@@ -11,12 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as EstimationRouteImport } from './routes/estimation'
+import { Route as DesabonnementRouteImport } from './routes/desabonnement'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as CguRouteImport } from './routes/cgu'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
+import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
@@ -30,6 +33,11 @@ const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
 const EstimationRoute = EstimationRouteImport.update({
   id: '/estimation',
   path: '/estimation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesabonnementRoute = DesabonnementRouteImport.update({
+  id: '/desabonnement',
+  path: '/desabonnement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
@@ -57,9 +65,19 @@ const PrixHotelIndexRoute = PrixHotelIndexRouteImport.update({
   path: '/prix-hotel/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MesDonneesIndexRoute = MesDonneesIndexRouteImport.update({
+  id: '/mes-donnees/',
+  path: '/mes-donnees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesIndexRoute = GuidesIndexRouteImport.update({
   id: '/guides/',
   path: '/guides/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
+  id: '/mes-donnees/acces',
+  path: '/mes-donnees/acces',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesSlugRoute = GuidesSlugRouteImport.update({
@@ -89,11 +107,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/guides/': typeof GuidesIndexRoute
+  '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
@@ -103,11 +124,14 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/guides': typeof GuidesIndexRoute
+  '/mes-donnees': typeof MesDonneesIndexRoute
   '/prix-hotel': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
@@ -118,11 +142,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/guides/': typeof GuidesIndexRoute
+  '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
@@ -134,11 +161,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
     | '/estimation/resultat'
     | '/guides/$slug'
+    | '/mes-donnees/acces'
     | '/guides/'
+    | '/mes-donnees/'
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
@@ -148,11 +178,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
     | '/estimation/resultat'
     | '/guides/$slug'
+    | '/mes-donnees/acces'
     | '/guides'
+    | '/mes-donnees'
     | '/prix-hotel'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region'
@@ -162,11 +195,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
     | '/estimation/resultat'
     | '/guides/$slug'
+    | '/mes-donnees/acces'
     | '/guides/'
+    | '/mes-donnees/'
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
@@ -177,10 +213,13 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CguRoute: typeof CguRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
+  DesabonnementRoute: typeof DesabonnementRoute
   EstimationRoute: typeof EstimationRouteWithChildren
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
+  MesDonneesAccesRoute: typeof MesDonneesAccesRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  MesDonneesIndexRoute: typeof MesDonneesIndexRoute
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
   PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
   PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
@@ -200,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/estimation'
       fullPath: '/estimation'
       preLoaderRoute: typeof EstimationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/desabonnement': {
+      id: '/desabonnement'
+      path: '/desabonnement'
+      fullPath: '/desabonnement'
+      preLoaderRoute: typeof DesabonnementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confidentialite': {
@@ -237,11 +283,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrixHotelIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mes-donnees/': {
+      id: '/mes-donnees/'
+      path: '/mes-donnees'
+      fullPath: '/mes-donnees/'
+      preLoaderRoute: typeof MesDonneesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/': {
       id: '/guides/'
       path: '/guides'
       fullPath: '/guides/'
       preLoaderRoute: typeof GuidesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-donnees/acces': {
+      id: '/mes-donnees/acces'
+      path: '/mes-donnees/acces'
+      fullPath: '/mes-donnees/acces'
+      preLoaderRoute: typeof MesDonneesAccesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/$slug': {
@@ -292,10 +352,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CguRoute: CguRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
+  DesabonnementRoute: DesabonnementRoute,
   EstimationRoute: EstimationRouteWithChildren,
   MentionsLegalesRoute: MentionsLegalesRoute,
   GuidesSlugRoute: GuidesSlugRoute,
+  MesDonneesAccesRoute: MesDonneesAccesRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  MesDonneesIndexRoute: MesDonneesIndexRoute,
   PrixHotelIndexRoute: PrixHotelIndexRoute,
   PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
   PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
