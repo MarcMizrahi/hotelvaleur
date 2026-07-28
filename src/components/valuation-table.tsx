@@ -27,7 +27,7 @@ export function ValuationTable({ coefficients }: { coefficients: Coefficient[] }
               <tr key={s} className="hover:bg-surface/60">
                 <th scope="row" className="px-4 py-3 font-medium text-navy border-b border-border/60">{label}</th>
                 <td className="px-4 py-3 tabular-nums border-b border-border/60">
-                  {formatEurosCents(c.price_per_room_low_cents)} – {formatEurosCents(c.price_per_room_high_cents)}
+                  {formatEuros(c.price_per_room_low_cents)} – {formatEuros(c.price_per_room_high_cents)}
                 </td>
                 <td className="px-4 py-3 tabular-nums border-b border-border/60">
                   {c.ebitda_multiple_low.toFixed(1)}× – {c.ebitda_multiple_high.toFixed(1)}×
