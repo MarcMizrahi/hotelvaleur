@@ -148,8 +148,40 @@ export const submitEstimation = createServerFn({ method: "POST" })
       throw new Error("Enregistrement impossible. Veuillez réessayer.");
     }
 
-    // 6. Prévoir l'envoi de l'email (implémenté au prompt 04)
-    // await sendEstimationReport(inserted.id);
+    // 6. Envoi du rapport par email (best-effort — n'échoue jamais le parcours)
+    let reportSent = false;
+    try {
+      const { sendEstimationReport } = await import("@/lib/send-report.server");
+      const r = await sendEstimationReport({
+        estimationId: inserted.id,
+        email: emailLower,
+        low: result.valueLowCents,
+        high: result.valueHighCents,
+        methodUsed: result.methodUsed,
+        regionSlug: data.regionSlug,
+        saleIntent: data.saleIntent,
+        draft: {
+          regionSlug: data.regionSlug,
+          departmentCode: data.departmentCode,
+          city: data.city ?? undefined,
+          transactionType: data.transactionType,
+          roomCount: data.roomCount,
+          starRating: data.starRating,
+          hasRestaurant: data.hasRestaurant,
+          hasLicence4: data.hasLicence4,
+          annualRevenueCents: data.annualRevenueCents ?? undefined,
+          ebitdaCents: data.ebitdaCents ?? undefined,
+          occupancyRate: data.occupancyRate ?? undefined,
+          firstName: data.firstName ?? undefined,
+          lastName: data.lastName ?? undefined,
+          email: emailLower,
+          phone: data.phone ?? undefined,
+        },
+      });
+      reportSent = r.ok;
+    } catch (err) {
+      console.error("sendEstimationReport failed", err);
+    }
 
     return {
       id: inserted.id,
@@ -158,6 +190,6 @@ export const submitEstimation = createServerFn({ method: "POST" })
       methodUsed: result.methodUsed,
       outlier: result.detail.outlier,
       divergent: result.detail.divergent,
-      reportSent: false,
+      reportSent,
     };
   });
