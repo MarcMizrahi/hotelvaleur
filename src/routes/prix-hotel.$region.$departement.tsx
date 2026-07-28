@@ -162,7 +162,7 @@ function DepartmentPage() {
             Autres départements de {region.name}
           </h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-            {neighbours.map((d) => (
+            {neighbours.map((d: import("@/lib/regions").Department) => (
               <li key={d.code}>
                 <Link
                   to="/prix-hotel/$region/$departement"
