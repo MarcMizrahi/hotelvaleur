@@ -45,7 +45,7 @@ function RegionPage() {
       </div>
       <h2 className="mt-12 font-serif text-2xl text-navy">Départements</h2>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {region.departments.map((d) => (
+        {region.departments.map((d: (typeof region.departments)[number]) => (
           <li key={d.code}>
             <Link
               to="/prix-hotel/$region/$departement"

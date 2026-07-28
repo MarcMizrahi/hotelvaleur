@@ -9,38 +9,220 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as EstimationRouteImport } from './routes/estimation'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as CguRouteImport } from './routes/cgu'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
+import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
+import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
+import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 
+const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+  id: '/mentions-legales',
+  path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstimationRoute = EstimationRouteImport.update({
+  id: '/estimation',
+  path: '/estimation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CguRoute = CguRouteImport.update({
+  id: '/cgu',
+  path: '/cgu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrixHotelIndexRoute = PrixHotelIndexRouteImport.update({
+  id: '/prix-hotel/',
+  path: '/prix-hotel/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesIndexRoute = GuidesIndexRouteImport.update({
+  id: '/guides/',
+  path: '/guides/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesSlugRoute = GuidesSlugRouteImport.update({
+  id: '/guides/$slug',
+  path: '/guides/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstimationResultatRoute = EstimationResultatRouteImport.update({
+  id: '/resultat',
+  path: '/resultat',
+  getParentRoute: () => EstimationRoute,
+} as any)
+const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
+  id: '/prix-hotel/$region/',
+  path: '/prix-hotel/$region/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrixHotelRegionDepartementRoute =
+  PrixHotelRegionDepartementRouteImport.update({
+    id: '/prix-hotel/$region/$departement',
+    path: '/prix-hotel/$region/$departement',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cgu': typeof CguRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/estimation': typeof EstimationRouteWithChildren
+  '/mentions-legales': typeof MentionsLegalesRoute
+  '/estimation/resultat': typeof EstimationResultatRoute
+  '/guides/$slug': typeof GuidesSlugRoute
+  '/guides/': typeof GuidesIndexRoute
+  '/prix-hotel/': typeof PrixHotelIndexRoute
+  '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
+  '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cgu': typeof CguRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/estimation': typeof EstimationRouteWithChildren
+  '/mentions-legales': typeof MentionsLegalesRoute
+  '/estimation/resultat': typeof EstimationResultatRoute
+  '/guides/$slug': typeof GuidesSlugRoute
+  '/guides': typeof GuidesIndexRoute
+  '/prix-hotel': typeof PrixHotelIndexRoute
+  '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
+  '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cgu': typeof CguRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/estimation': typeof EstimationRouteWithChildren
+  '/mentions-legales': typeof MentionsLegalesRoute
+  '/estimation/resultat': typeof EstimationResultatRoute
+  '/guides/$slug': typeof GuidesSlugRoute
+  '/guides/': typeof GuidesIndexRoute
+  '/prix-hotel/': typeof PrixHotelIndexRoute
+  '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
+  '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/cgu'
+    | '/confidentialite'
+    | '/estimation'
+    | '/mentions-legales'
+    | '/estimation/resultat'
+    | '/guides/$slug'
+    | '/guides/'
+    | '/prix-hotel/'
+    | '/prix-hotel/$region/$departement'
+    | '/prix-hotel/$region/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/cgu'
+    | '/confidentialite'
+    | '/estimation'
+    | '/mentions-legales'
+    | '/estimation/resultat'
+    | '/guides/$slug'
+    | '/guides'
+    | '/prix-hotel'
+    | '/prix-hotel/$region/$departement'
+    | '/prix-hotel/$region'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/cgu'
+    | '/confidentialite'
+    | '/estimation'
+    | '/mentions-legales'
+    | '/estimation/resultat'
+    | '/guides/$slug'
+    | '/guides/'
+    | '/prix-hotel/'
+    | '/prix-hotel/$region/$departement'
+    | '/prix-hotel/$region/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  CguRoute: typeof CguRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
+  EstimationRoute: typeof EstimationRouteWithChildren
+  MentionsLegalesRoute: typeof MentionsLegalesRoute
+  GuidesSlugRoute: typeof GuidesSlugRoute
+  GuidesIndexRoute: typeof GuidesIndexRoute
+  PrixHotelIndexRoute: typeof PrixHotelIndexRoute
+  PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
+  PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mentions-legales': {
+      id: '/mentions-legales'
+      path: '/mentions-legales'
+      fullPath: '/mentions-legales'
+      preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estimation': {
+      id: '/estimation'
+      path: '/estimation'
+      fullPath: '/estimation'
+      preLoaderRoute: typeof EstimationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cgu': {
+      id: '/cgu'
+      path: '/cgu'
+      fullPath: '/cgu'
+      preLoaderRoute: typeof CguRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +230,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prix-hotel/': {
+      id: '/prix-hotel/'
+      path: '/prix-hotel'
+      fullPath: '/prix-hotel/'
+      preLoaderRoute: typeof PrixHotelIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/': {
+      id: '/guides/'
+      path: '/guides'
+      fullPath: '/guides/'
+      preLoaderRoute: typeof GuidesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/$slug': {
+      id: '/guides/$slug'
+      path: '/guides/$slug'
+      fullPath: '/guides/$slug'
+      preLoaderRoute: typeof GuidesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estimation/resultat': {
+      id: '/estimation/resultat'
+      path: '/resultat'
+      fullPath: '/estimation/resultat'
+      preLoaderRoute: typeof EstimationResultatRouteImport
+      parentRoute: typeof EstimationRoute
+    }
+    '/prix-hotel/$region/': {
+      id: '/prix-hotel/$region/'
+      path: '/prix-hotel/$region'
+      fullPath: '/prix-hotel/$region/'
+      preLoaderRoute: typeof PrixHotelRegionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prix-hotel/$region/$departement': {
+      id: '/prix-hotel/$region/$departement'
+      path: '/prix-hotel/$region/$departement'
+      fullPath: '/prix-hotel/$region/$departement'
+      preLoaderRoute: typeof PrixHotelRegionDepartementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface EstimationRouteChildren {
+  EstimationResultatRoute: typeof EstimationResultatRoute
+}
+
+const EstimationRouteChildren: EstimationRouteChildren = {
+  EstimationResultatRoute: EstimationResultatRoute,
+}
+
+const EstimationRouteWithChildren = EstimationRoute._addFileChildren(
+  EstimationRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  CguRoute: CguRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
+  EstimationRoute: EstimationRouteWithChildren,
+  MentionsLegalesRoute: MentionsLegalesRoute,
+  GuidesSlugRoute: GuidesSlugRoute,
+  GuidesIndexRoute: GuidesIndexRoute,
+  PrixHotelIndexRoute: PrixHotelIndexRoute,
+  PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
+  PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
