@@ -14,13 +14,275 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_event: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          path: string | null
+          properties: Json | null
+          referrer: string | null
+          session_id: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          path?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          session_id: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          path?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          session_id?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
+      email_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          estimation_id: string | null
+          id: string
+          provider_id: string | null
+          status: string
+          template: string
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          estimation_id?: string | null
+          id?: string
+          provider_id?: string | null
+          status: string
+          template: string
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          estimation_id?: string | null
+          id?: string
+          provider_id?: string | null
+          status?: string
+          template?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_log_estimation_id_fkey"
+            columns: ["estimation_id"]
+            isOneToOne: false
+            referencedRelation: "estimation"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estimation: {
+        Row: {
+          annual_revenue_cents: number | null
+          calculation_detail: Json | null
+          city: string | null
+          consent_contact: boolean
+          consent_marketing: boolean
+          created_at: string
+          department_code: string
+          ebitda_cents: number | null
+          email: string
+          first_name: string | null
+          has_licence_4: boolean
+          has_restaurant: boolean
+          id: string
+          internal_notes: string | null
+          is_independent: boolean
+          landing_page: string | null
+          last_name: string | null
+          method_used: string
+          occupancy_rate: number | null
+          phone: string | null
+          referrer: string | null
+          region_slug: string
+          report_sent_at: string | null
+          room_count: number
+          sale_intent: string
+          star_rating: number
+          status: string
+          transaction_type: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          value_high_cents: number
+          value_low_cents: number
+          works_needed: string | null
+        }
+        Insert: {
+          annual_revenue_cents?: number | null
+          calculation_detail?: Json | null
+          city?: string | null
+          consent_contact?: boolean
+          consent_marketing?: boolean
+          created_at?: string
+          department_code: string
+          ebitda_cents?: number | null
+          email: string
+          first_name?: string | null
+          has_licence_4?: boolean
+          has_restaurant?: boolean
+          id?: string
+          internal_notes?: string | null
+          is_independent?: boolean
+          landing_page?: string | null
+          last_name?: string | null
+          method_used: string
+          occupancy_rate?: number | null
+          phone?: string | null
+          referrer?: string | null
+          region_slug: string
+          report_sent_at?: string | null
+          room_count: number
+          sale_intent: string
+          star_rating: number
+          status?: string
+          transaction_type: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value_high_cents: number
+          value_low_cents: number
+          works_needed?: string | null
+        }
+        Update: {
+          annual_revenue_cents?: number | null
+          calculation_detail?: Json | null
+          city?: string | null
+          consent_contact?: boolean
+          consent_marketing?: boolean
+          created_at?: string
+          department_code?: string
+          ebitda_cents?: number | null
+          email?: string
+          first_name?: string | null
+          has_licence_4?: boolean
+          has_restaurant?: boolean
+          id?: string
+          internal_notes?: string | null
+          is_independent?: boolean
+          landing_page?: string | null
+          last_name?: string | null
+          method_used?: string
+          occupancy_rate?: number | null
+          phone?: string | null
+          referrer?: string | null
+          region_slug?: string
+          report_sent_at?: string | null
+          room_count?: number
+          sale_intent?: string
+          star_rating?: number
+          status?: string
+          transaction_type?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value_high_cents?: number
+          value_low_cents?: number
+          works_needed?: string | null
+        }
+        Relationships: []
+      }
+      profile: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: []
+      }
+      unsubscribe: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
+      valuation_coefficient: {
+        Row: {
+          ebitda_multiple_high: number
+          ebitda_multiple_low: number
+          id: string
+          price_per_room_high_cents: number
+          price_per_room_low_cents: number
+          region_slug: string
+          star_rating: number
+          updated_at: string
+        }
+        Insert: {
+          ebitda_multiple_high: number
+          ebitda_multiple_low: number
+          id?: string
+          price_per_room_high_cents: number
+          price_per_room_low_cents: number
+          region_slug: string
+          star_rating: number
+          updated_at?: string
+        }
+        Update: {
+          ebitda_multiple_high?: number
+          ebitda_multiple_low?: number
+          id?: string
+          price_per_room_high_cents?: number
+          price_per_room_low_cents?: number
+          region_slug?: string
+          star_rating?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
