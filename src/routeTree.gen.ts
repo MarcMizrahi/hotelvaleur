@@ -30,7 +30,6 @@ import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
-import { Route as ApiPublicTestEmailRouteImport } from './routes/api/public/test-email'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -138,11 +137,6 @@ const PrixHotelRegionDepartementRoute =
     path: '/prix-hotel/$region/$departement',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicTestEmailRoute = ApiPublicTestEmailRouteImport.update({
-  id: '/api/public/test-email',
-  path: '/api/public/test-email',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -164,7 +158,6 @@ export interface FileRoutesByFullPath {
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
-  '/api/public/test-email': typeof ApiPublicTestEmailRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
 }
@@ -187,7 +180,6 @@ export interface FileRoutesByTo {
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
   '/prix-hotel': typeof PrixHotelIndexRoute
-  '/api/public/test-email': typeof ApiPublicTestEmailRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
 }
@@ -212,7 +204,6 @@ export interface FileRoutesById {
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
-  '/api/public/test-email': typeof ApiPublicTestEmailRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
 }
@@ -238,7 +229,6 @@ export interface FileRouteTypes {
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
-    | '/api/public/test-email'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
   fileRoutesByTo: FileRoutesByTo
@@ -261,7 +251,6 @@ export interface FileRouteTypes {
     | '/guides'
     | '/mes-donnees'
     | '/prix-hotel'
-    | '/api/public/test-email'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region'
   id:
@@ -285,7 +274,6 @@ export interface FileRouteTypes {
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
-    | '/api/public/test-email'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
   fileRoutesById: FileRoutesById
@@ -305,7 +293,6 @@ export interface RootRouteChildren {
   GuidesIndexRoute: typeof GuidesIndexRoute
   MesDonneesIndexRoute: typeof MesDonneesIndexRoute
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
-  ApiPublicTestEmailRoute: typeof ApiPublicTestEmailRoute
   PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
   PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
 }
@@ -459,13 +446,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrixHotelRegionDepartementRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/test-email': {
-      id: '/api/public/test-email'
-      path: '/api/public/test-email'
-      fullPath: '/api/public/test-email'
-      preLoaderRoute: typeof ApiPublicTestEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -512,7 +492,6 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesIndexRoute: GuidesIndexRoute,
   MesDonneesIndexRoute: MesDonneesIndexRoute,
   PrixHotelIndexRoute: PrixHotelIndexRoute,
-  ApiPublicTestEmailRoute: ApiPublicTestEmailRoute,
   PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
   PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
 }
