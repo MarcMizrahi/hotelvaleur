@@ -1,5 +1,5 @@
 import type { Coefficient } from "@/lib/valuation";
-import { formatEurosCents } from "@/lib/money";
+import { formatEuros } from "@/lib/money";
 
 const STARS = [0, 1, 2, 3, 4, 5] as const;
 

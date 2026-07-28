@@ -12,8 +12,11 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
           <li key={i} className="flex items-center gap-1">
             {i > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
             {c.to ? (
-              // @ts-expect-error -- dynamic to
-              <Link to={c.to} params={c.params} className="hover:text-navy underline-offset-2 hover:underline">
+              <Link
+                to={c.to as string}
+                params={c.params as never}
+                className="hover:text-navy underline-offset-2 hover:underline"
+              >
                 {c.label}
               </Link>
             ) : (
