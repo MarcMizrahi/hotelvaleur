@@ -20,40 +20,37 @@ export const Route = createFileRoute("/api/public/resend-report")({
           .select("*")
           .eq("id", id)
           .maybeSingle();
-        if (error || !est) return new Response("Not found", { status: 404 });
+        if (error || !est) return Response.json({ ok: false, stage: "lookup", error: error?.message }, { status: 404 });
 
-        const result = await sendEstimationReport({
-          estimationId: est.id,
-          email: est.email,
-          low: Number(est.value_low_cents),
-          high: Number(est.value_high_cents),
-          methodUsed: est.method_used,
-          regionSlug: est.region_slug,
-          saleIntent: est.sale_intent,
-          draft: {
-            regionSlug: est.region_slug,
-            departmentCode: est.department_code,
-            city: est.city ?? undefined,
-            transactionType: est.transaction_type as never,
-            roomCount: est.room_count,
-            starRating: est.star_rating,
-            isIndependent: est.is_independent,
-            hasRestaurant: est.has_restaurant,
-            hasLicence4: est.has_licence_4,
-            worksNeeded: (est.works_needed ?? undefined) as never,
-            annualRevenueCents: est.annual_revenue_cents ? Number(est.annual_revenue_cents) : undefined,
-            ebitdaCents: est.ebitda_cents ? Number(est.ebitda_cents) : undefined,
-            occupancyRate: est.occupancy_rate ? Number(est.occupancy_rate) : undefined,
-            firstName: est.first_name ?? undefined,
-            lastName: est.last_name ?? undefined,
-            email: est.email,
-            phone: est.phone ?? undefined,
-            consentContact: est.consent_contact,
-            consentMarketing: est.consent_marketing,
-            saleIntent: est.sale_intent as never,
-          },
+        const result = await sendEmail({
+          to: est.email,
+          subject: `Votre estimation HotelValeur — ${est.city ?? est.department_code}`,
+          html: `<div style="font-family:Inter,Arial,sans-serif;padding:24px;color:#1a1a1a">
+            <h1 style="color:#0b1f3a">Votre estimation HotelValeur</h1>
+            <p>Bonjour,</p>
+            <p>Voici l'estimation de votre hôtel situé à ${est.city ?? ""} (${est.department_code}) :</p>
+            <p style="font-size:20px;font-weight:600;color:#0b1f3a">
+              ${(Number(est.value_low_cents)/100).toLocaleString("fr-FR")} € — ${(Number(est.value_high_cents)/100).toLocaleString("fr-FR")} €
+            </p>
+            <p>Méthode : ${est.method_used}. ${est.room_count} chambres, ${est.star_rating}★.</p>
+            <p style="color:#666;font-size:12px;margin-top:32px">Estimation à titre indicatif — HotelValeur.</p>
+          </div>`,
+          text: `Estimation HotelValeur : ${(Number(est.value_low_cents)/100).toLocaleString("fr-FR")} € — ${(Number(est.value_high_cents)/100).toLocaleString("fr-FR")} €`,
         });
-        return Response.json(result);
+
+        const { error: logErr } = await supabaseAdmin.from("email_log").insert({
+          estimation_id: est.id,
+          to_email: est.email,
+          template: "report",
+          status: result.ok ? "sent" : result.skipped ? "skipped" : "failed",
+          provider_id: result.providerId ?? null,
+          error_message: result.error ?? null,
+        });
+        if (result.ok) {
+          await supabaseAdmin.from("estimation").update({ report_sent_at: new Date().toISOString() }).eq("id", est.id);
+        }
+
+        return Response.json({ result, logInsertError: logErr?.message });
       },
     },
   },
