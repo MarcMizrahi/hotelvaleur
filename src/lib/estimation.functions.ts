@@ -108,7 +108,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
         value_low_cents: result.valueLowCents,
         value_high_cents: result.valueHighCents,
         method_used: result.methodUsed,
-        calculation_detail: result.detail as unknown as Record<string, unknown>,
+        calculation_detail: result.detail as never,
         email: data.email.toLowerCase().trim(),
         phone: data.phone ?? null,
         first_name: data.firstName ?? null,

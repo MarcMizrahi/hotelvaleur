@@ -54,7 +54,7 @@ export async function track(name: string, properties?: Record<string, unknown>) 
     await supabase.from("analytics_event").insert({
       name,
       session_id: getSessionId(),
-      properties: properties ?? null,
+      properties: (properties ?? null) as never,
       path: window.location.pathname,
       utm_source: attr.utm_source ?? null,
       utm_medium: attr.utm_medium ?? null,
