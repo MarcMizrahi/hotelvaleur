@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { sendEstimationReport } from "@/lib/send-report.server";
+import { sendEmail } from "@/lib/email.server";
 
 const ONE_SHOT_TOKEN = "hv-resend-9pT2mQx7Kv3nR8yL4bH1zW6cJ0dF5gS";
 
