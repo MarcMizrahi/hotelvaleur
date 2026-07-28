@@ -1,19 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { sendEmail } from "@/lib/email.server";
 
+// Temporary route — deleted after test run.
+const ONE_SHOT_TOKEN = "hv-test-4kZ9pQm2Xr7vB3nL8sT1yW6cH0dF5gJ";
+const FIXED_RECIPIENT = "mizrahimarc@gmail.com";
+
 export const Route = createFileRoute("/api/public/test-email")({
   server: {
     handlers: {
       GET: async ({ request }) => {
         const url = new URL(request.url);
-        const to = url.searchParams.get("to");
-        const token = url.searchParams.get("token");
-        if (token !== process.env.HOTELVALEUR_HMAC_SECRET) {
+        if (url.searchParams.get("token") !== ONE_SHOT_TOKEN) {
           return new Response("Forbidden", { status: 403 });
         }
-        if (!to) return new Response("Missing 'to'", { status: 400 });
         const result = await sendEmail({
-          to,
+          to: FIXED_RECIPIENT,
           subject: "Test HotelValeur — envoi email opérationnel",
           html: `<div style="font-family:Inter,Arial,sans-serif;padding:24px;color:#1a1a1a">
             <h1 style="color:#0b1f3a">HotelValeur — Test d'envoi</h1>
