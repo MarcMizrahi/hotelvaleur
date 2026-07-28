@@ -1,5 +1,5 @@
 import { formatEurosRange, formatEuros } from "@/lib/money";
-import { siteConfig } from "@/config/site";
+import { site as siteConfig } from "@/config/site";
 import type { EstimationDraft } from "@/lib/estimation-storage";
 import { regions } from "@/lib/regions";
 
@@ -49,7 +49,7 @@ export function buildReportHtml(input: ReportInput): string {
 <tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #e5e5e5;">
 <tr><td style="padding:24px 32px;border-bottom:1px solid #eeeeee;">
-  <p style="margin:0;font-size:14px;color:#666666;">${esc(siteConfig.brand)}</p>
+  <p style="margin:0;font-size:14px;color:#666666;">${esc(siteConfig.name)}</p>
 </td></tr>
 <tr><td style="padding:32px;">
   <p style="margin:0;font-size:14px;color:#666666;">Votre estimation confidentielle</p>
@@ -94,7 +94,7 @@ export function buildReportHtml(input: ReportInput): string {
 </td></tr>
 
 <tr><td style="padding:16px 32px;border-top:1px solid #eeeeee;font-size:11px;color:#888888;">
-  ${esc(siteConfig.brand)} — <a href="${esc(unsubscribeUrl)}" style="color:#888888;">Se désabonner</a>
+  ${esc(siteConfig.name)} — <a href="${esc(unsubscribeUrl)}" style="color:#888888;">Se désabonner</a>
 </td></tr>
 </table>
 </td></tr></table>
@@ -112,7 +112,7 @@ export function buildReportText(input: ReportInput): string {
         ? "fonds de commerce"
         : "murs seuls";
   return [
-    `${siteConfig.brand} — Votre estimation confidentielle`,
+    `${siteConfig.name} — Votre estimation confidentielle`,
     ``,
     `Entre ${formatEurosRange(low, high)}`,
     `Pour un hôtel de ${draft.roomCount} chambres, ${draft.starRating ? draft.starRating + " étoiles" : "non classé"}${dep ? ", dans le " + dep.name : ""}, ${txLabel}.`,
@@ -140,7 +140,7 @@ export function buildUnsubscribeConfirmationHtml(email: string): string {
 <p>Bonjour,</p>
 <p>Votre adresse <strong>${esc(email)}</strong> a bien été retirée de nos envois.</p>
 <p>Vous ne recevrez plus d'emails de notre part.</p>
-<p style="color:#666;font-size:12px;">${esc(siteConfig.brand)}</p>
+<p style="color:#666;font-size:12px;">${esc(siteConfig.name)}</p>
 </body></html>`;
 }
 
@@ -170,7 +170,7 @@ export function buildAdminNotificationHtml(input: {
 export function buildAccessLinkHtml(link: string): string {
   return `<!doctype html><html lang="fr"><body style="font-family:Helvetica,Arial,sans-serif;padding:32px;">
 <p>Bonjour,</p>
-<p>Vous avez demandé à accéder à vos données personnelles conservées par ${esc(siteConfig.brand)}.</p>
+<p>Vous avez demandé à accéder à vos données personnelles conservées par ${esc(siteConfig.name)}.</p>
 <p><a href="${esc(link)}" style="color:#0f3057;">Accéder à mes données</a></p>
 <p>Ce lien est valable 24 heures. Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.</p>
 </body></html>`;
