@@ -57,8 +57,26 @@ export const submitEstimation = createServerFn({ method: "POST" })
       throw new Error("Vérification anti-spam échouée. Merci de recharger la page.");
     }
 
+    // 1b. Anti-abus : email jetable
+    const { isDisposableEmail } = await import("@/lib/disposable-emails");
+    if (isDisposableEmail(data.email)) {
+      throw new Error("Merci d'utiliser une adresse email personnelle ou professionnelle.");
+    }
+
     // 2. Client privilégié pour insertion (bypass RLS, écriture serveur uniquement)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // 2b. Limite de débit : max 5 soumissions / heure / email
+    const oneHourAgo = new Date(Date.now() - 3_600_000).toISOString();
+    const emailLower = data.email.toLowerCase().trim();
+    const { count } = await supabaseAdmin
+      .from("estimation")
+      .select("id", { count: "exact", head: true })
+      .eq("email", emailLower)
+      .gte("created_at", oneHourAgo);
+    if ((count ?? 0) >= 5) {
+      throw new Error("Trop de soumissions récentes. Réessayez dans une heure.");
+    }
 
     // 3. Coefficient de la région × classement
     const { data: coef, error: coefErr } = await supabaseAdmin
