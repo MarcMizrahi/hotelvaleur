@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as EstimationRouteImport } from './routes/estimation'
 import { Route as DesabonnementRouteImport } from './routes/desabonnement'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as CguRouteImport } from './routes/cgu'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -44,6 +45,11 @@ const EstimationRoute = EstimationRouteImport.update({
 const DesabonnementRoute = DesabonnementRouteImport.update({
   id: '/desabonnement',
   path: '/desabonnement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/cookies'
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/cookies'
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cgu'
     | '/confidentialite'
+    | '/cookies'
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CguRoute: typeof CguRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
+  CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
   EstimationRoute: typeof EstimationRouteWithChildren
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/desabonnement'
       fullPath: '/desabonnement'
       preLoaderRoute: typeof DesabonnementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confidentialite': {
@@ -372,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CguRoute: CguRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
+  CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
   EstimationRoute: EstimationRouteWithChildren,
   MentionsLegalesRoute: MentionsLegalesRoute,
@@ -387,3 +408,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
