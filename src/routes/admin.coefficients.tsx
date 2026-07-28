@@ -237,19 +237,23 @@ function Simulator({
   );
 
   const result = row
-    ? computeValuation({
-        regionSlug,
-        starRating: stars,
-        roomCount: rooms,
-        ebitdaCents: ebitda ? Math.round(Number(ebitda) * 100) : null,
-        transactionType: "murs_et_fonds",
-        coefficient: {
+    ? computeValuation(
+        {
+          regionSlug,
+          starRating: stars,
+          roomCount: rooms,
+          ebitdaCents: ebitda ? Math.round(Number(ebitda) * 100) : null,
+          transactionType: "murs_et_fonds",
+        },
+        {
+          region_slug: row.region_slug,
+          star_rating: row.star_rating,
           ebitda_multiple_low: Number(row.ebitda_multiple_low),
           ebitda_multiple_high: Number(row.ebitda_multiple_high),
           price_per_room_low_cents: Number(row.price_per_room_low_cents),
           price_per_room_high_cents: Number(row.price_per_room_high_cents),
         },
-      })
+      )
     : null;
 
   return (
@@ -312,7 +316,7 @@ function Simulator({
               {formatEurosRange(result.valueLowCents, result.valueHighCents)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              Méthode : {result.method}
+              Méthode : {result.methodUsed}
             </div>
           </>
         ) : (
