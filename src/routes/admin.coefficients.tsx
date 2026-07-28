@@ -243,7 +243,7 @@ function Simulator({
           starRating: stars,
           roomCount: rooms,
           ebitdaCents: ebitda ? Math.round(Number(ebitda) * 100) : null,
-          transactionType: "murs_et_fonds",
+          transactionType: "murs_fonds",
         },
         {
           region_slug: row.region_slug,
