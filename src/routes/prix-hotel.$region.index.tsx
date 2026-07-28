@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { fr } from "@/locales/fr";
-import { getRegionBySlug } from "@/lib/regions";
+import { getRegionBySlug, type Department } from "@/lib/regions";
 
 export const Route = createFileRoute("/prix-hotel/$region/")({
   loader: ({ params }) => {
@@ -45,7 +45,7 @@ function RegionPage() {
       </div>
       <h2 className="mt-12 font-serif text-2xl text-navy">Départements</h2>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {region.departments.map((d: (typeof region.departments)[number]) => (
+        {region.departments.map((d: Department) => (
           <li key={d.code}>
             <Link
               to="/prix-hotel/$region/$departement"
