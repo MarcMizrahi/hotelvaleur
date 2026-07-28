@@ -1,6 +1,9 @@
 /**
- * Email sending via Resend. Server-only.
- * Graceful no-op with clear logging when RESEND_API_KEY is not set.
+ * Email sending — Lovable Emails (managed).
+ *
+ * This is a stub until the sender domain is configured and the Lovable
+ * email templates are scaffolded. Callers keep working; sends are skipped
+ * with a clear log line instead of hitting any third-party provider.
  */
 
 export interface EmailPayload {
@@ -20,32 +23,13 @@ export interface EmailSendResult {
 }
 
 export async function sendEmail(payload: EmailPayload): Promise<EmailSendResult> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const fromDefault = process.env.EMAIL_FROM ?? "HotelValeur <onboarding@resend.dev>";
-  if (!apiKey) {
-    console.warn("[email] RESEND_API_KEY missing — email not sent to", payload.to);
-    return { ok: false, skipped: true, error: "RESEND_API_KEY not configured" };
-  }
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: payload.from ?? fromDefault,
-        to: [payload.to],
-        subject: payload.subject,
-        html: payload.html,
-        text: payload.text,
-        reply_to: payload.replyTo,
-      }),
-    });
-    const data = (await res.json()) as { id?: string; message?: string };
-    if (!res.ok) return { ok: false, error: data.message ?? `HTTP ${res.status}` };
-    return { ok: true, providerId: data.id };
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
-  }
+  console.warn(
+    "[email] Lovable Emails not configured yet — email not sent to",
+    payload.to,
+  );
+  return {
+    ok: false,
+    skipped: true,
+    error: "Lovable Emails not configured (sender domain pending setup)",
+  };
 }
