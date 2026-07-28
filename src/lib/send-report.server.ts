@@ -38,8 +38,8 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
   if (unsub) {
     await supabaseAdmin.from("email_log").insert({
       estimation_id: input.estimationId,
-      recipient_email: emailLower,
-      kind: "report",
+      to_email: emailLower,
+      template: "report",
       status: "skipped",
       error_message: "unsubscribed",
     });
@@ -77,10 +77,10 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
 
   await supabaseAdmin.from("email_log").insert({
     estimation_id: input.estimationId,
-    recipient_email: emailLower,
-    kind: "report",
+    to_email: emailLower,
+    template: "report",
     status: result.ok ? "sent" : result.skipped ? "skipped" : "failed",
-    provider_message_id: result.providerId ?? null,
+    provider_id: result.providerId ?? null,
     error_message: result.error ?? null,
   });
 
