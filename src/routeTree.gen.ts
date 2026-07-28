@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as EstimationRouteImport } from './routes/estimation'
 import { Route as DesabonnementRouteImport } from './routes/desabonnement'
@@ -25,6 +26,11 @@ import { Route as EstimationResultatRouteImport } from './routes/estimation.resu
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
+    | '/sitemap.xml'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
+    | '/sitemap.xml'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/desabonnement'
     | '/estimation'
     | '/mentions-legales'
+    | '/sitemap.xml'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -216,6 +228,7 @@ export interface RootRouteChildren {
   DesabonnementRoute: typeof DesabonnementRoute
   EstimationRoute: typeof EstimationRouteWithChildren
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   MesDonneesAccesRoute: typeof MesDonneesAccesRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
@@ -227,6 +240,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mentions-legales': {
       id: '/mentions-legales'
       path: '/mentions-legales'
@@ -355,6 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   DesabonnementRoute: DesabonnementRoute,
   EstimationRoute: EstimationRouteWithChildren,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   MesDonneesAccesRoute: MesDonneesAccesRoute,
   GuidesIndexRoute: GuidesIndexRoute,

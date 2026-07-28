@@ -121,7 +121,7 @@ function RegionPage() {
           Ce qui fait varier le prix en {region.name}
         </h2>
         <ul className="mt-4 space-y-2 text-foreground/85 list-disc pl-5">
-          {region.factors.map((f) => (
+          {region.factors.map((f: string) => (
             <li key={f}>{f}</li>
           ))}
         </ul>
@@ -132,7 +132,7 @@ function RegionPage() {
           Départements de {region.name}
         </h2>
         <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {region.departments.map((d) => (
+          {region.departments.map((d: import("@/lib/regions").Department) => (
             <li key={d.code}>
               <Link
                 to="/prix-hotel/$region/$departement"

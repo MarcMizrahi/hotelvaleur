@@ -58,7 +58,7 @@ function DepartmentPage() {
     staleTime: 60 * 60 * 1000,
   });
 
-  const neighbours = region.departments.filter((d) => d.slug !== department.slug).slice(0, 3);
+  const neighbours = region.departments.filter((d: import("@/lib/regions").Department) => d.slug !== department.slug).slice(0, 3);
   const coef3 = coefficients.find((c) => c.star_rating === 3);
   const coef2 = coefficients.find((c) => c.star_rating === 2);
   const example3 = coef3
@@ -150,7 +150,7 @@ function DepartmentPage() {
           s'appliquent au {department.name} :
         </p>
         <ul className="mt-3 space-y-2 text-foreground/85 list-disc pl-5">
-          {region.factors.map((f) => (
+          {region.factors.map((f: string) => (
             <li key={f}>{f}</li>
           ))}
         </ul>
