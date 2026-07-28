@@ -21,9 +21,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
+import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 
@@ -87,6 +91,11 @@ const GuidesIndexRoute = GuidesIndexRouteImport.update({
   path: '/guides/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
   id: '/mes-donnees/acces',
   path: '/mes-donnees/acces',
@@ -102,6 +111,21 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEmailsRoute = AdminEmailsRouteImport.update({
+  id: '/emails',
+  path: '/emails',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
+  id: '/coefficients',
+  path: '/coefficients',
+  getParentRoute: () => AdminRoute,
+} as any)
 const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
   id: '/prix-hotel/$region/',
   path: '/prix-hotel/$region/',
@@ -116,7 +140,7 @@ const PrixHotelRegionDepartementRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
@@ -124,9 +148,13 @@ export interface FileRoutesByFullPath {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/emails': typeof AdminEmailsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -135,7 +163,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
@@ -143,9 +170,13 @@ export interface FileRoutesByTo {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/emails': typeof AdminEmailsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/admin': typeof AdminIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
   '/prix-hotel': typeof PrixHotelIndexRoute
@@ -155,7 +186,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
@@ -163,9 +194,13 @@ export interface FileRoutesById {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/emails': typeof AdminEmailsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -184,9 +219,13 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/coefficients'
+    | '/admin/emails'
+    | '/admin/leads'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -195,7 +234,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/cgu'
     | '/confidentialite'
     | '/cookies'
@@ -203,9 +241,13 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/coefficients'
+    | '/admin/emails'
+    | '/admin/leads'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/admin'
     | '/guides'
     | '/mes-donnees'
     | '/prix-hotel'
@@ -222,9 +264,13 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/coefficients'
+    | '/admin/emails'
+    | '/admin/leads'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -234,7 +280,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CguRoute: typeof CguRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   CookiesRoute: typeof CookiesRoute
@@ -337,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/mes-donnees/acces': {
       id: '/mes-donnees/acces'
       path: '/mes-donnees/acces'
@@ -358,6 +411,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/emails': {
+      id: '/admin/emails'
+      path: '/emails'
+      fullPath: '/admin/emails'
+      preLoaderRoute: typeof AdminEmailsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/coefficients': {
+      id: '/admin/coefficients'
+      path: '/coefficients'
+      fullPath: '/admin/coefficients'
+      preLoaderRoute: typeof AdminCoefficientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/prix-hotel/$region/': {
       id: '/prix-hotel/$region/'
       path: '/prix-hotel/$region'
@@ -375,6 +449,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminCoefficientsRoute: typeof AdminCoefficientsRoute
+  AdminEmailsRoute: typeof AdminEmailsRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCoefficientsRoute: AdminCoefficientsRoute,
+  AdminEmailsRoute: AdminEmailsRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface EstimationRouteChildren {
   EstimationResultatRoute: typeof EstimationResultatRoute
 }
@@ -389,7 +479,7 @@ const EstimationRouteWithChildren = EstimationRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   CguRoute: CguRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   CookiesRoute: CookiesRoute,
