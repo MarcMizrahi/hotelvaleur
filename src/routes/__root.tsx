@@ -27,12 +27,24 @@ function NotFoundComponent() {
             {fr.placeholders.not_found.title}
           </h1>
           <p className="mt-3 text-muted-foreground">{fr.placeholders.not_found.body}</p>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3 justify-center">
             <Link
               to="/"
               className="inline-flex items-center justify-center rounded-md bg-navy px-5 py-3 text-sm font-medium text-navy-foreground hover:bg-navy/90 transition-colors"
             >
-              {fr.placeholders.not_found.home}
+              Retour à l'accueil
+            </Link>
+            <Link
+              to="/estimation"
+              className="inline-flex items-center justify-center rounded-md border border-border bg-background px-5 py-3 text-sm font-medium hover:bg-surface"
+            >
+              Estimer mon hôtel
+            </Link>
+            <Link
+              to="/prix-hotel"
+              className="inline-flex items-center justify-center rounded-md border border-border bg-background px-5 py-3 text-sm font-medium hover:bg-surface"
+            >
+              Prix par région
             </Link>
           </div>
         </div>

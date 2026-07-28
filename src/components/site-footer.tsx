@@ -34,6 +34,21 @@ export function SiteFooter() {
                 {t.footer.terms}
               </Link>
             </li>
+            <li>
+              <Link to="/cookies" className="text-foreground/80 hover:text-navy">
+                Cookies
+              </Link>
+            </li>
+            <li>
+              <Link to="/mes-donnees" className="text-foreground/80 hover:text-navy">
+                Mes données
+              </Link>
+            </li>
+            <li>
+              <Link to="/guides" className="text-foreground/80 hover:text-navy">
+                Guides
+              </Link>
+            </li>
           </ul>
         </nav>
 
