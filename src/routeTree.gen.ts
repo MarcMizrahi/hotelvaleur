@@ -28,6 +28,7 @@ import { Route as EstimationResultatRouteImport } from './routes/estimation.resu
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
+import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 
@@ -126,6 +127,11 @@ const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
   path: '/coefficients',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBenchmarksRoute = AdminBenchmarksRouteImport.update({
+  id: '/benchmarks',
+  path: '/benchmarks',
+  getParentRoute: () => AdminRoute,
+} as any)
 const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
   id: '/prix-hotel/$region/',
   path: '/prix-hotel/$region/',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/estimation': typeof EstimationRouteWithChildren
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
@@ -432,6 +444,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoefficientsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/benchmarks': {
+      id: '/admin/benchmarks'
+      path: '/benchmarks'
+      fullPath: '/admin/benchmarks'
+      preLoaderRoute: typeof AdminBenchmarksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/prix-hotel/$region/': {
       id: '/prix-hotel/$region/'
       path: '/prix-hotel/$region'
@@ -450,6 +469,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBenchmarksRoute: typeof AdminBenchmarksRoute
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -457,6 +477,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBenchmarksRoute: AdminBenchmarksRoute,
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
@@ -498,13 +519,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
