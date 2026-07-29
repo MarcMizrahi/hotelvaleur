@@ -105,6 +105,9 @@ export const submitEstimation = createServerFn({ method: "POST" })
         annualRevenueCents: data.annualRevenueCents ?? null,
         ebitdaCents: data.ebitdaCents ?? null,
         occupancyRate: data.occupancyRate ?? null,
+        leaseYearsRemaining: data.leaseYearsRemaining ?? null,
+        isEmphyteotic: data.isEmphyteotic ?? null,
+        emphyteoticYearsRemaining: data.emphyteoticYearsRemaining ?? null,
       },
       coef as unknown as Coefficient,
     );
