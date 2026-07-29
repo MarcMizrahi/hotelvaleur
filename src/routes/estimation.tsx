@@ -204,6 +204,8 @@ function validateStep(step: number, d: EstimationDraft): string | null {
       return null;
     case 2:
       if (!d.transactionType) return "Choisissez le type de transaction envisagé.";
+      if (d.isEmphyteotic && (!d.emphyteoticYearsRemaining || d.emphyteoticYearsRemaining < 1))
+        return "Indiquez la durée restante du bail emphytéotique.";
       return null;
     case 3:
       if (!d.roomCount || d.roomCount < 1 || d.roomCount > 500)
