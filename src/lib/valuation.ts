@@ -17,6 +17,12 @@ export interface ValuationInput {
   annualRevenueCents?: number | null;
   ebitdaCents?: number | null;
   occupancyRate?: number | null; // 0..100
+  /** Années restantes du bail commercial — pertinent pour transactionType = "fonds". */
+  leaseYearsRemaining?: number | null;
+  /** Vrai si les murs sont détenus via un bail emphytéotique — pertinent pour "murs" ou "murs_fonds". */
+  isEmphyteotic?: boolean | null;
+  /** Années restantes du bail emphytéotique. */
+  emphyteoticYearsRemaining?: number | null;
 }
 
 export interface Coefficient {
@@ -133,15 +139,55 @@ export function computeValuation(
   // 5. Ajustements multiplicatifs
   const adjustments: Array<{ label: string; factor: number }> = [];
 
-  const txMap: Record<TransactionType, number> = {
-    murs_fonds: 1.0,
-    fonds: 0.4,
-    murs: 0.6,
-  };
-  adjustments.push({
-    label: `Type de transaction : ${input.transactionType}`,
-    factor: txMap[input.transactionType],
-  });
+  // 5a. Type de transaction
+  // Cas particulier "fonds seul" : si l'on dispose d'un EBITDA (réel ou estimé)
+  // et d'un CA, on retraite l'EBITDA d'un loyer implicite de 10 % du CA
+  // (fourchette usuelle 8–12 % en hôtellerie) et on applique un multiple 3–5×,
+  // conforme aux pratiques de marché pour le fonds de commerce seul.
+  let fondsRepriced = false;
+  if (
+    input.transactionType === "fonds" &&
+    ebitdaBand &&
+    input.annualRevenueCents &&
+    input.annualRevenueCents > 0
+  ) {
+    const impliedRent = Math.round(input.annualRevenueCents * 0.1);
+    const ebitdaFonds = Math.max(0, ebitdaBand.used - impliedRent);
+    if (ebitdaFonds > 0) {
+      combined = { low: ebitdaFonds * 3, high: ebitdaFonds * 5 };
+      fondsRepriced = true;
+      adjustments.push({
+        label: "Fonds seul : EBITDA retraité (loyer implicite 10 % du CA) × 3–5",
+        factor: 1.0,
+      });
+    }
+  }
+
+  if (!fondsRepriced) {
+    const txMap: Record<TransactionType, number> = {
+      murs_fonds: 1.0,
+      fonds: 0.4,
+      murs: 0.6,
+    };
+    adjustments.push({
+      label: `Type de transaction : ${input.transactionType}`,
+      factor: txMap[input.transactionType],
+    });
+  }
+
+  // 5b. Durée du bail commercial (pertinent pour "fonds")
+  if (
+    input.transactionType === "fonds" &&
+    typeof input.leaseYearsRemaining === "number" &&
+    input.leaseYearsRemaining >= 0
+  ) {
+    const y = input.leaseYearsRemaining;
+    let f = 1.0;
+    if (y < 3) f = 0.75;
+    else if (y < 6) f = 0.9;
+    else f = 1.0;
+    adjustments.push({ label: `Bail commercial restant : ${y} an(s)`, factor: f });
+  }
 
   if (input.worksNeeded) {
     const worksMap: Record<WorksNeeded, number> = {
@@ -165,6 +211,24 @@ export function computeValuation(
     else if (o < 70) f = 1.05;
     else f = 1.1;
     adjustments.push({ label: `Taux d'occupation : ${o.toFixed(1)} %`, factor: f });
+  }
+
+  // 5c. Bail emphytéotique (murs ou murs+fonds) : décote temporelle
+  // Approximation d'une actualisation sur la durée restante :
+  //   factor = 1 - exp(-années / 30)
+  // 99 ans → ×0.96, 50 → ×0.81, 30 → ×0.63, 15 → ×0.39, 5 → ×0.15.
+  if (
+    input.isEmphyteotic &&
+    (input.transactionType === "murs" || input.transactionType === "murs_fonds") &&
+    typeof input.emphyteoticYearsRemaining === "number" &&
+    input.emphyteoticYearsRemaining > 0
+  ) {
+    const y = input.emphyteoticYearsRemaining;
+    const f = 1 - Math.exp(-y / 30);
+    adjustments.push({
+      label: `Bail emphytéotique : ${y} an(s) restants`,
+      factor: Number(f.toFixed(3)),
+    });
   }
 
   let low = combined.low;
