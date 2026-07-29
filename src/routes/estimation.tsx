@@ -304,6 +304,9 @@ function Step2({ draft, update }: StepProps) {
       desc: "Vous vendez l'immobilier, l'exploitation continue avec un bail.",
     },
   ];
+  const isFonds = draft.transactionType === "fonds";
+  const isMursOrBoth =
+    draft.transactionType === "murs" || draft.transactionType === "murs_fonds";
   return (
     <section>
       <h1 className="font-serif text-3xl">Que souhaitez-vous céder ?</h1>
@@ -327,6 +330,72 @@ function Step2({ draft, update }: StepProps) {
           );
         })}
       </div>
+
+      {isFonds && (
+        <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4">
+          <Label htmlFor="lease">Années restantes sur le bail commercial</Label>
+          <p className="mt-1 text-xs text-muted-foreground">
+            La durée résiduelle du bail est le premier facteur de valeur d'un fonds seul.
+          </p>
+          <Input
+            id="lease"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={99}
+            className="mt-2 max-w-[160px]"
+            value={draft.leaseYearsRemaining ?? ""}
+            onChange={(e) =>
+              update({
+                leaseYearsRemaining: e.target.value ? Number(e.target.value) : undefined,
+              })
+            }
+          />
+        </div>
+      )}
+
+      {isMursOrBoth && (
+        <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+          <label className="flex items-start gap-2 text-sm">
+            <Checkbox
+              checked={draft.isEmphyteotic ?? false}
+              onCheckedChange={(v) =>
+                update({
+                  isEmphyteotic: v === true,
+                  emphyteoticYearsRemaining: v === true ? draft.emphyteoticYearsRemaining : undefined,
+                })
+              }
+            />
+            <span>
+              Les murs sont détenus via un <strong>bail emphytéotique</strong>
+              <span className="block text-xs text-muted-foreground">
+                Bail long (18–99 ans) dont la valeur s'éteint à l'échéance.
+              </span>
+            </span>
+          </label>
+          {draft.isEmphyteotic && (
+            <div>
+              <Label htmlFor="emp">Années restantes</Label>
+              <Input
+                id="emp"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={99}
+                className="mt-1 max-w-[160px]"
+                value={draft.emphyteoticYearsRemaining ?? ""}
+                onChange={(e) =>
+                  update({
+                    emphyteoticYearsRemaining: e.target.value
+                      ? Number(e.target.value)
+                      : undefined,
+                  })
+                }
+              />
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
