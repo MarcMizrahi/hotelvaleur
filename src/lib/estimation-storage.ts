@@ -7,6 +7,9 @@ export interface EstimationDraft {
   city?: string;
   // Étape 2
   transactionType?: TransactionType;
+  leaseYearsRemaining?: number;
+  isEmphyteotic?: boolean;
+  emphyteoticYearsRemaining?: number;
   // Étape 3
   roomCount?: number;
   starRating?: number;
