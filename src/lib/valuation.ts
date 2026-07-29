@@ -17,6 +17,12 @@ export interface ValuationInput {
   annualRevenueCents?: number | null;
   ebitdaCents?: number | null;
   occupancyRate?: number | null; // 0..100
+  /** Années restantes du bail commercial — pertinent pour transactionType = "fonds". */
+  leaseYearsRemaining?: number | null;
+  /** Vrai si les murs sont détenus via un bail emphytéotique — pertinent pour "murs" ou "murs_fonds". */
+  isEmphyteotic?: boolean | null;
+  /** Années restantes du bail emphytéotique. */
+  emphyteoticYearsRemaining?: number | null;
 }
 
 export interface Coefficient {
