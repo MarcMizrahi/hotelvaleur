@@ -157,6 +157,7 @@ function AdminLayout({ email }: { email: string }) {
     { to: "/admin", label: "Tableau de bord", exact: true },
     { to: "/admin/leads", label: "Leads" },
     { to: "/admin/coefficients", label: "Coefficients" },
+    { to: "/admin/benchmarks", label: "Benchmarks" },
     { to: "/admin/emails", label: "Emails" },
   ];
   return (
