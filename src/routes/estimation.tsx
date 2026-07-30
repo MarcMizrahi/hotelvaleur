@@ -521,8 +521,8 @@ function Step3({ draft, update }: StepProps) {
       <h1 className="font-serif text-3xl">Votre établissement</h1>
       <div className="mt-6 space-y-5">
         <div>
-
           <Label htmlFor="rooms">Nombre de chambres</Label>
+
 
           <Input
             id="rooms"
