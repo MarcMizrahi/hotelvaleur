@@ -106,6 +106,7 @@ function EstimationPage() {
           leaseYearsRemaining: draft.leaseYearsRemaining ?? null,
           isEmphyteotic: draft.isEmphyteotic ?? null,
           emphyteoticYearsRemaining: draft.emphyteoticYearsRemaining ?? null,
+          hotelName: draft.hotelName ?? null,
           roomCount: draft.roomCount!,
           starRating: draft.starRating ?? 0,
           isIndependent: draft.isIndependent ?? true,
@@ -130,7 +131,7 @@ function EstimationPage() {
           turnstileToken: null,
         },
       });
-      saveResult({
+      const stored = {
         id: result.id,
         valueLowCents: result.valueLowCents,
         valueHighCents: result.valueHighCents,
@@ -138,14 +139,16 @@ function EstimationPage() {
         draft,
         reportSent: result.reportSent,
         outlier: result.outlier,
-      });
+      };
+      saveResult(stored);
       await track("funnel_vendeur.step_6");
       await track("estimation.completed", { method_used: result.methodUsed });
       if (draft.saleIntent === "moins_1_an" || draft.saleIntent === "1_a_2_ans") {
         await track("lead.qualified", { sale_intent: draft.saleIntent });
       }
+      setResult(stored);
       clearDraft();
-      navigate({ to: "/estimation/resultat" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Une erreur est survenue.";
       setError(msg + " Vos réponses sont conservées, réessayez dans un instant.");
@@ -510,6 +513,37 @@ function Step3({ draft, update }: StepProps) {
 
 function Step4({ draft, update }: StepProps) {
   const [showTip, setShowTip] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [importErr, setImportErr] = useState<string | null>(null);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    setImporting(true);
+    setImportMsg(null);
+    setImportErr(null);
+    try {
+      const { parseFinancialsFile } = await import("@/lib/spreadsheet-import");
+      const found = await parseFinancialsFile(file);
+      const labels: string[] = [];
+      if (found.annualRevenueCents) labels.push("chiffre d'affaires");
+      if (found.ebitdaCents) labels.push("EBITDA");
+      if (typeof found.occupancyRate === "number") labels.push("taux d'occupation");
+      if (labels.length === 0) {
+        setImportErr(
+          "Aucune donnée reconnue. Le fichier doit contenir des libellés comme « Chiffre d'affaires », « EBITDA » ou « Taux d'occupation » suivis de leur valeur.",
+        );
+      } else {
+        update(found);
+        setImportMsg(`Importé depuis ${file.name} : ${labels.join(", ")}.`);
+      }
+    } catch {
+      setImportErr("Fichier illisible. Formats acceptés : .xlsx, .xls, .csv.");
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <section>
       <h1 className="font-serif text-3xl">Vos chiffres, si vous les avez sous la main.</h1>
@@ -517,11 +551,32 @@ function Step4({ draft, update }: StepProps) {
         Facultatif. Sans ces informations, nous vous donnerons une fourchette plus large basée
         sur les références de votre région.
       </p>
+
+      <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/30 p-4">
+        <Label htmlFor="xls">Importer un fichier Excel</Label>
+        <p className="mt-1 text-xs text-muted-foreground">
+          .xlsx, .xls ou .csv contenant chiffre d'affaires, EBITDA et/ou taux d'occupation. Les
+          champs ci-dessous seront pré-remplis.
+        </p>
+        <Input
+          id="xls"
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          className="mt-2"
+          disabled={importing}
+          onChange={(e) => void handleFile(e.target.files?.[0])}
+        />
+        {importing && <p className="mt-2 text-xs text-muted-foreground">Lecture du fichier…</p>}
+        {importMsg && <p className="mt-2 text-xs text-primary">{importMsg}</p>}
+        {importErr && <p className="mt-2 text-xs text-destructive">{importErr}</p>}
+      </div>
+
       <div className="mt-6 space-y-4">
         <div>
           <Label htmlFor="ca">Chiffre d'affaires annuel (€)</Label>
           <Input
             id="ca"
+            key={`ca-${draft.annualRevenueCents ?? ""}`}
             inputMode="numeric"
             defaultValue={draft.annualRevenueCents ? String(draft.annualRevenueCents / 100) : ""}
             onBlur={(e) => update({ annualRevenueCents: parseEuros(e.target.value) || undefined })}
@@ -531,6 +586,7 @@ function Step4({ draft, update }: StepProps) {
           <Label htmlFor="ebitda">EBITDA / excédent brut d'exploitation (€)</Label>
           <Input
             id="ebitda"
+            key={`ebitda-${draft.ebitdaCents ?? ""}`}
             inputMode="numeric"
             defaultValue={draft.ebitdaCents ? String(draft.ebitdaCents / 100) : ""}
             onBlur={(e) => update({ ebitdaCents: parseEuros(e.target.value) || undefined })}
