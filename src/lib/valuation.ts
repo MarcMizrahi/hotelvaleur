@@ -11,6 +11,9 @@ export interface ValuationInput {
   starRating: number;
   roomCount: number;
   transactionType: TransactionType;
+  /** Nom commercial de l'établissement — sert à détecter enseigne et positionnement. */
+  hotelName?: string | null;
+
   worksNeeded?: WorksNeeded | null;
   hasRestaurant?: boolean;
   hasLicence4?: boolean;
