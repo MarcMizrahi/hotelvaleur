@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { fr } from "@/locales/fr";
 import { regions } from "@/lib/regions";
@@ -13,7 +13,9 @@ import {
   clearDraft,
   saveResult,
   type EstimationDraft,
+  type StoredResult,
 } from "@/lib/estimation-storage";
+import { EstimationResultView } from "@/components/estimation-result-view";
 import { parseEuros } from "@/lib/money";
 import { track, captureAttribution } from "@/lib/analytics";
 import { submitEstimation } from "@/lib/estimation.functions";
@@ -42,12 +44,12 @@ export const Route = createFileRoute("/estimation")({
 const TOTAL_STEPS = 6;
 
 function EstimationPage() {
-  const navigate = useNavigate();
   const submit = useServerFn(submitEstimation);
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<EstimationDraft>({});
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<StoredResult | null>(null);
 
   useEffect(() => {
     setDraft(loadDraft());
@@ -97,7 +99,7 @@ function EstimationPage() {
     setError(null);
     try {
       const attr = JSON.parse(sessionStorage.getItem("hv_attribution") ?? "{}");
-      const result = await submit({
+      const res = await submit({
         data: {
           regionSlug: draft.regionSlug!,
           departmentCode: draft.departmentCode!,
@@ -131,18 +133,18 @@ function EstimationPage() {
           turnstileToken: null,
         },
       });
-      const stored = {
-        id: result.id,
-        valueLowCents: result.valueLowCents,
-        valueHighCents: result.valueHighCents,
-        methodUsed: result.methodUsed,
+      const stored: StoredResult = {
+        id: res.id,
+        valueLowCents: res.valueLowCents,
+        valueHighCents: res.valueHighCents,
+        methodUsed: res.methodUsed,
         draft,
-        reportSent: result.reportSent,
-        outlier: result.outlier,
+        reportSent: res.reportSent,
+        outlier: res.outlier,
       };
       saveResult(stored);
       await track("funnel_vendeur.step_6");
-      await track("estimation.completed", { method_used: result.methodUsed });
+      await track("estimation.completed", { method_used: res.methodUsed });
       if (draft.saleIntent === "moins_1_an" || draft.saleIntent === "1_a_2_ans") {
         await track("lead.qualified", { sale_intent: draft.saleIntent });
       }
@@ -156,6 +158,14 @@ function EstimationPage() {
       setSubmitting(false);
     }
   };
+
+  if (result) {
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-10 sm:py-16">
+        <EstimationResultView result={result} />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 sm:py-16">
