@@ -149,6 +149,7 @@ function EstimationPage() {
         await track("lead.qualified", { sale_intent: draft.saleIntent });
       }
       setResult(stored);
+      void track("resultat.viewed", { method_used: res.methodUsed });
       clearDraft();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: unknown) {
