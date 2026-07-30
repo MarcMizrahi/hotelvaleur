@@ -245,6 +245,14 @@ export function computeValuation(
   if (input.hasRestaurant) adjustments.push({ label: "Restaurant", factor: 1.03 });
   if (input.hasLicence4) adjustments.push({ label: "Licence IV", factor: 1.02 });
 
+  // 5b bis. Signal du nom commercial (enseigne / positionnement)
+  const brand = brandSignal(input.hotelName);
+  if (brand.isBranded)
+    adjustments.push({ label: "Enseigne / chaîne reconnue", factor: 1.04 });
+  if (brand.isPremium)
+    adjustments.push({ label: "Positionnement premium (nom de l'établissement)", factor: 1.03 });
+
+
   if (typeof input.occupancyRate === "number") {
     const o = input.occupancyRate;
     let f = 1.0;
