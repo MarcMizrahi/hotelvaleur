@@ -408,7 +408,21 @@ function Step3({ draft, update }: StepProps) {
       <h1 className="font-serif text-3xl">Votre établissement</h1>
       <div className="mt-6 space-y-5">
         <div>
+          <Label htmlFor="hotelName">Nom de l'hôtel (facultatif)</Label>
+          <Input
+            id="hotelName"
+            value={draft.hotelName ?? ""}
+            placeholder="Ex. Hôtel du Château"
+            onChange={(e) => update({ hotelName: e.target.value })}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Il reste confidentiel. Il nous sert à repérer une enseigne ou un positionnement
+            premium, qui influencent la valorisation.
+          </p>
+        </div>
+        <div>
           <Label htmlFor="rooms">Nombre de chambres</Label>
+
           <Input
             id="rooms"
             type="number"
