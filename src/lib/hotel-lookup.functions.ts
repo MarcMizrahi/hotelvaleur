@@ -18,6 +18,54 @@ export interface HotelSuggestion {
   regionSlug?: string;
   starRating?: number;
   roomCount?: number;
+  /** Type d'hébergement OSM (hotel, guest_house…). */
+  kind?: string;
+  /** Score de confiance 0-100 : correspondance du nom + richesse des données. */
+  confidence: number;
+}
+
+/** Normalisation simple pour comparer des noms (accents, ponctuation, mots vides). */
+function normalizeName(v: string): string {
+  return v
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9 ]+/g, " ")
+    .replace(/\b(hotel|hostellerie|auberge|le|la|les|de|du|des|d|l)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Similarité de tokens (Dice) entre la requête et le nom trouvé, 0-1. */
+function nameSimilarity(query: string, candidate: string): number {
+  const a = new Set(normalizeName(query).split(" ").filter(Boolean));
+  const b = new Set(normalizeName(candidate).split(" ").filter(Boolean));
+  if (a.size === 0 || b.size === 0) return 0;
+  let inter = 0;
+  for (const t of a) if (b.has(t)) inter += 1;
+  return (2 * inter) / (a.size + b.size);
+}
+
+function scoreSuggestion(args: {
+  query: string;
+  name: string;
+  kind: string;
+  hasCity: boolean;
+  hasDepartment: boolean;
+  hasStars: boolean;
+  hasRooms: boolean;
+}): number {
+  const sim = nameSimilarity(args.query, args.name);
+  let score = 45 * sim;
+  // Correspondance exacte (hors mots vides) fortement valorisée
+  if (normalizeName(args.query) === normalizeName(args.name)) score += 20;
+  if (args.kind === "hotel") score += 12;
+  else if (args.kind === "guest_house" || args.kind === "motel") score += 6;
+  if (args.hasCity) score += 8;
+  if (args.hasDepartment) score += 7;
+  if (args.hasStars) score += 5;
+  if (args.hasRooms) score += 3;
+  return Math.max(1, Math.min(100, Math.round(score)));
 }
 
 function departmentFromPostcode(postcode: string | undefined, city?: string): string | undefined {
@@ -46,7 +94,7 @@ export const searchHotels = createServerFn({ method: "GET" })
     url.searchParams.set("countrycodes", "fr");
     url.searchParams.set("addressdetails", "1");
     url.searchParams.set("extratags", "1");
-    url.searchParams.set("limit", "8");
+    url.searchParams.set("limit", "15");
     url.searchParams.set("accept-language", "fr");
 
     let raw: unknown[] = [];
@@ -84,6 +132,11 @@ export const searchHotels = createServerFn({ method: "GET" })
       const starsRaw = extratags.stars ? Number(String(extratags.stars).replace(/[^\d]/g, "")) : NaN;
       const roomsRaw = extratags.rooms ? Number(String(extratags.rooms).replace(/[^\d]/g, "")) : NaN;
 
+      const suggestionStars =
+        Number.isFinite(starsRaw) && starsRaw >= 0 && starsRaw <= 5 ? starsRaw : undefined;
+      const suggestionRooms =
+        Number.isFinite(roomsRaw) && roomsRaw >= 1 && roomsRaw <= 500 ? roomsRaw : undefined;
+
       out.push({
         name,
         label: [city, postcode].filter(Boolean).join(" · ") || String(item.display_name ?? ""),
@@ -91,10 +144,20 @@ export const searchHotels = createServerFn({ method: "GET" })
         postcode,
         departmentCode,
         regionSlug: region?.slug,
-        starRating: Number.isFinite(starsRaw) && starsRaw >= 0 && starsRaw <= 5 ? starsRaw : undefined,
-        roomCount: Number.isFinite(roomsRaw) && roomsRaw >= 1 && roomsRaw <= 500 ? roomsRaw : undefined,
+        starRating: suggestionStars,
+        roomCount: suggestionRooms,
+        kind: type,
+        confidence: scoreSuggestion({
+          query: data.query,
+          name,
+          kind: type,
+          hasCity: Boolean(city),
+          hasDepartment: Boolean(region),
+          hasStars: suggestionStars !== undefined,
+          hasRooms: suggestionRooms !== undefined,
+        }),
       });
-      if (out.length >= 6) break;
     }
-    return out;
+    out.sort((a, b) => b.confidence - a.confidence);
+    return out.slice(0, 8);
   });
