@@ -19,7 +19,9 @@ import { EstimationResultView } from "@/components/estimation-result-view";
 import { parseEuros } from "@/lib/money";
 import { track, captureAttribution } from "@/lib/analytics";
 import { submitEstimation } from "@/lib/estimation.functions";
+import { searchHotels, type HotelSuggestion } from "@/lib/hotel-lookup.functions";
 import { useServerFn } from "@tanstack/react-start";
+
 
 export const Route = createFileRoute("/estimation")({
   head: () => ({
