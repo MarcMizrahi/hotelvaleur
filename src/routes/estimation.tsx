@@ -19,7 +19,9 @@ import { EstimationResultView } from "@/components/estimation-result-view";
 import { parseEuros } from "@/lib/money";
 import { track, captureAttribution } from "@/lib/analytics";
 import { submitEstimation } from "@/lib/estimation.functions";
+import { searchHotels, type HotelSuggestion } from "@/lib/hotel-lookup.functions";
 import { useServerFn } from "@tanstack/react-start";
+
 
 export const Route = createFileRoute("/estimation")({
   head: () => ({
@@ -245,13 +247,109 @@ function validateStep(step: number, d: EstimationDraft): string | null {
 
 function Step1({ draft, update }: StepProps) {
   const currentRegion = regions.find((r) => r.slug === draft.regionSlug);
+  const lookup = useServerFn(searchHotels);
+  const [nameInput, setNameInput] = useState(draft.hotelName ?? "");
+  const [suggestions, setSuggestions] = useState<HotelSuggestion[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [identified, setIdentified] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    setNameInput(draft.hotelName ?? "");
+  }, [draft.hotelName]);
+
+  useEffect(() => {
+    const q = nameInput.trim();
+    if (dismissed || q.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    let cancelled = false;
+    setSearching(true);
+    const t = setTimeout(async () => {
+      try {
+        const res = await lookup({ data: { query: q } });
+        if (!cancelled) setSuggestions(res);
+      } catch {
+        if (!cancelled) setSuggestions([]);
+      } finally {
+        if (!cancelled) setSearching(false);
+      }
+    }, 450);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [nameInput, dismissed, lookup]);
+
+  const pick = (s: HotelSuggestion) => {
+    update({
+      hotelName: s.name,
+      regionSlug: s.regionSlug ?? draft.regionSlug,
+      departmentCode: s.regionSlug ? s.departmentCode : draft.departmentCode,
+      city: s.city ?? draft.city,
+      starRating: s.starRating ?? draft.starRating,
+      roomCount: s.roomCount ?? draft.roomCount,
+    });
+    setNameInput(s.name);
+    setSuggestions([]);
+    setDismissed(true);
+    setIdentified([s.name, s.label].filter(Boolean).join(" — "));
+  };
+
   return (
     <section>
-      <h1 className="font-serif text-3xl">Où se situe votre hôtel ?</h1>
+      <h1 className="font-serif text-3xl">Quel est votre hôtel, et où se situe-t-il ?</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        La localisation influence fortement la valorisation.
+        Saisissez le nom de l'établissement : nous tentons de l'identifier pour pré-remplir la
+        localisation. La localisation influence fortement la valorisation.
       </p>
       <div className="mt-6 space-y-4">
+        <div className="relative">
+          <Label htmlFor="hotelName">Nom de l'hôtel (facultatif)</Label>
+          <Input
+            id="hotelName"
+            autoComplete="off"
+            value={nameInput}
+            placeholder="Ex. Hôtel du Château"
+            onChange={(e) => {
+              setNameInput(e.target.value);
+              setDismissed(false);
+              setIdentified(null);
+              update({ hotelName: e.target.value || undefined });
+            }}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Il reste confidentiel. Il nous sert à identifier l'établissement et à repérer une
+            enseigne ou un positionnement premium, qui influencent la valorisation.
+          </p>
+          {searching && !dismissed && (
+            <p className="mt-1 text-xs text-muted-foreground">Recherche de l'établissement…</p>
+          )}
+          {identified && (
+            <p className="mt-1 text-xs text-primary">
+              Établissement identifié : {identified}. Vérifiez les champs pré-remplis ci-dessous.
+            </p>
+          )}
+          {suggestions.length > 0 && (
+            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-background shadow-lg">
+              {suggestions.map((s, i) => (
+                <li key={`${s.name}-${i}`}>
+                  <button
+                    type="button"
+                    onClick={() => pick(s)}
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                  >
+                    <span className="font-medium">{s.name}</span>
+                    {s.label && (
+                      <span className="block text-xs text-muted-foreground">{s.label}</span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <div>
           <Label htmlFor="region">Région</Label>
           <select
@@ -297,6 +395,7 @@ function Step1({ draft, update }: StepProps) {
     </section>
   );
 }
+
 
 function Step2({ draft, update }: StepProps) {
   const options: Array<{
@@ -422,20 +521,8 @@ function Step3({ draft, update }: StepProps) {
       <h1 className="font-serif text-3xl">Votre établissement</h1>
       <div className="mt-6 space-y-5">
         <div>
-          <Label htmlFor="hotelName">Nom de l'hôtel (facultatif)</Label>
-          <Input
-            id="hotelName"
-            value={draft.hotelName ?? ""}
-            placeholder="Ex. Hôtel du Château"
-            onChange={(e) => update({ hotelName: e.target.value })}
-          />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Il reste confidentiel. Il nous sert à repérer une enseigne ou un positionnement
-            premium, qui influencent la valorisation.
-          </p>
-        </div>
-        <div>
           <Label htmlFor="rooms">Nombre de chambres</Label>
+
 
           <Input
             id="rooms"
