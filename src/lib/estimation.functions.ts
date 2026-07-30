@@ -99,6 +99,8 @@ export const submitEstimation = createServerFn({ method: "POST" })
         regionSlug: data.regionSlug,
         starRating: data.starRating,
         roomCount: data.roomCount,
+        hotelName: data.hotelName ?? null,
+
         transactionType: data.transactionType,
         worksNeeded: data.worksNeeded ?? null,
         hasRestaurant: data.hasRestaurant,
