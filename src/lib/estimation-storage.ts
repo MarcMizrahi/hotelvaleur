@@ -11,6 +11,7 @@ export interface EstimationDraft {
   isEmphyteotic?: boolean;
   emphyteoticYearsRemaining?: number;
   // Étape 3
+  hotelName?: string;
   roomCount?: number;
   starRating?: number;
   isIndependent?: boolean;
