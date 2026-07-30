@@ -328,27 +328,79 @@ function Step1({ draft, update }: StepProps) {
           )}
           {identified && (
             <p className="mt-1 text-xs text-primary">
-              Établissement identifié : {identified}. Vérifiez les champs pré-remplis ci-dessous.
+              Établissement identifié : {identified}. Vérifiez les champs pré-remplis ci-dessous.{" "}
+              <button
+                type="button"
+                className="underline"
+                onClick={() => {
+                  setIdentified(null);
+                  setDismissed(false);
+                }}
+              >
+                Choisir un autre établissement
+              </button>
             </p>
           )}
           {suggestions.length > 0 && (
-            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-background shadow-lg">
-              {suggestions.map((s, i) => (
-                <li key={`${s.name}-${i}`}>
+            <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-background shadow-lg">
+              <p className="border-b border-border bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground">
+                {suggestions.length} correspondance{suggestions.length > 1 ? "s" : ""} trouvée
+                {suggestions.length > 1 ? "s" : ""} — sélectionnez la bonne entrée
+              </p>
+              <ul className="max-h-72 overflow-y-auto">
+                {suggestions.map((s, i) => (
+                  <li key={`${s.name}-${i}`}>
+                    <button
+                      type="button"
+                      onClick={() => pick(s)}
+                      className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-muted"
+                    >
+                      <span className="min-w-0">
+                        <span className="block font-medium">{s.name}</span>
+                        {s.label && (
+                          <span className="block text-xs text-muted-foreground">{s.label}</span>
+                        )}
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {[
+                            s.kind === "hotel" ? "Hôtel" : s.kind === "guest_house" ? "Maison d'hôtes" : s.kind,
+                            s.starRating ? `${s.starRating}★` : null,
+                            s.roomCount ? `${s.roomCount} chambres` : null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
+                      </span>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                          s.confidence >= 70
+                            ? "bg-primary/10 text-primary"
+                            : s.confidence >= 45
+                              ? "bg-muted text-foreground"
+                              : "bg-muted text-muted-foreground"
+                        }`}
+                        title="Score de confiance de la correspondance"
+                      >
+                        {s.confidence}%
+                      </span>
+                    </button>
+                  </li>
+                ))}
+                <li className="border-t border-border">
                   <button
                     type="button"
-                    onClick={() => pick(s)}
-                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                    onClick={() => {
+                      setSuggestions([]);
+                      setDismissed(true);
+                    }}
+                    className="block w-full px-3 py-2 text-left text-xs text-muted-foreground hover:bg-muted"
                   >
-                    <span className="font-medium">{s.name}</span>
-                    {s.label && (
-                      <span className="block text-xs text-muted-foreground">{s.label}</span>
-                    )}
+                    Aucun de ces établissements — saisir manuellement
                   </button>
                 </li>
-              ))}
-            </ul>
+              </ul>
+            </div>
           )}
+
         </div>
         <div>
           <Label htmlFor="region">Région</Label>
