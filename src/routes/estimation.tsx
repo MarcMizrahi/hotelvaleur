@@ -527,12 +527,18 @@ function Step4({ draft, update }: StepProps) {
   const [importing, setImporting] = useState(false);
   const [importMsg, setImportMsg] = useState<string | null>(null);
   const [importErr, setImportErr] = useState<string | null>(null);
+  const [importedYears, setImportedYears] = useState<
+    { year: number; annualRevenueCents?: number; ebitdaCents?: number; occupancyRate?: number }[]
+  >([]);
+  const [cagr, setCagr] = useState<number | null>(null);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
     setImporting(true);
     setImportMsg(null);
     setImportErr(null);
+    setImportedYears([]);
+    setCagr(null);
     try {
       const { parseFinancialsFile } = await import("@/lib/spreadsheet-import");
       const found = await parseFinancialsFile(file);
@@ -545,8 +551,19 @@ function Step4({ draft, update }: StepProps) {
           "Aucune donnée reconnue. Le fichier doit contenir des libellés comme « Chiffre d'affaires », « EBITDA » ou « Taux d'occupation » suivis de leur valeur.",
         );
       } else {
-        update(found);
-        setImportMsg(`Importé depuis ${file.name} : ${labels.join(", ")}.`);
+        update({
+          annualRevenueCents: found.annualRevenueCents,
+          ebitdaCents: found.ebitdaCents,
+          occupancyRate: found.occupancyRate,
+        });
+        const multi = (found.years ?? []).length > 1;
+        setImportedYears(found.years ?? []);
+        setCagr(typeof found.revenueCagr === "number" ? found.revenueCagr : null);
+        setImportMsg(
+          multi
+            ? `Importé depuis ${file.name} : ${found.years!.length} exercices détectés (${found.years![0].year}–${found.years![found.years!.length - 1].year}). Valeurs retenues = moyenne pondérée par récence.`
+            : `Importé depuis ${file.name} : ${labels.join(", ")}.`,
+        );
       }
     } catch {
       setImportErr("Fichier illisible. Formats acceptés : .xlsx, .xls, .csv.");
@@ -566,8 +583,9 @@ function Step4({ draft, update }: StepProps) {
       <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/30 p-4">
         <Label htmlFor="xls">Importer un fichier Excel</Label>
         <p className="mt-1 text-xs text-muted-foreground">
-          .xlsx, .xls ou .csv contenant chiffre d'affaires, EBITDA et/ou taux d'occupation. Les
-          champs ci-dessous seront pré-remplis.
+          .xlsx, .xls ou .csv contenant chiffre d'affaires, EBITDA et/ou taux d'occupation. Un
+          fichier sur plusieurs exercices (une colonne ou une ligne par année) est pris en charge :
+          les derniers exercices sont pondérés par récence. Les champs ci-dessous seront pré-remplis.
         </p>
         <Input
           id="xls"
@@ -580,7 +598,49 @@ function Step4({ draft, update }: StepProps) {
         {importing && <p className="mt-2 text-xs text-muted-foreground">Lecture du fichier…</p>}
         {importMsg && <p className="mt-2 text-xs text-primary">{importMsg}</p>}
         {importErr && <p className="mt-2 text-xs text-destructive">{importErr}</p>}
+
+        {importedYears.length > 1 && (
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground">
+                  <th className="py-1 text-left font-medium">Exercice</th>
+                  <th className="py-1 text-right font-medium">CA</th>
+                  <th className="py-1 text-right font-medium">EBITDA</th>
+                  <th className="py-1 text-right font-medium">Occupation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {importedYears.map((y) => (
+                  <tr key={y.year} className="border-t border-border/60">
+                    <td className="py-1">{y.year}</td>
+                    <td className="py-1 text-right">
+                      {y.annualRevenueCents
+                        ? `${Math.round(y.annualRevenueCents / 100).toLocaleString("fr-FR")} €`
+                        : "—"}
+                    </td>
+                    <td className="py-1 text-right">
+                      {y.ebitdaCents
+                        ? `${Math.round(y.ebitdaCents / 100).toLocaleString("fr-FR")} €`
+                        : "—"}
+                    </td>
+                    <td className="py-1 text-right">
+                      {typeof y.occupancyRate === "number" ? `${y.occupancyRate} %` : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {cagr !== null && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Tendance du chiffre d'affaires : {cagr > 0 ? "+" : ""}
+                {cagr} % par an sur la période.
+              </p>
+            )}
+          </div>
+        )}
       </div>
+
 
       <div className="mt-6 space-y-4">
         <div>
