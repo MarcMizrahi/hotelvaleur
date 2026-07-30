@@ -286,8 +286,14 @@ export async function parseFinancialsFile(file: File): Promise<ImportedFinancial
     }
     if (series.length === 1) {
       const [only] = series;
-      return { ...only, years: series, year: undefined } as ImportedFinancials;
+      return {
+        annualRevenueCents: only.annualRevenueCents,
+        ebitdaCents: only.ebitdaCents,
+        occupancyRate: only.occupancyRate,
+        years: series,
+      };
     }
+
   }
 
   return parseSinglePeriod(rows);
