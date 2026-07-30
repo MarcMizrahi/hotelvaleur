@@ -123,6 +123,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
         department_code: data.departmentCode,
         city: data.city ?? null,
         transaction_type: data.transactionType,
+        hotel_name: data.hotelName ?? null,
         room_count: data.roomCount,
         star_rating: data.starRating,
         is_independent: data.isIndependent,
