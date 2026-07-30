@@ -10,6 +10,7 @@ const submitSchema = z.object({
   leaseYearsRemaining: z.number().int().min(0).max(99).optional().nullable(),
   isEmphyteotic: z.boolean().optional().nullable(),
   emphyteoticYearsRemaining: z.number().int().min(0).max(99).optional().nullable(),
+  hotelName: z.string().max(160).optional().nullable(),
   roomCount: z.number().int().min(1).max(500),
   starRating: z.number().int().min(0).max(5),
   isIndependent: z.boolean().default(true),
