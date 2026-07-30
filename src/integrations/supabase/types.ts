@@ -108,6 +108,7 @@ export type Database = {
           first_name: string | null
           has_licence_4: boolean
           has_restaurant: boolean
+          hotel_name: string | null
           id: string
           internal_notes: string | null
           is_independent: boolean
@@ -144,6 +145,7 @@ export type Database = {
           first_name?: string | null
           has_licence_4?: boolean
           has_restaurant?: boolean
+          hotel_name?: string | null
           id?: string
           internal_notes?: string | null
           is_independent?: boolean
@@ -180,6 +182,7 @@ export type Database = {
           first_name?: string | null
           has_licence_4?: boolean
           has_restaurant?: boolean
+          hotel_name?: string | null
           id?: string
           internal_notes?: string | null
           is_independent?: boolean
