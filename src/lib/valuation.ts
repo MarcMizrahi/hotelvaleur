@@ -69,6 +69,45 @@ export interface ValuationResult {
 const MIN_SPREAD = 0.2; // 20 %
 const DIVERGENCE_THRESHOLD = 0.6; // 60 %
 
+/** Enseignes / chaînes nationales ou internationales reconnues. */
+const KNOWN_BRANDS = [
+  "accor", "ibis", "mercure", "novotel", "sofitel", "pullman", "mgallery", "adagio",
+  "best western", "campanile", "kyriad", "premiere classe", "première classe",
+  "b&b hotel", "b&b hôtel", "logis", "citotel", "brit hotel", "brit hôtel",
+  "the originals", "inter-hotel", "inter hotel", "hilton", "marriott", "radisson",
+  "holiday inn", "mercure", "ramada", "nh hotel", "okko", "mama shelter", "appart city",
+  "appart'city", "relais & chateaux", "relais et chateaux", "relais & châteaux",
+];
+
+/** Termes de positionnement haut de gamme dans le nom commercial. */
+const PREMIUM_TERMS = [
+  "palace", "chateau", "château", "manoir", "domaine", "spa", "thalasso",
+  "resort", "golf", "abbaye", "bastide", "mas ", "villa",
+];
+
+function normalizeName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+/** Signal tiré du nom commercial : enseigne reconnue et/ou positionnement premium. */
+export function brandSignal(hotelName?: string | null): {
+  isBranded: boolean;
+  isPremium: boolean;
+} {
+  if (!hotelName || hotelName.trim().length < 2) return { isBranded: false, isPremium: false };
+  const n = normalizeName(hotelName);
+  const norm = (s: string) => normalizeName(s);
+  return {
+    isBranded: KNOWN_BRANDS.some((b) => n.includes(norm(b))),
+    isPremium: PREMIUM_TERMS.some((t) => n.includes(norm(t))),
+  };
+}
+
+
 function roundEurosBand(cents: number): number {
   // < 1 M€ : arrondi au millier d'euros ; >= 1 M€ : à 10 000 €
   const oneMillion = 100_000_000; // 1 000 000 € en centimes
