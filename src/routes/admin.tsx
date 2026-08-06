@@ -158,6 +158,7 @@ function AdminLayout({ email }: { email: string }) {
     { to: "/admin/leads", label: "Leads" },
     { to: "/admin/coefficients", label: "Coefficients" },
     { to: "/admin/benchmarks", label: "Benchmarks" },
+    { to: "/admin/transactions", label: "Transactions" },
     { to: "/admin/emails", label: "Emails" },
   ];
   return (
