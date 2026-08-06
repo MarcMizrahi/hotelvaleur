@@ -114,9 +114,13 @@ export const submitEstimation = createServerFn({ method: "POST" })
     const sameStar = usable
       .filter((c: { star_rating: number | null }) => c.star_rating === data.starRating)
       .map((c: { price_per_room_cents: number | null }) => c.price_per_room_cents!);
-    const allStars = usable.map(
-      (c: { price_per_room_cents: number | null }) => c.price_per_room_cents!,
-    );
+    // Repli : catégories voisines (±1 étoile), segments trop proches pour biaiser.
+    const nearStars = usable
+      .filter(
+        (c: { star_rating: number | null }) =>
+          c.star_rating != null && Math.abs(c.star_rating - data.starRating) <= 1,
+      )
+      .map((c: { price_per_room_cents: number | null }) => c.price_per_room_cents!);
     const comparables =
       sameStar.length >= 2
         ? { medianPerRoomCents: median(sameStar), sampleSize: sameStar.length, scope: "segment" as const }
