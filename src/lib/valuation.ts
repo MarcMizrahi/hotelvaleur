@@ -233,8 +233,9 @@ export function computeValuation(
     }
     methodUsed = "blended";
   } else {
-    // Seule méthode A – élargir de 20 % de chaque côté
-    combined = { low: perRoom.low * 0.8, high: perRoom.high * 1.2 };
+    // Seule méthode A – les coefficients par chambre étant désormais calibrés
+    // sur des fourchettes de marché déjà larges (±33 %), on n'élargit que de 10 %.
+    combined = { low: perRoom.low * 0.9, high: perRoom.high * 1.1 };
     methodUsed = "per_room";
   }
 
