@@ -224,6 +224,65 @@ function AgentsAdmin() {
         <Button onClick={() => setForm({ ...emptyForm })}>Nouvel agent</Button>
       </div>
 
+      <div className="grid gap-3 sm:grid-cols-4">
+        {[
+          { label: "Agents", value: agents.length },
+          { label: "Actifs", value: agents.filter((a) => a.is_active).length },
+          { label: "Publics", value: agents.filter((a) => a.is_public).length },
+          {
+            label: "Leads attribués 30 j",
+            value: Object.values(loadByAgent).reduce((s, n) => s + n, 0),
+          },
+        ].map((k) => (
+          <div key={k.label} className="rounded-lg border border-border bg-card p-4">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">{k.label}</div>
+            <div className="mt-1 text-2xl font-semibold tabular-nums text-navy">{k.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-[220px] flex-1 space-y-1">
+          <Label htmlFor="a-search">Rechercher</Label>
+          <Input
+            id="a-search"
+            placeholder="Nom, société, email…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="a-status">État</Label>
+          <select
+            id="a-status"
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+          >
+            <option value="all">Tous</option>
+            <option value="active">Actifs</option>
+            <option value="inactive">Inactifs</option>
+          </select>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="a-region">Région</Label>
+          <select
+            id="a-region"
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            value={regionFilter}
+            onChange={(e) => setRegionFilter(e.target.value)}
+          >
+            <option value="all">Toutes</option>
+            <option value="national">France entière</option>
+            {regions.map((r) => (
+              <option key={r.slug} value={r.slug}>
+                {r.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {loading ? (
         <p className="text-muted-foreground">Chargement…</p>
       ) : (
@@ -240,13 +299,26 @@ function AgentsAdmin() {
               </tr>
             </thead>
             <tbody>
-              {agents.map((a) => (
+              {visibleAgents.map((a) => (
                 <tr key={a.id} className="border-t border-border align-top">
                   <td className="p-3">
-                    <div className="font-medium">{a.full_name}</div>
-                    <div className="text-muted-foreground">{a.company ?? "—"}</div>
-                    <div className="text-muted-foreground">{a.email}</div>
+                    <div className="flex items-center gap-3">
+                      {a.photo_url ? (
+                        <img
+                          src={a.photo_url}
+                          alt={a.full_name}
+                          className="h-10 w-10 rounded-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : null}
+                      <div>
+                        <div className="font-medium">{a.full_name}</div>
+                        <div className="text-muted-foreground">{a.company ?? "—"}</div>
+                        <div className="text-muted-foreground">{a.email}</div>
+                      </div>
+                    </div>
                   </td>
+
                   <td className="p-3 text-muted-foreground">
                     {(a.regions ?? []).length === 0
                       ? "France entière"
