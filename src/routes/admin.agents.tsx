@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { regions } from "@/lib/regions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
 import { listBrokerageLeads, upsertAgent, deleteAgent } from "@/lib/brokerage.functions";
+import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
+
 
 export const Route = createFileRoute("/admin/agents")({
   component: AgentsAdmin,
