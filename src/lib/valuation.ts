@@ -269,7 +269,7 @@ export function computeValuation(
   if (!fondsRepriced) {
     const txMap: Record<TransactionType, number> = {
       murs_fonds: 1.0,
-      fonds: 0.4,
+      fonds: 0.28,
       murs: 0.6,
     };
     adjustments.push({
