@@ -58,3 +58,8 @@ export async function uploadAgentPhoto(
   }
   return data.signedUrl;
 }
+
+/** Valeur envoyée en base : URL nettoyée, ou null quand la photo est supprimée. */
+export function photoUrlForPayload(value: string): string | null {
+  return value.trim() || null;
+}

@@ -10,6 +10,7 @@ import { regions } from "@/lib/regions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
 import { listBrokerageLeads, upsertAgent, deleteAgent } from "@/lib/brokerage.functions";
 import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
+import { photoUrlForPayload } from "@/lib/agent-photo";
 
 
 export const Route = createFileRoute("/admin/agents")({
@@ -189,7 +190,7 @@ function AgentsAdmin() {
           company: form.company.trim() || null,
           email: form.email.trim(),
           phone: form.phone.trim() || null,
-          photoUrl: form.photoUrl.trim() || null,
+          photoUrl: photoUrlForPayload(form.photoUrl),
           bio: form.bio.trim() || null,
 
           regions: form.regions,
