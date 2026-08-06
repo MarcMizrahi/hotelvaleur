@@ -193,16 +193,20 @@ function Home() {
 
 
       {/* CONFIDENTIALITÉ */}
-      <section className="bg-navy text-navy-foreground">
-        <div className="container-page py-16 md:py-24 max-w-4xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-wider">
+      <section className="relative overflow-hidden bg-navy text-navy-foreground">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-0 bg-[radial-gradient(90%_70%_at_100%_0%,color-mix(in_oklab,var(--color-gold)_22%,transparent)_0%,transparent_60%)]"
+        />
+        <div className="container-page relative max-w-4xl py-16 md:py-24">
+          <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-gold">
             <ShieldCheck className="h-3.5 w-3.5" />
             Confidentialité
           </div>
-          <h2 className="mt-4 font-serif text-3xl md:text-4xl text-navy-foreground">
+          <h2 className="mt-5 font-serif text-3xl text-navy-foreground md:text-4xl">
             {t.home.privacy.title}
           </h2>
-          <div className="mt-6 space-y-4 text-white/85 leading-relaxed max-w-2xl">
+          <div className="mt-6 max-w-2xl space-y-4 leading-relaxed text-navy-foreground/80">
             <p>{t.home.privacy.p1}</p>
             <p>{t.home.privacy.p2}</p>
             <p>{t.home.privacy.p3}</p>
@@ -213,17 +217,19 @@ function Home() {
       {/* MÉTHODE + LIMITES */}
       <section className="container-page py-16 md:py-24">
         <div className="max-w-3xl">
-          <h2 className="font-serif text-2xl md:text-3xl text-navy">
+          <p className="eyebrow">Transparence</p>
+          <h2 className="mt-3 font-serif text-2xl text-navy md:text-3xl">
             {t.home.method.title}
           </h2>
-          <p className="mt-4 text-foreground/80 leading-relaxed">
+          <p className="mt-4 leading-relaxed text-foreground/75">
             {t.home.method.body}
           </p>
         </div>
       </section>
 
       {/* CTA FINAL */}
-      <section className="border-t border-border">
+      <section className="border-t border-border bg-surface">
+
         <div className="container-page py-16 md:py-20 text-center max-w-2xl mx-auto">
           <h2 className="font-serif text-3xl md:text-4xl text-navy">
             {t.home.final_cta.title}
