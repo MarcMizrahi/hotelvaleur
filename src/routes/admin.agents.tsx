@@ -20,6 +20,7 @@ interface AgentForm {
   company: string;
   email: string;
   phone: string;
+  photoUrl: string;
   bio: string;
   regions: string[];
   starRatings: number[];
@@ -38,6 +39,7 @@ const emptyForm: AgentForm = {
   company: "",
   email: "",
   phone: "",
+  photoUrl: "",
   bio: "",
   regions: [],
   starRatings: [],
@@ -50,6 +52,7 @@ const emptyForm: AgentForm = {
   isActive: true,
   isPublic: true,
 };
+
 
 function AgentsAdmin() {
   const load = useServerFn(listBrokerageLeads);
