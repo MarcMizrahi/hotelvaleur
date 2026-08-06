@@ -277,13 +277,44 @@ function EstimationPage() {
       </div>
 
       {error && (
-        <p
+        <div
           role="alert"
-          className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
+          aria-live="assertive"
+          className="mt-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm"
         >
-          {error}
-        </p>
+          <div className="flex gap-3">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
+            <div className="min-w-0">
+              <p className="font-medium text-destructive">{error.title}</p>
+              <p className="mt-1 text-foreground/80">{error.message}</p>
+              {error.hint && (
+                <p className="mt-1 text-muted-foreground">{error.hint}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(error.gotoStep || error.fieldId) && (
+                  <Button size="sm" variant="outline" onClick={() => applyFix(error)}>
+                    Corriger {error.gotoStep ? `(étape ${error.gotoStep})` : ""}
+                  </Button>
+                )}
+                {error.retryable && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={submitting}
+                    onClick={() => void handleSubmit()}
+                  >
+                    Relancer le calcul
+                  </Button>
+                )}
+                <Button size="sm" variant="ghost" asChild>
+                  <a href={`mailto:${site.contactEmail}`}>Nous écrire</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
+
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
