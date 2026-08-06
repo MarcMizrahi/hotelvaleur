@@ -214,6 +214,7 @@ export type Database = {
           city: string | null
           confidence: number
           created_at: string
+          dedup_key: string | null
           department_code: string | null
           excerpt: string | null
           hotel_name: string | null
@@ -236,6 +237,7 @@ export type Database = {
           city?: string | null
           confidence?: number
           created_at?: string
+          dedup_key?: string | null
           department_code?: string | null
           excerpt?: string | null
           hotel_name?: string | null
@@ -258,6 +260,7 @@ export type Database = {
           city?: string | null
           confidence?: number
           created_at?: string
+          dedup_key?: string | null
           department_code?: string | null
           excerpt?: string | null
           hotel_name?: string | null
