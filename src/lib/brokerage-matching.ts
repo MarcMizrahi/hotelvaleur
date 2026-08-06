@@ -234,3 +234,16 @@ export function horizonLabel(v: string): string {
 export function operationLabel(v: string): string {
   return OPERATION_TYPES.find((s) => s.value === v)?.label ?? v;
 }
+
+export function reasonLabel(v: string): string {
+  switch (v) {
+    case "region":
+      return "agent de la région";
+    case "adjacent":
+      return "agent d'une région limitrophe";
+    case "national":
+      return "agent à couverture nationale";
+    default:
+      return "aucun agent éligible";
+  }
+}

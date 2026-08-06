@@ -6,6 +6,7 @@
 import { sendEmail } from "@/lib/email.server";
 import {
   selectAgent,
+  reasonLabel,
   horizonLabel,
   operationLabel,
   type AgentRow,
