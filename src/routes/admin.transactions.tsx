@@ -50,7 +50,7 @@ function TransactionsPage() {
     mutationFn: () => runNow(),
     onSuccess: (r) => {
       setMessage(
-        `Veille terminée : ${r.articlesFound} article(s) analysé(s), ${r.transactionsInserted} transaction(s) ajoutée(s).`,
+        `Veille terminée : ${r.articlesFound} article(s) analysé(s), ${r.transactionsInserted} transaction(s) ajoutée(s), ${r.duplicatesSkipped} doublon(s) écarté(s).`,
       );
       qc.invalidateQueries({ queryKey: ["market-transactions"] });
     },

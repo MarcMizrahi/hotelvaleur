@@ -182,6 +182,8 @@ export interface ScrapeSummary {
   runId: string | null;
   articlesFound: number;
   transactionsInserted: number;
+  /** Transactions écartées car déjà présentes (même URL ou même hôtel/date/chambres/prix). */
+  duplicatesSkipped: number;
 }
 
 export async function runMarketScrape(): Promise<ScrapeSummary> {
@@ -196,6 +198,7 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
 
   let articlesFound = 0;
   let inserted = 0;
+  let duplicates = 0;
 
   try {
     // 1. Une recherche par terme, restreinte aux domaines suivis.
@@ -252,7 +255,14 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
           confidence: Math.min(1, Math.max(0, t.confidence ?? 0)),
           status: "pending",
         });
-        if (!error) inserted += 1;
+        if (!error) {
+          inserted += 1;
+        } else if (error.code === "23505") {
+          // Doublon : même URL, ou même hôtel/date/chambres/prix déjà en base.
+          duplicates += 1;
+        } else {
+          console.error("[scrape] insert failed", error);
+        }
         // Une seule transaction par URL (contrainte d'unicité sur source_url).
         break;
       }
@@ -287,5 +297,5 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
     throw err;
   }
 
-  return { runId, articlesFound, transactionsInserted: inserted };
+  return { runId, articlesFound, transactionsInserted: inserted, duplicatesSkipped: duplicates };
 }
