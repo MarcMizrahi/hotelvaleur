@@ -186,6 +186,21 @@ export interface ScrapeSummary {
   duplicatesSkipped: number;
 }
 
+/** Réplique l'empreinte calculée en base (trigger market_transaction_dedup_key). */
+function buildDedupKey(
+  hotelName: string | null | undefined,
+  publishedAt: string | null,
+  roomCount: number | null,
+  priceCents: number | null,
+  transactionType: string | null,
+): string | null {
+  const norm = (hotelName ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!norm) return null;
+  return [norm, publishedAt ?? "", roomCount ?? "", priceCents ?? "", transactionType ?? ""].join(
+    "|",
+  );
+}
+
 export async function runMarketScrape(): Promise<ScrapeSummary> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
