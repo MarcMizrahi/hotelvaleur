@@ -357,6 +357,23 @@ function BenchmarksPage() {
                     {fmtEuros(r.bench.lowPerRoomEuros)} – {fmtEuros(r.bench.highPerRoomEuros)}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
+                    {(() => {
+                      const obs = observed.get(
+                        `${r.bench.regionSlug}::${r.bench.starRating}`,
+                      );
+                      if (!obs)
+                        return <span className="text-muted-foreground italic">—</span>;
+                      return (
+                        <span title={`${obs.count} transaction(s) validée(s)`}>
+                          {fmtEuros(obs.median)}{" "}
+                          <span className="text-xs text-muted-foreground">
+                            ({obs.count})
+                          </span>
+                        </span>
+                      );
+                    })()}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums">
                     {r.status === "missing" ? (
                       <span className="text-muted-foreground italic">coef manquant</span>
                     ) : (
