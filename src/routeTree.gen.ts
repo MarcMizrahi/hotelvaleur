@@ -28,6 +28,7 @@ import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminMiseEnRelationRouteImport } from './routes/admin.mise-en-relation'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
@@ -132,6 +133,11 @@ const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMiseEnRelationRoute = AdminMiseEnRelationRouteImport.update({
+  id: '/mise-en-relation',
+  path: '/mise-en-relation',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -249,6 +257,7 @@ export interface FileRoutesById {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -508,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTransactionsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/mise-en-relation': {
+      id: '/admin/mise-en-relation'
+      path: '/mise-en-relation'
+      fullPath: '/admin/mise-en-relation'
+      preLoaderRoute: typeof AdminMiseEnRelationRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/leads'
@@ -573,6 +592,7 @@ interface AdminRouteChildren {
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminMiseEnRelationRoute: typeof AdminMiseEnRelationRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -583,6 +603,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminMiseEnRelationRoute: AdminMiseEnRelationRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
