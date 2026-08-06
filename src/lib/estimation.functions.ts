@@ -93,6 +93,37 @@ export const submitEstimation = createServerFn({ method: "POST" })
       throw new Error("Coefficient de valorisation introuvable pour cette région/classement.");
     }
 
+    // 3b. Comparables marché : transactions validées du même segment
+    // (murs+fonds, base de référence du moteur avant facteur de transaction).
+    const { data: comps } = await supabaseAdmin
+      .from("market_transaction")
+      .select("star_rating, price_per_room_cents, transaction_type")
+      .eq("status", "validated")
+      .eq("region_slug", data.regionSlug)
+      .not("price_per_room_cents", "is", null);
+
+    const usable = (comps ?? []).filter(
+      (c: { transaction_type: string | null }) =>
+        !c.transaction_type || c.transaction_type === "murs_fonds",
+    );
+    const median = (values: number[]) => {
+      const s = [...values].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 ? s[m]! : Math.round((s[m - 1]! + s[m]!) / 2);
+    };
+    const sameStar = usable
+      .filter((c: { star_rating: number | null }) => c.star_rating === data.starRating)
+      .map((c: { price_per_room_cents: number | null }) => c.price_per_room_cents!);
+    const allStars = usable.map(
+      (c: { price_per_room_cents: number | null }) => c.price_per_room_cents!,
+    );
+    const comparables =
+      sameStar.length >= 2
+        ? { medianPerRoomCents: median(sameStar), sampleSize: sameStar.length, scope: "segment" as const }
+        : allStars.length >= 3
+          ? { medianPerRoomCents: median(allStars), sampleSize: allStars.length, scope: "region" as const }
+          : null;
+
     // 4. Recalcul côté serveur (autoritatif)
     const result = computeValuation(
       {
