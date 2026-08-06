@@ -26,6 +26,20 @@ export interface ValuationInput {
   isEmphyteotic?: boolean | null;
   /** Années restantes du bail emphytéotique. */
   emphyteoticYearsRemaining?: number | null;
+  /**
+   * Comparables marché observés (transactions validées) pour ce segment.
+   * Utilisés pour recentrer la méthode « prix par chambre ».
+   */
+  comparables?: MarketComparables | null;
+}
+
+export interface MarketComparables {
+  /** Médiane observée du prix par chambre, en centimes. */
+  medianPerRoomCents: number;
+  /** Nombre de transactions retenues. */
+  sampleSize: number;
+  /** Périmètre : segment exact (région + étoiles) ou élargi (région seule). */
+  scope: "segment" | "region";
 }
 
 export interface Coefficient {
@@ -49,6 +63,15 @@ export interface ValuationDetail {
   adjustments: Array<{ label: string; factor: number }>;
   outlier: boolean;
   divergent: boolean;
+  /** Recentrage appliqué à partir des transactions observées, le cas échéant. */
+  marketAnchor: {
+    medianPerRoomCents: number;
+    sampleSize: number;
+    scope: "segment" | "region";
+    weight: number;
+    /** Écart entre la médiane observée et le milieu de la fourchette théorique. */
+    deltaRatio: number;
+  } | null;
   coefficient: {
     region_slug: string;
     star_rating: number;
@@ -123,9 +146,37 @@ export function computeValuation(
   if (coefficient.region_slug !== input.regionSlug)
     throw new Error("Coefficient region mismatch");
   // 2. Méthode A – prix par chambre (toujours calculable)
+  let perRoomLowUnit = coefficient.price_per_room_low_cents;
+  let perRoomHighUnit = coefficient.price_per_room_high_cents;
+
+  // 2b. Recentrage sur les comparables marché observés (transactions validées).
+  // Le poids croît avec la taille de l'échantillon et se limite à 50 % (segment)
+  // ou 30 % (périmètre régional élargi), pour éviter qu'un échantillon étroit
+  // ne pilote seul la valorisation.
+  let marketAnchor: ValuationDetail["marketAnchor"] = null;
+  const cmp = input.comparables;
+  if (cmp && cmp.sampleSize > 0 && cmp.medianPerRoomCents > 0) {
+    const mid = (perRoomLowUnit + perRoomHighUnit) / 2;
+    const maxWeight = cmp.scope === "segment" ? 0.5 : 0.3;
+    const weight = Math.min(maxWeight, cmp.sampleSize / 10);
+    // Le recentrage est borné à ±40 % pour rester robuste aux transactions atypiques.
+    const rawRatio = cmp.medianPerRoomCents / mid;
+    const ratio = Math.min(1.4, Math.max(0.6, rawRatio));
+    const factor = 1 + weight * (ratio - 1);
+    perRoomLowUnit = perRoomLowUnit * factor;
+    perRoomHighUnit = perRoomHighUnit * factor;
+    marketAnchor = {
+      medianPerRoomCents: cmp.medianPerRoomCents,
+      sampleSize: cmp.sampleSize,
+      scope: cmp.scope,
+      weight: Number(weight.toFixed(2)),
+      deltaRatio: Number((rawRatio - 1).toFixed(3)),
+    };
+  }
+
   const perRoom = {
-    low: input.roomCount * coefficient.price_per_room_low_cents,
-    high: input.roomCount * coefficient.price_per_room_high_cents,
+    low: input.roomCount * perRoomLowUnit,
+    high: input.roomCount * perRoomHighUnit,
   };
 
   // 3. Méthode B – multiple d'EBITDA
@@ -133,8 +184,12 @@ export function computeValuation(
   let ebitdaCents = input.ebitdaCents ?? null;
   let estimated = false;
   if ((!ebitdaCents || ebitdaCents <= 0) && input.annualRevenueCents && input.annualRevenueCents > 0) {
-    // Estimation EBITDA à 28 % du CA
-    ebitdaCents = Math.round(input.annualRevenueCents * 0.28);
+    // Estimation EBITDA : marge dépendant du positionnement (observé 22–34 % du CA)
+    const marginByStar: Record<number, number> = {
+      0: 0.22, 1: 0.22, 2: 0.25, 3: 0.28, 4: 0.31, 5: 0.34,
+    };
+    const margin = marginByStar[input.starRating] ?? 0.28;
+    ebitdaCents = Math.round(input.annualRevenueCents * margin);
     estimated = true;
   }
   if (ebitdaCents && ebitdaCents > 0) {
@@ -165,16 +220,22 @@ export function computeValuation(
         high: Math.max(perRoom.high, ebitdaBand.high),
       };
     } else {
-      // Moyenne pondérée 60 % B / 40 % A
+      // Pondération selon la qualité de la donnée :
+      // EBITDA déclaré → 60 % rendement / 40 % comparables ;
+      // EBITDA estimé depuis le CA → 40 % / 60 %, la méthode par chambre
+      // (recalée sur le marché) devenant la référence dominante.
+      const wEbitda = ebitdaBand.estimated ? 0.4 : 0.6;
+      const wPerRoom = 1 - wEbitda;
       combined = {
-        low: 0.4 * perRoom.low + 0.6 * ebitdaBand.low,
-        high: 0.4 * perRoom.high + 0.6 * ebitdaBand.high,
+        low: wPerRoom * perRoom.low + wEbitda * ebitdaBand.low,
+        high: wPerRoom * perRoom.high + wEbitda * ebitdaBand.high,
       };
     }
     methodUsed = "blended";
   } else {
-    // Seule méthode A – élargir de 20 % de chaque côté
-    combined = { low: perRoom.low * 0.8, high: perRoom.high * 1.2 };
+    // Seule méthode A – les coefficients par chambre étant désormais calibrés
+    // sur des fourchettes de marché déjà larges (±33 %), on n'élargit que de 10 %.
+    combined = { low: perRoom.low * 0.9, high: perRoom.high * 1.1 };
     methodUsed = "per_room";
   }
 
@@ -208,7 +269,7 @@ export function computeValuation(
   if (!fondsRepriced) {
     const txMap: Record<TransactionType, number> = {
       murs_fonds: 1.0,
-      fonds: 0.4,
+      fonds: 0.28,
       murs: 0.6,
     };
     adjustments.push({
@@ -261,6 +322,20 @@ export function computeValuation(
     else if (o < 70) f = 1.05;
     else f = 1.1;
     adjustments.push({ label: `Taux d'occupation : ${o.toFixed(1)} %`, factor: f });
+  }
+
+  // 5b ter. Effet taille : les très petites unités se négocient avec une décote
+  // (coûts fixes d'exploitation, marché d'acquéreurs plus étroit), les grandes
+  // unités bénéficient d'une prime d'intérêt institutionnel.
+  if (input.roomCount > 0) {
+    const n = input.roomCount;
+    let f = 1.0;
+    if (n < 12) f = 0.88;
+    else if (n < 20) f = 0.94;
+    else if (n <= 80) f = 1.0;
+    else if (n <= 150) f = 1.04;
+    else f = 1.07;
+    if (f !== 1.0) adjustments.push({ label: `Taille : ${n} chambres`, factor: f });
   }
 
   // 5c. Bail emphytéotique (murs ou murs+fonds) : décote temporelle
@@ -319,6 +394,7 @@ export function computeValuation(
       adjustments,
       outlier,
       divergent,
+      marketAnchor,
       coefficient: {
         region_slug: coefficient.region_slug,
         star_rating: coefficient.star_rating,
