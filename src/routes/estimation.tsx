@@ -21,6 +21,8 @@ import { track, captureAttribution } from "@/lib/analytics";
 import { submitEstimation } from "@/lib/estimation.functions";
 import { searchHotels, type HotelSuggestion } from "@/lib/hotel-lookup.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { classifySubmitError, type FormError } from "@/lib/estimation-errors";
 
 
 export const Route = createFileRoute("/estimation")({
@@ -49,7 +51,7 @@ function EstimationPage() {
   const submit = useServerFn(submitEstimation);
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<EstimationDraft>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FormError | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [restored, setRestored] = useState(false);
@@ -189,8 +191,10 @@ function EstimationPage() {
       clearDraft();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Une erreur est survenue.";
-      setError(msg + " Vos réponses sont conservées, réessayez dans un instant.");
+      const err = classifySubmitError(e);
+      setError(err);
+      toast.error(err.title, { description: err.hint ?? err.message });
+      if (err.gotoStep) setStep(err.gotoStep);
     } finally {
       setSubmitting(false);
     }
