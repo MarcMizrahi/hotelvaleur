@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { regions } from "@/lib/regions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
 import { listBrokerageLeads, upsertAgent, deleteAgent } from "@/lib/brokerage.functions";
+import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
+
 
 export const Route = createFileRoute("/admin/agents")({
   component: AgentsAdmin,
@@ -442,15 +444,16 @@ function AgentsAdmin() {
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="a-photo">Photo (URL https)</Label>
-              <Input
-                id="a-photo"
-                type="url"
-                placeholder="https://…/photo.jpg"
+              <Label htmlFor="a-photo">Photo de l'agent</Label>
+              <AgentPhotoField
                 value={form.photoUrl}
-                onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
+                onChange={(url: string) =>
+                  setForm((f) => (f ? { ...f, photoUrl: url } : f))
+                }
               />
+
             </div>
+
           </div>
 
 
