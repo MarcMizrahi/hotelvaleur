@@ -52,16 +52,26 @@ function EstimationPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<StoredResult | null>(null);
+  const [restored, setRestored] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setDraft(loadDraft());
+    const saved = loadDraftState();
+    if (saved) {
+      setDraft(saved.draft);
+      setStep(saved.step);
+      if (saved.step > 1 || Object.keys(saved.draft).length > 0) setRestored(true);
+    }
+    setHydrated(true);
     captureAttribution();
     void track("funnel_vendeur.started");
   }, []);
 
   useEffect(() => {
-    saveDraft(draft);
-  }, [draft]);
+    if (!hydrated) return;
+    saveDraft(draft, step);
+  }, [draft, step, hydrated]);
+
 
   useEffect(() => {
     const onUnload = () => {
