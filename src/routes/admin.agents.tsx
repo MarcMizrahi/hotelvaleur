@@ -53,6 +53,28 @@ const emptyForm: AgentForm = {
   isPublic: true,
 };
 
+function toFormBase(a: any): AgentForm {
+  return {
+    id: a.id,
+    fullName: a.full_name,
+    company: a.company ?? "",
+    email: a.email,
+    phone: a.phone ?? "",
+    photoUrl: a.photo_url ?? "",
+    bio: a.bio ?? "",
+    regions: a.regions ?? [],
+    starRatings: a.star_ratings ?? [],
+    transactionTypes: a.transaction_types ?? [],
+    minRooms: a.min_rooms != null ? String(a.min_rooms) : "",
+    maxRooms: a.max_rooms != null ? String(a.max_rooms) : "",
+    languages: (a.languages ?? []).join(", "),
+    transactionsCount: String(a.transactions_count ?? 0),
+    monthlyCapacity: String(a.monthly_capacity ?? 10),
+    isActive: a.is_active,
+    isPublic: a.is_public,
+  };
+}
+
 
 function AgentsAdmin() {
   const load = useServerFn(listBrokerageLeads);
