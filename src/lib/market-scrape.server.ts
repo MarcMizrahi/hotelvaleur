@@ -182,6 +182,8 @@ export interface ScrapeSummary {
   runId: string | null;
   articlesFound: number;
   transactionsInserted: number;
+  /** Transactions écartées car déjà présentes (même URL ou même hôtel/date/chambres/prix). */
+  duplicatesSkipped: number;
 }
 
 export async function runMarketScrape(): Promise<ScrapeSummary> {
