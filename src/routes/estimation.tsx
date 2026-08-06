@@ -89,10 +89,28 @@ function EstimationPage() {
     setError(null);
   };
 
+  const focusField = (fieldId?: string) => {
+    if (!fieldId) return;
+    window.setTimeout(() => {
+      const el = document.getElementById(fieldId);
+      if (el instanceof HTMLElement) {
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        el.focus({ preventScroll: true });
+      }
+    }, 80);
+  };
+
+  const applyFix = (err: FormError) => {
+    if (err.gotoStep) setStep(err.gotoStep);
+    setError(null);
+    focusField(err.fieldId);
+  };
+
   const goNext = async () => {
     const err = validateStep(step, draft);
     if (err) {
       setError(err);
+      focusField(err.fieldId);
       return;
     }
     await track(`funnel_vendeur.step_${step}`);
@@ -102,11 +120,17 @@ function EstimationPage() {
   const goBack = () => setStep((s) => Math.max(1, s - 1));
 
   const handleSubmit = async () => {
-    const err = validateStep(6, draft);
-    if (err) {
-      setError(err);
-      return;
+    for (let s = 1; s <= TOTAL_STEPS; s++) {
+      const err = validateStep(s, draft);
+      if (err) {
+        setError({ ...err, gotoStep: s });
+        if (s !== step) setStep(s);
+        focusField(err.fieldId);
+        toast.error(err.title, { description: err.hint ?? err.message });
+        return;
+      }
     }
+
     setSubmitting(true);
     setError(null);
     try {
