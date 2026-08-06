@@ -129,7 +129,9 @@ function AgentsAdmin() {
           company: form.company.trim() || null,
           email: form.email.trim(),
           phone: form.phone.trim() || null,
+          photoUrl: form.photoUrl.trim() || null,
           bio: form.bio.trim() || null,
+
           regions: form.regions,
           starRatings: form.starRatings,
           transactionTypes: form.transactionTypes as never,
