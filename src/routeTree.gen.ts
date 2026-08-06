@@ -32,6 +32,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
+import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
@@ -151,6 +152,11 @@ const AdminBenchmarksRoute = AdminBenchmarksRouteImport.update({
   path: '/benchmarks',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAgentsRoute = AdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => AdminRoute,
+} as any)
 const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
   id: '/prix-hotel/$region/',
   path: '/prix-hotel/$region/',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
@@ -236,6 +244,7 @@ export interface FileRoutesById {
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
@@ -524,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBenchmarksRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/agents': {
+      id: '/admin/agents'
+      path: '/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AdminAgentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/prix-hotel/$region/': {
       id: '/prix-hotel/$region/'
       path: '/prix-hotel/$region'
@@ -549,6 +568,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAgentsRoute: typeof AdminAgentsRoute
   AdminBenchmarksRoute: typeof AdminBenchmarksRoute
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
@@ -558,6 +578,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgentsRoute: AdminAgentsRoute,
   AdminBenchmarksRoute: AdminBenchmarksRoute,
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
