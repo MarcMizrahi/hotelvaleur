@@ -124,8 +124,8 @@ export const submitEstimation = createServerFn({ method: "POST" })
     const comparables =
       sameStar.length >= 2
         ? { medianPerRoomCents: median(sameStar), sampleSize: sameStar.length, scope: "segment" as const }
-        : allStars.length >= 3
-          ? { medianPerRoomCents: median(allStars), sampleSize: allStars.length, scope: "region" as const }
+        : nearStars.length >= 3
+          ? { medianPerRoomCents: median(nearStars), sampleSize: nearStars.length, scope: "region" as const }
           : null;
 
     // 4. Recalcul côté serveur (autoritatif)
