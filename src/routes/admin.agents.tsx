@@ -346,6 +346,16 @@ function AgentsAdmin() {
                     <Button variant="ghost" size="sm" onClick={() => edit(a)}>
                       Modifier
                     </Button>
+                    <Button variant="ghost" size="sm" onClick={() => void toggleActive(a)}>
+                      {a.is_active ? "Désactiver" : "Activer"}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setForm({ ...emptyForm, ...toFormBase(a), id: null })}
+                    >
+                      Dupliquer
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -367,12 +377,15 @@ function AgentsAdmin() {
                   </td>
                 </tr>
               ))}
-              {agents.length === 0 && (
+              {visibleAgents.length === 0 && (
                 <tr>
                   <td className="p-6 text-muted-foreground" colSpan={6}>
-                    Aucun agent enregistré.
+                    {agents.length === 0
+                      ? "Aucun agent enregistré."
+                      : "Aucun agent ne correspond à ces filtres."}
                   </td>
                 </tr>
+
               )}
             </tbody>
           </table>
