@@ -343,36 +343,112 @@ function EstimationPage() {
 
 // ---------- Validation ----------
 
-function validateStep(step: number, d: EstimationDraft): string | null {
+function validateStep(step: number, d: EstimationDraft): FormError | null {
+  const err = (
+    title: string,
+    message: string,
+    hint?: string,
+    fieldId?: string,
+  ): FormError => ({ title, message, hint, fieldId, gotoStep: step });
+
   switch (step) {
     case 1:
-      if (!d.regionSlug) return "Sélectionnez votre région.";
-      if (!d.departmentCode) return "Sélectionnez votre département.";
+      if (!d.regionSlug)
+        return err(
+          "Région manquante",
+          "La région détermine les références de prix appliquées.",
+          "Choisissez la région de votre établissement.",
+          "region",
+        );
+      if (!d.departmentCode)
+        return err(
+          "Département manquant",
+          "Le département affine la fourchette au sein de la région.",
+          "Sélectionnez le département dans la liste.",
+          "dep",
+        );
       return null;
     case 2:
-      if (!d.transactionType) return "Choisissez le type de transaction envisagé.";
+      if (!d.transactionType)
+        return err(
+          "Type de transaction manquant",
+          "La méthode de valorisation dépend de ce que vous cédez (murs, fonds, ou les deux).",
+          "Sélectionnez l'une des trois options.",
+        );
       if (d.isEmphyteotic && (!d.emphyteoticYearsRemaining || d.emphyteoticYearsRemaining < 1))
-        return "Indiquez la durée restante du bail emphytéotique.";
+        return err(
+          "Durée du bail emphytéotique manquante",
+          "La durée restante fait fortement varier la valeur d'un bail emphytéotique.",
+          "Indiquez le nombre d'années restantes (au moins 1).",
+          "emp",
+        );
       return null;
     case 3:
       if (!d.roomCount || d.roomCount < 1 || d.roomCount > 500)
-        return "Indiquez un nombre de chambres entre 1 et 500.";
-      if (typeof d.starRating !== "number") return "Précisez le classement (0 à 5 étoiles).";
+        return err(
+          "Nombre de chambres invalide",
+          "Le nombre de chambres est la base du calcul par prix/chambre.",
+          "Saisissez un nombre entre 1 et 500 (chambres exploitées).",
+          "rooms",
+        );
+      if (typeof d.starRating !== "number")
+        return err(
+          "Classement manquant",
+          "Le classement conditionne le positionnement de prix retenu.",
+          "Choisissez de 0 à 5 étoiles (0 si non classé).",
+        );
       return null;
-    case 4:
-      return null; // facultatif
+    case 4: {
+      if (
+        typeof d.occupancyRate === "number" &&
+        (d.occupancyRate <= 0 || d.occupancyRate > 100)
+      )
+        return err(
+          "Taux d'occupation invalide",
+          "Le taux d'occupation doit être exprimé en pourcentage.",
+          "Saisissez une valeur entre 1 et 100, ou laissez le champ vide.",
+          "occ",
+        );
+      if (
+        typeof d.annualRevenueCents === "number" &&
+        typeof d.ebitdaCents === "number" &&
+        d.ebitdaCents > d.annualRevenueCents
+      )
+        return err(
+          "EBITDA supérieur au chiffre d'affaires",
+          "L'EBITDA saisi dépasse le chiffre d'affaires annuel, ce qui fausserait le calcul.",
+          "Vérifiez les deux montants (en euros, hors taxes) ou laissez l'EBITDA vide.",
+          "ebitda",
+        );
+      return null;
+    }
     case 5:
       if (!d.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))
-        return "Une adresse email valide est nécessaire pour recevoir le rapport.";
+        return err(
+          "Adresse email invalide",
+          "Le rapport détaillé vous est envoyé par email.",
+          "Format attendu : prenom.nom@domaine.fr",
+          "em",
+        );
       if (!d.consentContact)
-        return "Merci de cocher l'accord de recontact pour recevoir votre estimation.";
+        return err(
+          "Accord de recontact requis",
+          "Sans cet accord nous ne pouvons pas vous transmettre l'estimation.",
+          "Cochez la case de consentement au-dessus du bouton.",
+        );
       return null;
     case 6:
-      if (!d.saleIntent) return "Indiquez où vous en êtes dans votre projet.";
+      if (!d.saleIntent)
+        return err(
+          "Horizon de projet manquant",
+          "Cette information nous permet d'adapter les conseils du rapport.",
+          "Sélectionnez l'échéance qui correspond le mieux.",
+        );
       return null;
   }
   return null;
 }
+
 
 // ---------- Steps ----------
 
