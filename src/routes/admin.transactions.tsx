@@ -54,6 +54,7 @@ function TransactionsPage() {
         `Veille terminée : ${r.articlesFound} article(s) analysé(s), ${r.transactionsInserted} transaction(s) ajoutée(s), ${r.duplicatesSkipped} doublon(s) écarté(s).`,
       );
       qc.invalidateQueries({ queryKey: ["market-transactions"] });
+      qc.invalidateQueries({ queryKey: ["dedup-log"] });
     },
     onError: (e) => setMessage(e instanceof Error ? e.message : "Échec de la veille."),
   });
