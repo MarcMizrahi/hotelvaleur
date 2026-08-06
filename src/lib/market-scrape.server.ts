@@ -295,5 +295,5 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
     throw err;
   }
 
-  return { runId, articlesFound, transactionsInserted: inserted };
+  return { runId, articlesFound, transactionsInserted: inserted, duplicatesSkipped: duplicates };
 }
