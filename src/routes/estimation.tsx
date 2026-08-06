@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import {
-  loadDraft,
+  loadDraftState,
   saveDraft,
   clearDraft,
   saveResult,
@@ -52,16 +52,26 @@ function EstimationPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<StoredResult | null>(null);
+  const [restored, setRestored] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setDraft(loadDraft());
+    const saved = loadDraftState();
+    if (saved) {
+      setDraft(saved.draft);
+      setStep(saved.step);
+      if (saved.step > 1 || Object.keys(saved.draft).length > 0) setRestored(true);
+    }
+    setHydrated(true);
     captureAttribution();
     void track("funnel_vendeur.started");
   }, []);
 
   useEffect(() => {
-    saveDraft(draft);
-  }, [draft]);
+    if (!hydrated) return;
+    saveDraft(draft, step);
+  }, [draft, step, hydrated]);
+
 
   useEffect(() => {
     const onUnload = () => {
@@ -181,7 +191,31 @@ function EstimationPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 pb-32 sm:py-16 sm:pb-16">
+      {restored && (
+        <div
+          role="status"
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm"
+        >
+          <span className="min-w-0 text-foreground/80">
+            Progression restaurée — vous reprenez à l'étape {step} sur {TOTAL_STEPS}.
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              clearDraft();
+              setDraft({});
+              setStep(1);
+              setRestored(false);
+              setError(null);
+            }}
+          >
+            Recommencer
+          </Button>
+        </div>
+      )}
       <div className="mb-8">
+
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3">
           <p className="min-w-0 truncate font-serif text-lg text-navy">
             {stepLabels[step - 1]}
