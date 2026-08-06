@@ -49,6 +49,11 @@ export function SiteFooter() {
                 Guides
               </Link>
             </li>
+            <li>
+              <Link to="/experts" className="text-foreground/80 hover:text-navy">
+                Nos experts
+              </Link>
+            </li>
           </ul>
         </nav>
 
