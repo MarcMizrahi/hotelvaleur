@@ -280,6 +280,78 @@ export type Database = {
         }
         Relationships: []
       }
+      market_transaction_dedup_log: {
+        Row: {
+          city: string | null
+          created_at: string
+          dedup_key: string | null
+          detail: string | null
+          hotel_name: string | null
+          id: string
+          kept_transaction_id: string | null
+          price_cents: number | null
+          published_at: string | null
+          reason: string
+          room_count: number | null
+          run_id: string | null
+          source_name: string | null
+          source_url: string | null
+          title: string | null
+          transaction_type: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          dedup_key?: string | null
+          detail?: string | null
+          hotel_name?: string | null
+          id?: string
+          kept_transaction_id?: string | null
+          price_cents?: number | null
+          published_at?: string | null
+          reason: string
+          room_count?: number | null
+          run_id?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          title?: string | null
+          transaction_type?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          dedup_key?: string | null
+          detail?: string | null
+          hotel_name?: string | null
+          id?: string
+          kept_transaction_id?: string | null
+          price_cents?: number | null
+          published_at?: string | null
+          reason?: string
+          room_count?: number | null
+          run_id?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          title?: string | null
+          transaction_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_transaction_dedup_log_kept_transaction_id_fkey"
+            columns: ["kept_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transaction"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_transaction_dedup_log_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "scrape_run"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile: {
         Row: {
           created_at: string

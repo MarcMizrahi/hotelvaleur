@@ -186,6 +186,21 @@ export interface ScrapeSummary {
   duplicatesSkipped: number;
 }
 
+/** Réplique l'empreinte calculée en base (trigger market_transaction_dedup_key). */
+function buildDedupKey(
+  hotelName: string | null | undefined,
+  publishedAt: string | null,
+  roomCount: number | null,
+  priceCents: number | null,
+  transactionType: string | null,
+): string | null {
+  const norm = (hotelName ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!norm) return null;
+  return [norm, publishedAt ?? "", roomCount ?? "", priceCents ?? "", transactionType ?? ""].join(
+    "|",
+  );
+}
+
 export async function runMarketScrape(): Promise<ScrapeSummary> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -219,13 +234,31 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
 
     const { data: existing } = await supabaseAdmin
       .from("market_transaction")
-      .select("source_url")
+      .select("id, source_url")
       .in("source_url", urls.length ? urls : ["__none__"]);
-    const known = new Set((existing ?? []).map((r) => r.source_url));
+    const known = new Map((existing ?? []).map((r: any) => [r.source_url, r.id]));
+
+    const logSkip = async (entry: { reason: string; [k: string]: unknown }) => {
+      const { error } = await supabaseAdmin
+        .from("market_transaction_dedup_log")
+        .insert({ run_id: runId, ...entry } as never);
+      if (error) console.error("[scrape] dedup log failed", error);
+    };
 
     // 2 + 3. Extraction puis insertion.
     for (const hit of byUrl.values()) {
-      if (known.has(hit.url)) continue;
+      if (known.has(hit.url)) {
+        duplicates += 1;
+        await logSkip({
+          source_name: hit.sourceName,
+          source_url: hit.url,
+          title: hit.title ?? null,
+          reason: "source_url_deja_connue",
+          detail: "Cet article a déjà généré une transaction en base.",
+          kept_transaction_id: known.get(hit.url) ?? null,
+        });
+        continue;
+      }
       const transactions = await extractTransactions(hit);
       for (const t of transactions) {
         if ((t.confidence ?? 0) < 0.4) continue;
@@ -260,6 +293,36 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
         } else if (error.code === "23505") {
           // Doublon : même URL, ou même hôtel/date/chambres/prix déjà en base.
           duplicates += 1;
+          const dedupKey = buildDedupKey(
+            t.hotel_name,
+            t.published_date ?? null,
+            t.room_count ?? null,
+            priceCents,
+            t.transaction_type ?? null,
+          );
+          const { data: kept } = dedupKey
+            ? await supabaseAdmin
+                .from("market_transaction")
+                .select("id")
+                .eq("dedup_key", dedupKey)
+                .maybeSingle()
+            : { data: null as any };
+          await logSkip({
+            source_name: hit.sourceName,
+            source_url: hit.url,
+            title: hit.title ?? null,
+            hotel_name: t.hotel_name ?? null,
+            city: t.city ?? null,
+            published_at: t.published_date ?? null,
+            room_count: t.room_count ?? null,
+            price_cents: priceCents,
+            transaction_type: t.transaction_type ?? null,
+            dedup_key: dedupKey,
+            reason: "empreinte_identique",
+            detail:
+              "Même hôtel, date, nombre de chambres, prix et type de transaction qu'un enregistrement existant.",
+            kept_transaction_id: kept?.id ?? null,
+          });
         } else {
           console.error("[scrape] insert failed", error);
         }
