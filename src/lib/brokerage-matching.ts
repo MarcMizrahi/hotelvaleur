@@ -31,44 +31,141 @@ export type AgentLoad = Record<string, number>;
 /** Date (ms) du dernier lead reçu, pour la rotation équitable. */
 export type AgentLastAssigned = Record<string, number>;
 
+export type MatchReason = "region" | "adjacent" | "national" | "none";
+
 export interface MatchResult {
   agent: AgentRow | null;
-  /** "region" | "national" | "none" */
-  reason: "region" | "national" | "none";
+  reason: MatchReason;
+  /** Points d'inadéquation acceptés (étoiles, taille, capacité dépassée). */
+  penalties?: string[];
 }
 
-function matchesSegment(a: AgentRow, c: MatchCriteria): boolean {
-  if (a.star_ratings.length > 0 && !a.star_ratings.includes(c.starRating)) return false;
-  if (a.transaction_types.length > 0 && !a.transaction_types.includes(c.operationType))
-    return false;
-  if (a.min_rooms != null && c.roomCount < a.min_rooms) return false;
-  if (a.max_rooms != null && c.roomCount > a.max_rooms) return false;
-  return true;
+/**
+ * Régions limitrophes (France métropolitaine), utilisées pour le second cercle
+ * de proximité géographique lorsqu'aucun agent ne couvre la région exacte.
+ */
+export const ADJACENT_REGIONS: Record<string, string[]> = {
+  "auvergne-rhone-alpes": [
+    "bourgogne-franche-comte",
+    "centre-val-de-loire",
+    "nouvelle-aquitaine",
+    "occitanie",
+    "provence-alpes-cote-d-azur",
+  ],
+  "bourgogne-franche-comte": [
+    "auvergne-rhone-alpes",
+    "centre-val-de-loire",
+    "grand-est",
+    "ile-de-france",
+  ],
+  bretagne: ["normandie", "pays-de-la-loire"],
+  "centre-val-de-loire": [
+    "auvergne-rhone-alpes",
+    "bourgogne-franche-comte",
+    "ile-de-france",
+    "normandie",
+    "nouvelle-aquitaine",
+    "pays-de-la-loire",
+  ],
+  corse: ["provence-alpes-cote-d-azur"],
+  "grand-est": ["bourgogne-franche-comte", "hauts-de-france", "ile-de-france"],
+  "hauts-de-france": ["grand-est", "ile-de-france", "normandie"],
+  "ile-de-france": [
+    "bourgogne-franche-comte",
+    "centre-val-de-loire",
+    "grand-est",
+    "hauts-de-france",
+    "normandie",
+  ],
+  normandie: [
+    "bretagne",
+    "centre-val-de-loire",
+    "hauts-de-france",
+    "ile-de-france",
+    "pays-de-la-loire",
+  ],
+  "nouvelle-aquitaine": [
+    "auvergne-rhone-alpes",
+    "centre-val-de-loire",
+    "occitanie",
+    "pays-de-la-loire",
+  ],
+  occitanie: [
+    "auvergne-rhone-alpes",
+    "nouvelle-aquitaine",
+    "provence-alpes-cote-d-azur",
+  ],
+  "pays-de-la-loire": [
+    "bretagne",
+    "centre-val-de-loire",
+    "normandie",
+    "nouvelle-aquitaine",
+  ],
+  "provence-alpes-cote-d-azur": ["auvergne-rhone-alpes", "corse", "occitanie"],
+};
+
+export function adjacentRegions(slug: string): string[] {
+  return ADJACENT_REGIONS[slug] ?? [];
 }
 
-function hasCapacity(a: AgentRow, load: AgentLoad): boolean {
-  return (load[a.id] ?? 0) < a.monthly_capacity;
+/**
+ * Critères non bloquants : ils ne disqualifient pas un agent, ils le déclassent.
+ * Seule la couverture géographique est éliminatoire (cf. selectAgent).
+ */
+function softPenalties(a: AgentRow, c: MatchCriteria, load: AgentLoad): string[] {
+  const p: string[] = [];
+  if (a.star_ratings.length > 0 && !a.star_ratings.includes(c.starRating)) {
+    p.push("segment étoiles");
+  }
+  if (a.transaction_types.length > 0 && !a.transaction_types.includes(c.operationType)) {
+    p.push("type d'opération");
+  }
+  if (
+    (a.min_rooms != null && c.roomCount < a.min_rooms) ||
+    (a.max_rooms != null && c.roomCount > a.max_rooms)
+  ) {
+    p.push("taille de l'établissement");
+  }
+  if ((load[a.id] ?? 0) >= a.monthly_capacity) {
+    p.push("capacité mensuelle atteinte");
+  }
+  return p;
 }
 
-/** Tri : capacité restante décroissante, puis ancienneté du dernier lead, puis id. */
+/**
+ * Tri d'un cercle géographique : d'abord le moins d'écarts de segment,
+ * puis la capacité restante décroissante, puis l'ancienneté du dernier lead.
+ */
 function pickBest(
   candidates: AgentRow[],
+  criteria: MatchCriteria,
   load: AgentLoad,
   lastAssigned: AgentLastAssigned,
-): AgentRow | null {
+): { agent: AgentRow; penalties: string[] } | null {
   if (candidates.length === 0) return null;
-  const sorted = [...candidates].sort((x, y) => {
-    const rx = x.monthly_capacity - (load[x.id] ?? 0);
-    const ry = y.monthly_capacity - (load[y.id] ?? 0);
+  const scored = candidates.map((a) => ({ a, p: softPenalties(a, criteria, load) }));
+  scored.sort((x, y) => {
+    if (x.p.length !== y.p.length) return x.p.length - y.p.length;
+    const rx = x.a.monthly_capacity - (load[x.a.id] ?? 0);
+    const ry = y.a.monthly_capacity - (load[y.a.id] ?? 0);
     if (rx !== ry) return ry - rx;
-    const lx = lastAssigned[x.id] ?? 0;
-    const ly = lastAssigned[y.id] ?? 0;
+    const lx = lastAssigned[x.a.id] ?? 0;
+    const ly = lastAssigned[y.a.id] ?? 0;
     if (lx !== ly) return lx - ly;
-    return x.id.localeCompare(y.id);
+    return x.a.id.localeCompare(y.a.id);
   });
-  return sorted[0] ?? null;
+  const best = scored[0];
+  return best ? { agent: best.a, penalties: best.p } : null;
 }
 
+/**
+ * Priorité = proximité géographique.
+ *   1. Agents couvrant explicitement la région du bien
+ *   2. Agents couvrant une région limitrophe
+ *   3. Agents à couverture nationale (aucune région déclarée)
+ * Un agent qui déclare des régions sans inclure la région (ni une limitrophe)
+ * n'est jamais attribué : la couverture géographique est éliminatoire.
+ */
 export function selectAgent(
   agents: AgentRow[],
   criteria: MatchCriteria,
@@ -76,25 +173,35 @@ export function selectAgent(
   lastAssigned: AgentLastAssigned = {},
 ): MatchResult {
   const active = agents.filter((a) => a.is_active);
+  const neighbours = adjacentRegions(criteria.regionSlug);
 
-  const regional = active.filter(
-    (a) =>
-      a.regions.includes(criteria.regionSlug) &&
-      matchesSegment(a, criteria) &&
-      hasCapacity(a, load),
-  );
-  const regionalPick = pickBest(regional, load, lastAssigned);
-  if (regionalPick) return { agent: regionalPick, reason: "region" };
+  const tiers: Array<{ reason: MatchReason; list: AgentRow[] }> = [
+    {
+      reason: "region",
+      list: active.filter((a) => a.regions.includes(criteria.regionSlug)),
+    },
+    {
+      reason: "adjacent",
+      list: active.filter(
+        (a) =>
+          !a.regions.includes(criteria.regionSlug) &&
+          a.regions.some((r) => neighbours.includes(r)),
+      ),
+    },
+    {
+      reason: "national",
+      list: active.filter((a) => a.regions.length === 0),
+    },
+  ];
 
-  // Repli national : agents sans restriction de région (couverture nationale).
-  const national = active.filter(
-    (a) => a.regions.length === 0 && matchesSegment(a, criteria) && hasCapacity(a, load),
-  );
-  const nationalPick = pickBest(national, load, lastAssigned);
-  if (nationalPick) return { agent: nationalPick, reason: "national" };
+  for (const tier of tiers) {
+    const pick = pickBest(tier.list, criteria, load, lastAssigned);
+    if (pick) return { agent: pick.agent, reason: tier.reason, penalties: pick.penalties };
+  }
 
-  return { agent: null, reason: "none" };
+  return { agent: null, reason: "none", penalties: [] };
 }
+
 
 export const SALE_HORIZONS = [
   { value: "moins_6_mois", label: "Vendre sous 6 mois" },
@@ -126,4 +233,17 @@ export function horizonLabel(v: string): string {
 }
 export function operationLabel(v: string): string {
   return OPERATION_TYPES.find((s) => s.value === v)?.label ?? v;
+}
+
+export function reasonLabel(v: string): string {
+  switch (v) {
+    case "region":
+      return "agent de la région";
+    case "adjacent":
+      return "agent d'une région limitrophe";
+    case "national":
+      return "agent à couverture nationale";
+    default:
+      return "aucun agent éligible";
+  }
 }

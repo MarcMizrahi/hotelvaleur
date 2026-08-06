@@ -6,6 +6,7 @@
 import { sendEmail } from "@/lib/email.server";
 import {
   selectAgent,
+  reasonLabel,
   horizonLabel,
   operationLabel,
   type AgentRow,
@@ -90,7 +91,11 @@ export async function autoAssignAgent(
       event_type: "assigned",
       to_value: match.agent.id,
       agent_id: match.agent.id,
-      detail: `Attribution automatique (${match.reason})`,
+      detail:
+        `Attribution automatique — ${reasonLabel(match.reason)}` +
+        (match.penalties && match.penalties.length > 0
+          ? ` (écarts acceptés : ${match.penalties.join(", ")})`
+          : ""),
       actor: "system",
     });
   } else {
