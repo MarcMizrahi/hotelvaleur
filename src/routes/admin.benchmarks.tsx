@@ -114,8 +114,38 @@ function BenchmarksPage() {
     queryKey: ["admin-coefficients"],
     queryFn: () => listFn(),
   });
+  const listTx = useServerFn(listValidatedTransactions);
+  const { data: txData } = useQuery({
+    queryKey: ["validated-transactions"],
+    queryFn: () => listTx(),
+  });
   const [regionFilter, setRegionFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<Row["status"] | "">("");
+
+  /** Prix/chambre médian observé sur les transactions validées, par région × étoiles. */
+  const observed = useMemo(() => {
+    const buckets = new Map<string, number[]>();
+    for (const t of (txData?.transactions ?? []) as Array<{
+      region_slug: string | null;
+      star_rating: number | null;
+      price_per_room_cents: number | null;
+    }>) {
+      if (!t.region_slug || t.star_rating == null || t.price_per_room_cents == null) continue;
+      const key = `${t.region_slug}::${t.star_rating}`;
+      const arr = buckets.get(key) ?? [];
+      arr.push(t.price_per_room_cents / 100);
+      buckets.set(key, arr);
+    }
+    const out = new Map<string, { median: number; count: number }>();
+    for (const [key, values] of buckets) {
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      const median =
+        sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
+      out.set(key, { median, count: sorted.length });
+    }
+    return out;
+  }, [txData]);
 
   const rows = useMemo<Row[]>(() => {
     if (!coefficients) return [];
