@@ -182,6 +182,105 @@ function TransactionsPage() {
           </table>
         </div>
       )}
+
+      <DedupAuditTrail />
     </div>
+  );
+}
+
+const REASON_LABEL: Record<string, string> = {
+  source_url_deja_connue: "Article déjà traité (même URL)",
+  empreinte_identique: "Empreinte identique (hôtel + date + chambres + prix + type)",
+  nettoyage_manuel: "Nettoyage manuel des doublons historiques",
+};
+
+function DedupAuditTrail() {
+  const load = useServerFn(listDedupLog);
+  const { data, isLoading } = useQuery({
+    queryKey: ["dedup-log"],
+    queryFn: () => load(),
+  });
+  const entries = (data?.entries ?? []) as any[];
+
+  return (
+    <section className="space-y-3">
+      <div>
+        <h2 className="font-serif text-xl text-navy">Journal de déduplication</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Traçabilité des enregistrements écartés lors de la veille, avec le motif de suppression et
+          la fiche conservée.
+        </p>
+      </div>
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Chargement…</p>
+      ) : entries.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Aucun doublon écarté pour le moment.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-border bg-background">
+          <table className="w-full text-sm">
+            <thead className="bg-surface text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2">Date</th>
+                <th className="px-3 py-2">Enregistrement écarté</th>
+                <th className="px-3 py-2">Prix</th>
+                <th className="px-3 py-2">Motif</th>
+                <th className="px-3 py-2">Empreinte</th>
+                <th className="px-3 py-2">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map((e) => (
+                <tr key={e.id} className="border-t border-border align-top">
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {new Date(e.created_at).toLocaleString("fr-FR")}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="font-medium text-navy">{e.hotel_name ?? e.title ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {[e.city, e.published_at, e.room_count ? `${e.room_count} ch.` : null,
+                        e.transaction_type]
+                        .filter(Boolean)
+                        .join(" · ") || "—"}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2">
+                    {e.price_cents != null ? formatEuros(e.price_cents) : "—"}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div>{REASON_LABEL[e.reason] ?? e.reason}</div>
+                    {e.detail && (
+                      <div className="mt-1 max-w-sm text-xs text-muted-foreground">{e.detail}</div>
+                    )}
+                    {e.kept_transaction_id && (
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        Fiche conservée : {String(e.kept_transaction_id).slice(0, 8)}…
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 max-w-[16rem] break-all text-xs text-muted-foreground">
+                    {e.dedup_key ?? "—"}
+                  </td>
+                  <td className="px-3 py-2">
+                    {e.source_url ? (
+                      <a
+                        href={e.source_url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-gold underline"
+                      >
+                        {e.source_name ?? "Lien"}
+                      </a>
+                    ) : (
+                      (e.source_name ?? "—")
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }
