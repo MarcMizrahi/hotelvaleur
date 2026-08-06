@@ -118,11 +118,6 @@ describe("brokerage matching — critères non bloquants", () => {
 
 describe("adjacence régionale", () => {
   it("est symétrique sur les 13 régions", () => {
-    const slugs = Object.keys(
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      {} as Record<string, string>,
-    );
-    void slugs;
     const all = [
       "auvergne-rhone-alpes",
       "bourgogne-franche-comte",
