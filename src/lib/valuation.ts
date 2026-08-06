@@ -323,6 +323,20 @@ export function computeValuation(
     adjustments.push({ label: `Taux d'occupation : ${o.toFixed(1)} %`, factor: f });
   }
 
+  // 5b ter. Effet taille : les très petites unités se négocient avec une décote
+  // (coûts fixes d'exploitation, marché d'acquéreurs plus étroit), les grandes
+  // unités bénéficient d'une prime d'intérêt institutionnel.
+  if (input.roomCount > 0) {
+    const n = input.roomCount;
+    let f = 1.0;
+    if (n < 12) f = 0.88;
+    else if (n < 20) f = 0.94;
+    else if (n <= 80) f = 1.0;
+    else if (n <= 150) f = 1.04;
+    else f = 1.07;
+    if (f !== 1.0) adjustments.push({ label: `Taille : ${n} chambres`, factor: f });
+  }
+
   // 5c. Bail emphytéotique (murs ou murs+fonds) : décote temporelle
   // Approximation d'une actualisation sur la durée restante :
   //   factor = 1 - exp(-années / 30)
