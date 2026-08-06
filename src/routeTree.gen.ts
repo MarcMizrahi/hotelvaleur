@@ -25,12 +25,14 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
+import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -112,6 +114,11 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -143,6 +150,12 @@ const PrixHotelRegionDepartementRoute =
     path: '/prix-hotel/$region/$departement',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScrapeTransactionsRoute =
+  ApiPublicHooksScrapeTransactionsRouteImport.update({
+    id: '/api/public/hooks/scrape-transactions',
+    path: '/api/public/hooks/scrape-transactions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -158,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -167,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -181,6 +196,7 @@ export interface FileRoutesByTo {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -190,6 +206,7 @@ export interface FileRoutesByTo {
   '/prix-hotel': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -206,6 +223,7 @@ export interface FileRoutesById {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -215,6 +233,7 @@ export interface FileRoutesById {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -232,6 +251,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -241,6 +261,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/scrape-transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -255,6 +276,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -264,6 +286,7 @@ export interface FileRouteTypes {
     | '/prix-hotel'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region'
+    | '/api/public/hooks/scrape-transactions'
   id:
     | '__root__'
     | '/'
@@ -279,6 +302,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -288,6 +312,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/scrape-transactions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -307,6 +332,7 @@ export interface RootRouteChildren {
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
   PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
   PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
+  ApiPublicHooksScrapeTransactionsRoute: typeof ApiPublicHooksScrapeTransactionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -423,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/leads'
@@ -465,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrixHotelRegionDepartementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/scrape-transactions': {
+      id: '/api/public/hooks/scrape-transactions'
+      path: '/api/public/hooks/scrape-transactions'
+      fullPath: '/api/public/hooks/scrape-transactions'
+      preLoaderRoute: typeof ApiPublicHooksScrapeTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -473,6 +513,7 @@ interface AdminRouteChildren {
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -481,6 +522,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -515,17 +557,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrixHotelIndexRoute: PrixHotelIndexRoute,
   PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
   PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
+  ApiPublicHooksScrapeTransactionsRoute: ApiPublicHooksScrapeTransactionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -208,6 +208,75 @@ export type Database = {
         }
         Relationships: []
       }
+      market_transaction: {
+        Row: {
+          buyer: string | null
+          city: string | null
+          confidence: number
+          created_at: string
+          department_code: string | null
+          excerpt: string | null
+          hotel_name: string | null
+          id: string
+          price_cents: number | null
+          price_per_room_cents: number | null
+          published_at: string | null
+          region_slug: string | null
+          room_count: number | null
+          seller: string | null
+          source_name: string
+          source_url: string
+          star_rating: number | null
+          status: string
+          title: string | null
+          transaction_type: string | null
+        }
+        Insert: {
+          buyer?: string | null
+          city?: string | null
+          confidence?: number
+          created_at?: string
+          department_code?: string | null
+          excerpt?: string | null
+          hotel_name?: string | null
+          id?: string
+          price_cents?: number | null
+          price_per_room_cents?: number | null
+          published_at?: string | null
+          region_slug?: string | null
+          room_count?: number | null
+          seller?: string | null
+          source_name: string
+          source_url: string
+          star_rating?: number | null
+          status?: string
+          title?: string | null
+          transaction_type?: string | null
+        }
+        Update: {
+          buyer?: string | null
+          city?: string | null
+          confidence?: number
+          created_at?: string
+          department_code?: string | null
+          excerpt?: string | null
+          hotel_name?: string | null
+          id?: string
+          price_cents?: number | null
+          price_per_room_cents?: number | null
+          published_at?: string | null
+          region_slug?: string | null
+          room_count?: number | null
+          seller?: string | null
+          source_name?: string
+          source_url?: string
+          star_rating?: number | null
+          status?: string
+          title?: string | null
+          transaction_type?: string | null
+        }
+        Relationships: []
+      }
       profile: {
         Row: {
           created_at: string
@@ -223,6 +292,39 @@ export type Database = {
           created_at?: string
           id?: string
           role?: string
+        }
+        Relationships: []
+      }
+      scrape_run: {
+        Row: {
+          articles_found: number
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          sources_count: number
+          started_at: string
+          status: string
+          transactions_inserted: number
+        }
+        Insert: {
+          articles_found?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          sources_count?: number
+          started_at?: string
+          status?: string
+          transactions_inserted?: number
+        }
+        Update: {
+          articles_found?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          sources_count?: number
+          started_at?: string
+          status?: string
+          transactions_inserted?: number
         }
         Relationships: []
       }

@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listCoefficients } from "@/lib/admin.functions";
+import { listValidatedTransactions } from "@/lib/market.functions";
 import { BENCHMARKS, type Benchmark } from "@/lib/benchmarks";
 import { computeValuation, type Coefficient } from "@/lib/valuation";
 import { regions } from "@/lib/regions";
@@ -113,8 +114,38 @@ function BenchmarksPage() {
     queryKey: ["admin-coefficients"],
     queryFn: () => listFn(),
   });
+  const listTx = useServerFn(listValidatedTransactions);
+  const { data: txData } = useQuery({
+    queryKey: ["validated-transactions"],
+    queryFn: () => listTx(),
+  });
   const [regionFilter, setRegionFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<Row["status"] | "">("");
+
+  /** Prix/chambre médian observé sur les transactions validées, par région × étoiles. */
+  const observed = useMemo(() => {
+    const buckets = new Map<string, number[]>();
+    for (const t of (txData?.transactions ?? []) as Array<{
+      region_slug: string | null;
+      star_rating: number | null;
+      price_per_room_cents: number | null;
+    }>) {
+      if (!t.region_slug || t.star_rating == null || t.price_per_room_cents == null) continue;
+      const key = `${t.region_slug}::${t.star_rating}`;
+      const arr = buckets.get(key) ?? [];
+      arr.push(t.price_per_room_cents / 100);
+      buckets.set(key, arr);
+    }
+    const out = new Map<string, { median: number; count: number }>();
+    for (const [key, values] of buckets) {
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      const median =
+        sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
+      out.set(key, { median, count: sorted.length });
+    }
+    return out;
+  }, [txData]);
 
   const rows = useMemo<Row[]>(() => {
     if (!coefficients) return [];
@@ -307,6 +338,7 @@ function BenchmarksPage() {
                 <th className="px-3 py-2">★</th>
                 <th className="px-3 py-2">Transaction</th>
                 <th className="px-3 py-2 text-right">Benchmark €/ch.</th>
+                <th className="px-3 py-2 text-right">Observé €/ch.</th>
                 <th className="px-3 py-2 text-right">Moteur €/ch.</th>
                 <th className="px-3 py-2 text-right">Écart médian</th>
                 <th className="px-3 py-2 text-right">Score</th>
@@ -323,6 +355,23 @@ function BenchmarksPage() {
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {fmtEuros(r.bench.lowPerRoomEuros)} – {fmtEuros(r.bench.highPerRoomEuros)}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums">
+                    {(() => {
+                      const obs = observed.get(
+                        `${r.bench.regionSlug}::${r.bench.starRating}`,
+                      );
+                      if (!obs)
+                        return <span className="text-muted-foreground italic">—</span>;
+                      return (
+                        <span title={`${obs.count} transaction(s) validée(s)`}>
+                          {fmtEuros(obs.median)}{" "}
+                          <span className="text-xs text-muted-foreground">
+                            ({obs.count})
+                          </span>
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {r.status === "missing" ? (
