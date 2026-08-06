@@ -223,10 +223,10 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
       .in("source_url", urls.length ? urls : ["__none__"]);
     const known = new Map((existing ?? []).map((r: any) => [r.source_url, r.id]));
 
-    const logSkip = async (entry: Record<string, unknown>) => {
+    const logSkip = async (entry: { reason: string; [k: string]: unknown }) => {
       const { error } = await supabaseAdmin
         .from("market_transaction_dedup_log")
-        .insert({ run_id: runId, ...entry });
+        .insert({ run_id: runId, ...entry } as never);
       if (error) console.error("[scrape] dedup log failed", error);
     };
 
