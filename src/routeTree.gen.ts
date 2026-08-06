@@ -31,6 +31,7 @@ import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficien
 import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
+import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -143,6 +144,12 @@ const PrixHotelRegionDepartementRoute =
     path: '/prix-hotel/$region/$departement',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScrapeTransactionsRoute =
+  ApiPublicHooksScrapeTransactionsRouteImport.update({
+    id: '/api/public/hooks/scrape-transactions',
+    path: '/api/public/hooks/scrape-transactions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -190,6 +198,7 @@ export interface FileRoutesByTo {
   '/prix-hotel': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -215,6 +224,7 @@ export interface FileRoutesById {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/scrape-transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/prix-hotel'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region'
+    | '/api/public/hooks/scrape-transactions'
   id:
     | '__root__'
     | '/'
@@ -288,6 +300,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/scrape-transactions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -307,6 +320,7 @@ export interface RootRouteChildren {
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
   PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
   PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
+  ApiPublicHooksScrapeTransactionsRoute: typeof ApiPublicHooksScrapeTransactionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -465,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrixHotelRegionDepartementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/scrape-transactions': {
+      id: '/api/public/hooks/scrape-transactions'
+      path: '/api/public/hooks/scrape-transactions'
+      fullPath: '/api/public/hooks/scrape-transactions'
+      preLoaderRoute: typeof ApiPublicHooksScrapeTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -515,17 +536,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrixHotelIndexRoute: PrixHotelIndexRoute,
   PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
   PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
+  ApiPublicHooksScrapeTransactionsRoute: ApiPublicHooksScrapeTransactionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
