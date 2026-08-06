@@ -34,21 +34,51 @@ export interface EstimationDraft {
 }
 
 const KEY = "hv_estimation_draft";
+const MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7; // 7 jours
 
-export function loadDraft(): EstimationDraft {
-  if (typeof window === "undefined") return {};
+export interface StoredDraft {
+  draft: EstimationDraft;
+  step: number;
+  updatedAt: number;
+}
+
+/** Charge le brouillon + l'étape en cours (localStorage, expire après 7 jours). */
+export function loadDraftState(): StoredDraft | null {
+  if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as EstimationDraft) : {};
+    const raw =
+      window.localStorage.getItem(KEY) ?? window.sessionStorage.getItem(KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<StoredDraft> & EstimationDraft;
+    // Ancien format : le brouillon était stocké à plat.
+    if (!parsed || typeof parsed !== "object") return null;
+    if (!("draft" in parsed)) {
+      return { draft: parsed as EstimationDraft, step: 1, updatedAt: Date.now() };
+    }
+    const state = parsed as StoredDraft;
+    if (!state.draft || Date.now() - (state.updatedAt ?? 0) > MAX_AGE_MS) {
+      clearDraft();
+      return null;
+    }
+    return {
+      draft: state.draft,
+      step: Math.min(Math.max(1, Math.round(state.step ?? 1)), 6),
+      updatedAt: state.updatedAt,
+    };
   } catch {
-    return {};
+    return null;
   }
 }
 
-export function saveDraft(draft: EstimationDraft) {
+export function loadDraft(): EstimationDraft {
+  return loadDraftState()?.draft ?? {};
+}
+
+export function saveDraft(draft: EstimationDraft, step = 1) {
   if (typeof window === "undefined") return;
   try {
-    sessionStorage.setItem(KEY, JSON.stringify(draft));
+    const payload: StoredDraft = { draft, step, updatedAt: Date.now() };
+    window.localStorage.setItem(KEY, JSON.stringify(payload));
   } catch {
     /* quota – ignore */
   }
@@ -56,8 +86,14 @@ export function saveDraft(draft: EstimationDraft) {
 
 export function clearDraft() {
   if (typeof window === "undefined") return;
-  sessionStorage.removeItem(KEY);
+  try {
+    window.localStorage.removeItem(KEY);
+    window.sessionStorage.removeItem(KEY);
+  } catch {
+    /* ignore */
+  }
 }
+
 
 const RESULT_KEY = "hv_last_result";
 export interface StoredResult {
