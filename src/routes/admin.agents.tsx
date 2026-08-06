@@ -441,7 +441,18 @@ function AgentsAdmin() {
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
             </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="a-photo">Photo (URL https)</Label>
+              <Input
+                id="a-photo"
+                type="url"
+                placeholder="https://…/photo.jpg"
+                value={form.photoUrl}
+                onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
+              />
+            </div>
           </div>
+
 
           <div className="space-y-2">
             <Label htmlFor="a-bio">Présentation</Label>
