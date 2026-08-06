@@ -99,6 +99,56 @@ function AgentsAdmin() {
     return m;
   }, [leads]);
 
+  const visibleAgents = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return agents.filter((a) => {
+      if (statusFilter === "active" && !a.is_active) return false;
+      if (statusFilter === "inactive" && a.is_active) return false;
+      if (regionFilter !== "all") {
+        const rs: string[] = a.regions ?? [];
+        if (regionFilter === "national" ? rs.length > 0 : !rs.includes(regionFilter)) return false;
+      }
+      if (!q) return true;
+      return [a.full_name, a.company, a.email, a.phone]
+        .filter(Boolean)
+        .some((v: string) => String(v).toLowerCase().includes(q));
+    });
+  }, [agents, search, statusFilter, regionFilter]);
+
+  async function toggleActive(a: any) {
+    try {
+      await save({
+        data: {
+          id: a.id,
+          fullName: a.full_name,
+          company: a.company ?? null,
+          email: a.email,
+          phone: a.phone ?? null,
+          photoUrl: a.photo_url ?? null,
+          bio: a.bio ?? null,
+          regions: a.regions ?? [],
+          starRatings: a.star_ratings ?? [],
+          transactionTypes: (a.transaction_types ?? []) as never,
+          minRooms: a.min_rooms ?? null,
+          maxRooms: a.max_rooms ?? null,
+          languages: a.languages ?? [],
+          transactionsCount: a.transactions_count ?? 0,
+          monthlyCapacity: a.monthly_capacity ?? 10,
+          isActive: !a.is_active,
+          isPublic: a.is_public,
+        },
+      });
+      toast.success(a.is_active ? "Agent désactivé" : "Agent activé");
+      await refresh();
+    } catch (err) {
+      toast.error("Mise à jour impossible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
+
+
+
   function edit(a: any) {
     setForm({
       id: a.id,
