@@ -170,16 +170,42 @@ function EstimationPage() {
     );
   }
 
+  const stepLabels = [
+    "Localisation",
+    "Établissement",
+    "Exploitation",
+    "Chiffres",
+    "Projet",
+    "Contact",
+  ];
+
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10 sm:py-16">
+    <main className="mx-auto max-w-2xl px-4 py-10 pb-32 sm:py-16 sm:pb-16">
       <div className="mb-8">
-        <p className="text-sm text-muted-foreground">
-          Étape {step} sur {TOTAL_STEPS}
-        </p>
-        <Progress value={(step / TOTAL_STEPS) * 100} className="mt-2 h-1" />
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3">
+          <p className="min-w-0 truncate font-serif text-lg text-navy">
+            {stepLabels[step - 1]}
+          </p>
+          <p className="shrink-0 text-sm text-muted-foreground tabular">
+            Étape {step} / {TOTAL_STEPS}
+          </p>
+        </div>
+        <Progress value={(step / TOTAL_STEPS) * 100} className="mt-3 h-1.5" />
+        <ol className="mt-3 hidden gap-1 sm:grid sm:grid-cols-6" aria-hidden>
+          {stepLabels.map((label, i) => (
+            <li
+              key={label}
+              className={`truncate text-[11px] uppercase tracking-wider ${
+                i + 1 <= step ? "text-navy" : "text-muted-foreground/60"
+              }`}
+            >
+              {label}
+            </li>
+          ))}
+        </ol>
       </div>
 
-      <div className="min-h-[360px]">
+      <div className="min-h-[360px] rounded-2xl border border-border bg-card p-5 sm:p-8">
         {step === 1 && <Step1 draft={draft} update={update} />}
         {step === 2 && <Step2 draft={draft} update={update} />}
         {step === 3 && <Step3 draft={draft} update={update} />}
@@ -189,26 +215,38 @@ function EstimationPage() {
       </div>
 
       {error && (
-        <p className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+        <p
+          role="alert"
+          className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
+        >
           {error}
         </p>
       )}
 
-      <div className="mt-8 flex items-center justify-between">
-        <Button variant="ghost" onClick={goBack} disabled={step === 1 || submitting}>
-          ← Retour
-        </Button>
-        {step < TOTAL_STEPS ? (
-          <Button onClick={goNext}>Continuer</Button>
-        ) : (
-          <Button onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "Calcul en cours…" : "Recevoir mon estimation"}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
+        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
+          <Button variant="ghost" onClick={goBack} disabled={step === 1 || submitting}>
+            ← Retour
           </Button>
-        )}
+          {step < TOTAL_STEPS ? (
+            <Button onClick={goNext} className="min-w-36 bg-navy text-navy-foreground hover:bg-navy/90">
+              Continuer
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="min-w-36 bg-navy text-navy-foreground hover:bg-navy/90"
+            >
+              {submitting ? "Calcul en cours…" : "Recevoir mon estimation"}
+            </Button>
+          )}
+        </div>
       </div>
     </main>
   );
 }
+
 
 // ---------- Validation ----------
 
