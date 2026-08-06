@@ -1,3 +1,5 @@
+import { AlertCircle } from "lucide-react";
+import { site } from "@/config/site";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { fr } from "@/locales/fr";
