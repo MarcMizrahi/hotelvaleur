@@ -69,3 +69,17 @@ export const listValidatedTransactions = createServerFn({ method: "GET" })
       .not("price_per_room_cents", "is", null);
     return { transactions: data ?? [] };
   });
+
+/** Journal d'audit : transactions écartées par la déduplication et motif du rejet. */
+export const listDedupLog = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context as never);
+    const { supabase } = context as never as { supabase: any };
+    const { data } = await supabase
+      .from("market_transaction_dedup_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    return { entries: data ?? [] };
+  });
