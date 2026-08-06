@@ -1,3 +1,5 @@
+import { AlertCircle } from "lucide-react";
+import { site } from "@/config/site";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { fr } from "@/locales/fr";
@@ -21,6 +23,8 @@ import { track, captureAttribution } from "@/lib/analytics";
 import { submitEstimation } from "@/lib/estimation.functions";
 import { searchHotels, type HotelSuggestion } from "@/lib/hotel-lookup.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { classifySubmitError, type FormError } from "@/lib/estimation-errors";
 
 
 export const Route = createFileRoute("/estimation")({
@@ -49,7 +53,7 @@ function EstimationPage() {
   const submit = useServerFn(submitEstimation);
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<EstimationDraft>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FormError | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [restored, setRestored] = useState(false);
@@ -89,10 +93,28 @@ function EstimationPage() {
     setError(null);
   };
 
+  const focusField = (fieldId?: string) => {
+    if (!fieldId) return;
+    window.setTimeout(() => {
+      const el = document.getElementById(fieldId);
+      if (el instanceof HTMLElement) {
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        el.focus({ preventScroll: true });
+      }
+    }, 80);
+  };
+
+  const applyFix = (err: FormError) => {
+    if (err.gotoStep) setStep(err.gotoStep);
+    setError(null);
+    focusField(err.fieldId);
+  };
+
   const goNext = async () => {
     const err = validateStep(step, draft);
     if (err) {
       setError(err);
+      focusField(err.fieldId);
       return;
     }
     await track(`funnel_vendeur.step_${step}`);
@@ -102,11 +124,17 @@ function EstimationPage() {
   const goBack = () => setStep((s) => Math.max(1, s - 1));
 
   const handleSubmit = async () => {
-    const err = validateStep(6, draft);
-    if (err) {
-      setError(err);
-      return;
+    for (let s = 1; s <= TOTAL_STEPS; s++) {
+      const err = validateStep(s, draft);
+      if (err) {
+        setError({ ...err, gotoStep: s });
+        if (s !== step) setStep(s);
+        focusField(err.fieldId);
+        toast.error(err.title, { description: err.hint ?? err.message });
+        return;
+      }
     }
+
     setSubmitting(true);
     setError(null);
     try {
@@ -165,8 +193,10 @@ function EstimationPage() {
       clearDraft();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Une erreur est survenue.";
-      setError(msg + " Vos réponses sont conservées, réessayez dans un instant.");
+      const err = classifySubmitError(e);
+      setError(err);
+      toast.error(err.title, { description: err.hint ?? err.message });
+      if (err.gotoStep) setStep(err.gotoStep);
     } finally {
       setSubmitting(false);
     }
@@ -249,13 +279,44 @@ function EstimationPage() {
       </div>
 
       {error && (
-        <p
+        <div
           role="alert"
-          className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
+          aria-live="assertive"
+          className="mt-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm"
         >
-          {error}
-        </p>
+          <div className="flex gap-3">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
+            <div className="min-w-0">
+              <p className="font-medium text-destructive">{error.title}</p>
+              <p className="mt-1 text-foreground/80">{error.message}</p>
+              {error.hint && (
+                <p className="mt-1 text-muted-foreground">{error.hint}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(error.gotoStep || error.fieldId) && (
+                  <Button size="sm" variant="outline" onClick={() => applyFix(error)}>
+                    Corriger {error.gotoStep ? `(étape ${error.gotoStep})` : ""}
+                  </Button>
+                )}
+                {error.retryable && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={submitting}
+                    onClick={() => void handleSubmit()}
+                  >
+                    Relancer le calcul
+                  </Button>
+                )}
+                <Button size="sm" variant="ghost" asChild>
+                  <a href={`mailto:${site.contactEmail}`}>Nous écrire</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
+
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
@@ -284,36 +345,112 @@ function EstimationPage() {
 
 // ---------- Validation ----------
 
-function validateStep(step: number, d: EstimationDraft): string | null {
+function validateStep(step: number, d: EstimationDraft): FormError | null {
+  const err = (
+    title: string,
+    message: string,
+    hint?: string,
+    fieldId?: string,
+  ): FormError => ({ title, message, hint, fieldId, gotoStep: step });
+
   switch (step) {
     case 1:
-      if (!d.regionSlug) return "Sélectionnez votre région.";
-      if (!d.departmentCode) return "Sélectionnez votre département.";
+      if (!d.regionSlug)
+        return err(
+          "Région manquante",
+          "La région détermine les références de prix appliquées.",
+          "Choisissez la région de votre établissement.",
+          "region",
+        );
+      if (!d.departmentCode)
+        return err(
+          "Département manquant",
+          "Le département affine la fourchette au sein de la région.",
+          "Sélectionnez le département dans la liste.",
+          "dep",
+        );
       return null;
     case 2:
-      if (!d.transactionType) return "Choisissez le type de transaction envisagé.";
+      if (!d.transactionType)
+        return err(
+          "Type de transaction manquant",
+          "La méthode de valorisation dépend de ce que vous cédez (murs, fonds, ou les deux).",
+          "Sélectionnez l'une des trois options.",
+        );
       if (d.isEmphyteotic && (!d.emphyteoticYearsRemaining || d.emphyteoticYearsRemaining < 1))
-        return "Indiquez la durée restante du bail emphytéotique.";
+        return err(
+          "Durée du bail emphytéotique manquante",
+          "La durée restante fait fortement varier la valeur d'un bail emphytéotique.",
+          "Indiquez le nombre d'années restantes (au moins 1).",
+          "emp",
+        );
       return null;
     case 3:
       if (!d.roomCount || d.roomCount < 1 || d.roomCount > 500)
-        return "Indiquez un nombre de chambres entre 1 et 500.";
-      if (typeof d.starRating !== "number") return "Précisez le classement (0 à 5 étoiles).";
+        return err(
+          "Nombre de chambres invalide",
+          "Le nombre de chambres est la base du calcul par prix/chambre.",
+          "Saisissez un nombre entre 1 et 500 (chambres exploitées).",
+          "rooms",
+        );
+      if (typeof d.starRating !== "number")
+        return err(
+          "Classement manquant",
+          "Le classement conditionne le positionnement de prix retenu.",
+          "Choisissez de 0 à 5 étoiles (0 si non classé).",
+        );
       return null;
-    case 4:
-      return null; // facultatif
+    case 4: {
+      if (
+        typeof d.occupancyRate === "number" &&
+        (d.occupancyRate <= 0 || d.occupancyRate > 100)
+      )
+        return err(
+          "Taux d'occupation invalide",
+          "Le taux d'occupation doit être exprimé en pourcentage.",
+          "Saisissez une valeur entre 1 et 100, ou laissez le champ vide.",
+          "occ",
+        );
+      if (
+        typeof d.annualRevenueCents === "number" &&
+        typeof d.ebitdaCents === "number" &&
+        d.ebitdaCents > d.annualRevenueCents
+      )
+        return err(
+          "EBITDA supérieur au chiffre d'affaires",
+          "L'EBITDA saisi dépasse le chiffre d'affaires annuel, ce qui fausserait le calcul.",
+          "Vérifiez les deux montants (en euros, hors taxes) ou laissez l'EBITDA vide.",
+          "ebitda",
+        );
+      return null;
+    }
     case 5:
       if (!d.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))
-        return "Une adresse email valide est nécessaire pour recevoir le rapport.";
+        return err(
+          "Adresse email invalide",
+          "Le rapport détaillé vous est envoyé par email.",
+          "Format attendu : prenom.nom@domaine.fr",
+          "em",
+        );
       if (!d.consentContact)
-        return "Merci de cocher l'accord de recontact pour recevoir votre estimation.";
+        return err(
+          "Accord de recontact requis",
+          "Sans cet accord nous ne pouvons pas vous transmettre l'estimation.",
+          "Cochez la case de consentement au-dessus du bouton.",
+        );
       return null;
     case 6:
-      if (!d.saleIntent) return "Indiquez où vous en êtes dans votre projet.";
+      if (!d.saleIntent)
+        return err(
+          "Horizon de projet manquant",
+          "Cette information nous permet d'adapter les conseils du rapport.",
+          "Sélectionnez l'échéance qui correspond le mieux.",
+        );
       return null;
   }
   return null;
 }
+
 
 // ---------- Steps ----------
 
