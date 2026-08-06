@@ -445,8 +445,11 @@ function AgentsAdmin() {
               <Label htmlFor="a-photo">Photo de l'agent</Label>
               <AgentPhotoField
                 value={form.photoUrl}
-                onChange={(url) => setForm((f) => ({ ...f, photoUrl: url }))}
+                onChange={(url: string) =>
+                  setForm((f) => (f ? { ...f, photoUrl: url } : f))
+                }
               />
+
             </div>
 
           </div>
