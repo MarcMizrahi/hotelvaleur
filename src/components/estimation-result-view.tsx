@@ -82,6 +82,30 @@ export function EstimationResultView({ result }: { result: StoredResult }) {
           : "Un récapitulatif détaillé vous sera envoyé par email dans quelques instants."}
       </p>
 
+      {result.brokerageToken && (
+        <section className="mt-10 rounded-xl border border-primary/30 bg-primary/5 p-6 sm:p-8">
+          <h3 className="font-serif text-2xl">Passer à l'étape suivante</h3>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Un agent spécialisé en hôtellerie, choisi selon votre région et votre segment, peut
+            affiner cette valorisation et vous accompagner jusqu'à la cession. Sans engagement,
+            réponse sous 48 heures ouvrées.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild size="lg">
+              <Link
+                to="/mise-en-relation/$token"
+                params={{ token: result.brokerageToken }}
+              >
+                Être mis en relation avec un expert
+              </Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link to="/experts">Voir nos experts</Link>
+            </Button>
+          </div>
+        </section>
+      )}
+
       <div className="mt-10 flex flex-wrap gap-3">
         <Button asChild variant="outline">
           <Link to="/guides">Consulter les guides</Link>
