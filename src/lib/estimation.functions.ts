@@ -146,6 +146,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
         leaseYearsRemaining: data.leaseYearsRemaining ?? null,
         isEmphyteotic: data.isEmphyteotic ?? null,
         emphyteoticYearsRemaining: data.emphyteoticYearsRemaining ?? null,
+        comparables,
       },
       coef as unknown as Coefficient,
     );
