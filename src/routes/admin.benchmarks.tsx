@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listCoefficients } from "@/lib/admin.functions";
+import { listValidatedTransactions } from "@/lib/market.functions";
 import { BENCHMARKS, type Benchmark } from "@/lib/benchmarks";
 import { computeValuation, type Coefficient } from "@/lib/valuation";
 import { regions } from "@/lib/regions";
