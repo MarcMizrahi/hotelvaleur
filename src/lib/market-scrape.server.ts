@@ -196,6 +196,7 @@ export async function runMarketScrape(): Promise<ScrapeSummary> {
 
   let articlesFound = 0;
   let inserted = 0;
+  let duplicates = 0;
 
   try {
     // 1. Une recherche par terme, restreinte aux domaines suivis.
