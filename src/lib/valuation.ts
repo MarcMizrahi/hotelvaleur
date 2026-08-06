@@ -393,6 +393,7 @@ export function computeValuation(
       adjustments,
       outlier,
       divergent,
+      marketAnchor,
       coefficient: {
         region_slug: coefficient.region_slug,
         star_rating: coefficient.star_rating,
