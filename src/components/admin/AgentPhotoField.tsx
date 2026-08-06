@@ -3,10 +3,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-
-const MAX_BYTES = 3 * 1024 * 1024; // 3 Mo
-const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
-const TEN_YEARS = 60 * 60 * 24 * 3650;
+import {
+  AGENT_PHOTO_TYPES,
+  uploadAgentPhoto,
+  validateAgentPhotoFile,
+} from "@/lib/agent-photo";
 
 interface Props {
   value: string;
@@ -18,31 +19,16 @@ export function AgentPhotoField({ value, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
 
   async function handleFile(file: File) {
-    if (!ACCEPTED.includes(file.type)) {
-      toast.error("Format non supporté", {
-        description: "Utilisez une image JPG, PNG ou WebP.",
-      });
-      return;
-    }
-    if (file.size > MAX_BYTES) {
-      toast.error("Fichier trop lourd", {
-        description: `Taille max 3 Mo (fichier : ${(file.size / 1024 / 1024).toFixed(1)} Mo).`,
-      });
+    const check = validateAgentPhotoFile(file);
+    if (!check.ok) {
+      toast.error(check.title, { description: check.description });
+      if (inputRef.current) inputRef.current.value = "";
       return;
     }
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `agents/${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage
-        .from("agent-photos")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (error) throw error;
-      const { data, error: signErr } = await supabase.storage
-        .from("agent-photos")
-        .createSignedUrl(path, TEN_YEARS);
-      if (signErr || !data?.signedUrl) throw signErr ?? new Error("URL indisponible");
-      onChange(data.signedUrl);
+      const url = await uploadAgentPhoto(supabase as any, file);
+      onChange(url);
       toast.success("Photo téléversée");
     } catch (e: any) {
       toast.error("Échec du téléversement", {
@@ -95,7 +81,9 @@ export function AgentPhotoField({ value, onChange }: Props) {
         <input
           ref={inputRef}
           type="file"
-          accept={ACCEPTED.join(",")}
+          data-testid="agent-photo-input"
+          aria-label="Fichier photo de l'agent"
+          accept={AGENT_PHOTO_TYPES.join(",")}
           className="sr-only"
           onChange={(e) => {
             const f = e.target.files?.[0];
