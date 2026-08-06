@@ -26,6 +26,20 @@ export interface ValuationInput {
   isEmphyteotic?: boolean | null;
   /** Années restantes du bail emphytéotique. */
   emphyteoticYearsRemaining?: number | null;
+  /**
+   * Comparables marché observés (transactions validées) pour ce segment.
+   * Utilisés pour recentrer la méthode « prix par chambre ».
+   */
+  comparables?: MarketComparables | null;
+}
+
+export interface MarketComparables {
+  /** Médiane observée du prix par chambre, en centimes. */
+  medianPerRoomCents: number;
+  /** Nombre de transactions retenues. */
+  sampleSize: number;
+  /** Périmètre : segment exact (région + étoiles) ou élargi (région seule). */
+  scope: "segment" | "region";
 }
 
 export interface Coefficient {
@@ -49,6 +63,15 @@ export interface ValuationDetail {
   adjustments: Array<{ label: string; factor: number }>;
   outlier: boolean;
   divergent: boolean;
+  /** Recentrage appliqué à partir des transactions observées, le cas échéant. */
+  marketAnchor: {
+    medianPerRoomCents: number;
+    sampleSize: number;
+    scope: "segment" | "region";
+    weight: number;
+    /** Écart entre la médiane observée et le milieu de la fourchette théorique. */
+    deltaRatio: number;
+  } | null;
   coefficient: {
     region_slug: string;
     star_rating: number;
