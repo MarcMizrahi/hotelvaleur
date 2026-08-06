@@ -25,6 +25,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
@@ -113,6 +114,11 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -215,6 +223,7 @@ export interface FileRoutesById {
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/leads'
@@ -494,6 +513,7 @@ interface AdminRouteChildren {
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -502,6 +522,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
