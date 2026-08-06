@@ -338,6 +338,7 @@ function BenchmarksPage() {
                 <th className="px-3 py-2">★</th>
                 <th className="px-3 py-2">Transaction</th>
                 <th className="px-3 py-2 text-right">Benchmark €/ch.</th>
+                <th className="px-3 py-2 text-right">Observé €/ch.</th>
                 <th className="px-3 py-2 text-right">Moteur €/ch.</th>
                 <th className="px-3 py-2 text-right">Écart médian</th>
                 <th className="px-3 py-2 text-right">Score</th>
