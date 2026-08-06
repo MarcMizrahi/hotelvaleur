@@ -22,6 +22,7 @@ import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
@@ -99,6 +100,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const MiseEnRelationTokenRoute = MiseEnRelationTokenRouteImport.update({
+  id: '/mise-en-relation/$token',
+  path: '/mise-en-relation/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
   id: '/mes-donnees/acces',
   path: '/mes-donnees/acces',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin': typeof AdminIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin'
     | '/guides'
     | '/mes-donnees'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   MesDonneesAccesRoute: typeof MesDonneesAccesRoute
+  MiseEnRelationTokenRoute: typeof MiseEnRelationTokenRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
   MesDonneesIndexRoute: typeof MesDonneesIndexRoute
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/mise-en-relation/$token': {
+      id: '/mise-en-relation/$token'
+      path: '/mise-en-relation/$token'
+      fullPath: '/mise-en-relation/$token'
+      preLoaderRoute: typeof MiseEnRelationTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/mes-donnees/acces': {
       id: '/mes-donnees/acces'
@@ -552,6 +572,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   MesDonneesAccesRoute: MesDonneesAccesRoute,
+  MiseEnRelationTokenRoute: MiseEnRelationTokenRoute,
   GuidesIndexRoute: GuidesIndexRoute,
   MesDonneesIndexRoute: MesDonneesIndexRoute,
   PrixHotelIndexRoute: PrixHotelIndexRoute,
