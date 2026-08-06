@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as EstimationRouteImport } from './routes/estimation'
 import { Route as DesabonnementRouteImport } from './routes/desabonnement'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -43,6 +44,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EstimationRoute = EstimationRouteImport.update({
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
     | '/admin/benchmarks'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
     | '/admin/benchmarks'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
     | '/admin/benchmarks'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
   EstimationRoute: typeof EstimationRouteWithChildren
+  ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/mentions-legales'
       fullPath: '/mentions-legales'
       preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/estimation': {
@@ -568,6 +588,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
   EstimationRoute: EstimationRouteWithChildren,
+  ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesSlugRoute: GuidesSlugRoute,
