@@ -146,9 +146,37 @@ export function computeValuation(
   if (coefficient.region_slug !== input.regionSlug)
     throw new Error("Coefficient region mismatch");
   // 2. Méthode A – prix par chambre (toujours calculable)
+  let perRoomLowUnit = coefficient.price_per_room_low_cents;
+  let perRoomHighUnit = coefficient.price_per_room_high_cents;
+
+  // 2b. Recentrage sur les comparables marché observés (transactions validées).
+  // Le poids croît avec la taille de l'échantillon et se limite à 50 % (segment)
+  // ou 30 % (périmètre régional élargi), pour éviter qu'un échantillon étroit
+  // ne pilote seul la valorisation.
+  let marketAnchor: ValuationDetail["marketAnchor"] = null;
+  const cmp = input.comparables;
+  if (cmp && cmp.sampleSize > 0 && cmp.medianPerRoomCents > 0) {
+    const mid = (perRoomLowUnit + perRoomHighUnit) / 2;
+    const maxWeight = cmp.scope === "segment" ? 0.5 : 0.3;
+    const weight = Math.min(maxWeight, cmp.sampleSize / 10);
+    // Le recentrage est borné à ±40 % pour rester robuste aux transactions atypiques.
+    const rawRatio = cmp.medianPerRoomCents / mid;
+    const ratio = Math.min(1.4, Math.max(0.6, rawRatio));
+    const factor = 1 + weight * (ratio - 1);
+    perRoomLowUnit = perRoomLowUnit * factor;
+    perRoomHighUnit = perRoomHighUnit * factor;
+    marketAnchor = {
+      medianPerRoomCents: cmp.medianPerRoomCents,
+      sampleSize: cmp.sampleSize,
+      scope: cmp.scope,
+      weight: Number(weight.toFixed(2)),
+      deltaRatio: Number((rawRatio - 1).toFixed(3)),
+    };
+  }
+
   const perRoom = {
-    low: input.roomCount * coefficient.price_per_room_low_cents,
-    high: input.roomCount * coefficient.price_per_room_high_cents,
+    low: input.roomCount * perRoomLowUnit,
+    high: input.roomCount * perRoomHighUnit,
   };
 
   // 3. Méthode B – multiple d'EBITDA
@@ -156,8 +184,12 @@ export function computeValuation(
   let ebitdaCents = input.ebitdaCents ?? null;
   let estimated = false;
   if ((!ebitdaCents || ebitdaCents <= 0) && input.annualRevenueCents && input.annualRevenueCents > 0) {
-    // Estimation EBITDA à 28 % du CA
-    ebitdaCents = Math.round(input.annualRevenueCents * 0.28);
+    // Estimation EBITDA : marge dépendant du positionnement (observé 22–34 % du CA)
+    const marginByStar: Record<number, number> = {
+      0: 0.22, 1: 0.22, 2: 0.25, 3: 0.28, 4: 0.31, 5: 0.34,
+    };
+    const margin = marginByStar[input.starRating] ?? 0.28;
+    ebitdaCents = Math.round(input.annualRevenueCents * margin);
     estimated = true;
   }
   if (ebitdaCents && ebitdaCents > 0) {
@@ -188,10 +220,15 @@ export function computeValuation(
         high: Math.max(perRoom.high, ebitdaBand.high),
       };
     } else {
-      // Moyenne pondérée 60 % B / 40 % A
+      // Pondération selon la qualité de la donnée :
+      // EBITDA déclaré → 60 % rendement / 40 % comparables ;
+      // EBITDA estimé depuis le CA → 40 % / 60 %, la méthode par chambre
+      // (recalée sur le marché) devenant la référence dominante.
+      const wEbitda = ebitdaBand.estimated ? 0.4 : 0.6;
+      const wPerRoom = 1 - wEbitda;
       combined = {
-        low: 0.4 * perRoom.low + 0.6 * ebitdaBand.low,
-        high: 0.4 * perRoom.high + 0.6 * ebitdaBand.high,
+        low: wPerRoom * perRoom.low + wEbitda * ebitdaBand.low,
+        high: wPerRoom * perRoom.high + wEbitda * ebitdaBand.high,
       };
     }
     methodUsed = "blended";
