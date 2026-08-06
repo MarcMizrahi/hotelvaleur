@@ -61,28 +61,37 @@ function AdminShell() {
     );
   }
   if (state.kind === "signed-out") return <LoginForm />;
-  if (state.kind === "not-admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="max-w-md text-center space-y-4">
-          <h1 className="font-serif text-2xl text-navy">Accès refusé</h1>
-          <p className="text-muted-foreground">
-            Le compte {state.email} n'a pas le rôle administrateur.
-          </p>
+  if (state.kind === "not-admin") return <AccessDenied email={state.email} />;
+  return <AdminLayout email={state.email} />;
+}
+
+function AccessDenied({ email }: { email: string }) {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4 bg-surface">
+      <div className="max-w-md text-center space-y-4">
+        <h1 className="font-serif text-2xl text-navy">Accès refusé</h1>
+        <p className="text-muted-foreground">
+          Le compte {email} n'a pas le rôle administrateur. Connectez-vous avec un compte
+          autorisé.
+        </p>
+        <div className="flex justify-center gap-3">
           <Button
-            variant="outline"
             onClick={async () => {
               await supabase.auth.signOut();
             }}
           >
-            Se déconnecter
+            Changer de compte
+          </Button>
+          <Button variant="outline" onClick={() => navigate({ to: "/" })}>
+            Retour au site
           </Button>
         </div>
       </div>
-    );
-  }
-  return <AdminLayout email={state.email} />;
+    </div>
+  );
 }
+
 
 function LoginForm() {
   const [email, setEmail] = useState("");
