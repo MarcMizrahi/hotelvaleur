@@ -1,0 +1,2 @@
+CREATE POLICY "Admins manage agent photos" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'agent-photos' AND public.is_admin()) WITH CHECK (bucket_id = 'agent-photos' AND public.is_admin());
+CREATE POLICY "Read agent photos" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'agent-photos');
