@@ -102,7 +102,9 @@ function AgentsAdmin() {
       company: a.company ?? "",
       email: a.email,
       phone: a.phone ?? "",
+      photoUrl: a.photo_url ?? "",
       bio: a.bio ?? "",
+
       regions: a.regions ?? [],
       starRatings: a.star_ratings ?? [],
       transactionTypes: a.transaction_types ?? [],
