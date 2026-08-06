@@ -63,6 +63,10 @@ function AgentsAdmin() {
   const [leads, setLeads] = useState<any[]>([]);
   const [form, setForm] = useState<AgentForm | null>(null);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [regionFilter, setRegionFilter] = useState("all");
+
 
   async function refresh() {
     setLoading(true);
