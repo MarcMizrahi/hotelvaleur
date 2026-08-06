@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as EstimationRouteImport } from './routes/estimation'
 import { Route as DesabonnementRouteImport } from './routes/desabonnement'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -22,14 +23,17 @@ import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminMiseEnRelationRouteImport } from './routes/admin.mise-en-relation'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
+import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
@@ -42,6 +46,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EstimationRoute = EstimationRouteImport.update({
@@ -99,6 +108,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const MiseEnRelationTokenRoute = MiseEnRelationTokenRouteImport.update({
+  id: '/mise-en-relation/$token',
+  path: '/mise-en-relation/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
   id: '/mes-donnees/acces',
   path: '/mes-donnees/acces',
@@ -119,6 +133,11 @@ const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMiseEnRelationRoute = AdminMiseEnRelationRouteImport.update({
+  id: '/mise-en-relation',
+  path: '/mise-en-relation',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -137,6 +156,11 @@ const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
 const AdminBenchmarksRoute = AdminBenchmarksRouteImport.update({
   id: '/benchmarks',
   path: '/benchmarks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAgentsRoute = AdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => AdminRoute,
 } as any)
 const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
@@ -165,16 +189,20 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
@@ -190,16 +218,20 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin': typeof AdminIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
@@ -217,16 +249,20 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
   '/estimation': typeof EstimationRouteWithChildren
+  '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
+  '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
@@ -245,16 +281,20 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
@@ -270,16 +310,20 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin'
     | '/guides'
     | '/mes-donnees'
@@ -296,16 +340,20 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/desabonnement'
     | '/estimation'
+    | '/experts'
     | '/mentions-legales'
     | '/sitemap.xml'
+    | '/admin/agents'
     | '/admin/benchmarks'
     | '/admin/coefficients'
     | '/admin/emails'
     | '/admin/leads'
+    | '/admin/mise-en-relation'
     | '/admin/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
+    | '/mise-en-relation/$token'
     | '/admin/'
     | '/guides/'
     | '/mes-donnees/'
@@ -323,10 +371,12 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
   EstimationRoute: typeof EstimationRouteWithChildren
+  ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   MesDonneesAccesRoute: typeof MesDonneesAccesRoute
+  MiseEnRelationTokenRoute: typeof MiseEnRelationTokenRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
   MesDonneesIndexRoute: typeof MesDonneesIndexRoute
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
@@ -349,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/mentions-legales'
       fullPath: '/mentions-legales'
       preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/estimation': {
@@ -428,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/mise-en-relation/$token': {
+      id: '/mise-en-relation/$token'
+      path: '/mise-en-relation/$token'
+      fullPath: '/mise-en-relation/$token'
+      preLoaderRoute: typeof MiseEnRelationTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mes-donnees/acces': {
       id: '/mes-donnees/acces'
       path: '/mes-donnees/acces'
@@ -454,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions'
       fullPath: '/admin/transactions'
       preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mise-en-relation': {
+      id: '/admin/mise-en-relation'
+      path: '/mise-en-relation'
+      fullPath: '/admin/mise-en-relation'
+      preLoaderRoute: typeof AdminMiseEnRelationRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/leads': {
@@ -484,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBenchmarksRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/agents': {
+      id: '/admin/agents'
+      path: '/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AdminAgentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/prix-hotel/$region/': {
       id: '/prix-hotel/$region/'
       path: '/prix-hotel/$region'
@@ -509,19 +587,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAgentsRoute: typeof AdminAgentsRoute
   AdminBenchmarksRoute: typeof AdminBenchmarksRoute
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminMiseEnRelationRoute: typeof AdminMiseEnRelationRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgentsRoute: AdminAgentsRoute,
   AdminBenchmarksRoute: AdminBenchmarksRoute,
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminMiseEnRelationRoute: AdminMiseEnRelationRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -548,10 +630,12 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
   EstimationRoute: EstimationRouteWithChildren,
+  ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   MesDonneesAccesRoute: MesDonneesAccesRoute,
+  MiseEnRelationTokenRoute: MiseEnRelationTokenRoute,
   GuidesIndexRoute: GuidesIndexRoute,
   MesDonneesIndexRoute: MesDonneesIndexRoute,
   PrixHotelIndexRoute: PrixHotelIndexRoute,
@@ -562,13 +646,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

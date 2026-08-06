@@ -53,6 +53,198 @@ export type Database = {
         }
         Relationships: []
       }
+      broker_agent: {
+        Row: {
+          bio: string | null
+          company: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          is_public: boolean
+          languages: string[]
+          max_rooms: number | null
+          min_rooms: number | null
+          monthly_capacity: number
+          phone: string | null
+          photo_url: string | null
+          regions: string[]
+          star_ratings: number[]
+          transaction_types: string[]
+          transactions_count: number
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          languages?: string[]
+          max_rooms?: number | null
+          min_rooms?: number | null
+          monthly_capacity?: number
+          phone?: string | null
+          photo_url?: string | null
+          regions?: string[]
+          star_ratings?: number[]
+          transaction_types?: string[]
+          transactions_count?: number
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          languages?: string[]
+          max_rooms?: number | null
+          min_rooms?: number | null
+          monthly_capacity?: number
+          phone?: string | null
+          photo_url?: string | null
+          regions?: string[]
+          star_ratings?: number[]
+          transaction_types?: string[]
+          transactions_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      brokerage_lead: {
+        Row: {
+          agent_id: string | null
+          assigned_at: string | null
+          availability: string | null
+          confidential: boolean
+          consent_share: boolean
+          contacted_at: string | null
+          created_at: string
+          estimation_id: string
+          has_mandate: boolean
+          id: string
+          internal_notes: string | null
+          message: string | null
+          operation_type: string
+          phone: string | null
+          sale_horizon: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          assigned_at?: string | null
+          availability?: string | null
+          confidential?: boolean
+          consent_share?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          estimation_id: string
+          has_mandate?: boolean
+          id?: string
+          internal_notes?: string | null
+          message?: string | null
+          operation_type: string
+          phone?: string | null
+          sale_horizon: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          assigned_at?: string | null
+          availability?: string | null
+          confidential?: boolean
+          consent_share?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          estimation_id?: string
+          has_mandate?: boolean
+          id?: string
+          internal_notes?: string | null
+          message?: string | null
+          operation_type?: string
+          phone?: string | null
+          sale_horizon?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brokerage_lead_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "broker_agent"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brokerage_lead_estimation_id_fkey"
+            columns: ["estimation_id"]
+            isOneToOne: false
+            referencedRelation: "estimation"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brokerage_lead_event: {
+        Row: {
+          actor: string | null
+          agent_id: string | null
+          created_at: string
+          detail: string | null
+          event_type: string
+          from_value: string | null
+          id: string
+          lead_id: string
+          to_value: string | null
+        }
+        Insert: {
+          actor?: string | null
+          agent_id?: string | null
+          created_at?: string
+          detail?: string | null
+          event_type: string
+          from_value?: string | null
+          id?: string
+          lead_id: string
+          to_value?: string | null
+        }
+        Update: {
+          actor?: string | null
+          agent_id?: string | null
+          created_at?: string
+          detail?: string | null
+          event_type?: string
+          from_value?: string | null
+          id?: string
+          lead_id?: string
+          to_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brokerage_lead_event_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "broker_agent"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brokerage_lead_event_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "brokerage_lead"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_log: {
         Row: {
           created_at: string

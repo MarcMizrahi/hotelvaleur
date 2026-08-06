@@ -208,6 +208,19 @@ export const submitEstimation = createServerFn({ method: "POST" })
       console.error("sendEstimationReport failed", err);
     }
 
+    // 7. Lien signé vers la mise en relation avec un agent (30 jours)
+    let brokerageToken: string | null = null;
+    try {
+      const { signToken } = await import("@/lib/hmac.server");
+      brokerageToken = signToken({
+        purpose: "brokerage",
+        subject: inserted.id,
+        exp: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,
+      });
+    } catch (err) {
+      console.error("brokerage token signing failed", err);
+    }
+
     return {
       id: inserted.id,
       valueLowCents: result.valueLowCents,
@@ -216,5 +229,6 @@ export const submitEstimation = createServerFn({ method: "POST" })
       outlier: result.detail.outlier,
       divergent: result.detail.divergent,
       reportSent,
+      brokerageToken,
     };
   });

@@ -13,6 +13,7 @@ export function SiteHeader() {
     { to: "/estimation", label: t.nav.estimation },
     { to: "/prix-hotel", label: t.nav.prices },
     { to: "/guides", label: t.nav.guides },
+    { to: "/experts", label: "Nos experts" },
   ] as const;
 
   return (

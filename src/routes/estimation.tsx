@@ -181,6 +181,7 @@ function EstimationPage() {
         draft,
         reportSent: res.reportSent,
         outlier: res.outlier,
+        brokerageToken: res.brokerageToken,
       };
       saveResult(stored);
       await track("funnel_vendeur.step_6");

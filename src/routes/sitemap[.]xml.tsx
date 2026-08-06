@@ -11,6 +11,7 @@ function buildEntries(): Entry[] {
     { path: "/", priority: "1.0", changefreq: "weekly" },
     { path: "/estimation", priority: "0.9", changefreq: "monthly" },
     { path: "/prix-hotel", priority: "0.9", changefreq: "monthly" },
+    { path: "/experts", priority: "0.8", changefreq: "monthly" },
     { path: "/guides", priority: "0.8", changefreq: "monthly" },
     { path: "/guides/combien-vaut-mon-hotel", priority: "0.7", changefreq: "monthly" },
     { path: "/guides/vendre-son-hotel-etapes", priority: "0.7", changefreq: "monthly" },

@@ -156,6 +156,8 @@ function AdminLayout({ email }: { email: string }) {
   const nav = [
     { to: "/admin", label: "Tableau de bord", exact: true },
     { to: "/admin/leads", label: "Leads" },
+    { to: "/admin/mise-en-relation", label: "Mise en relation" },
+    { to: "/admin/agents", label: "Agents" },
     { to: "/admin/coefficients", label: "Coefficients" },
     { to: "/admin/benchmarks", label: "Benchmarks" },
     { to: "/admin/transactions", label: "Transactions" },

@@ -104,6 +104,7 @@ export interface StoredResult {
   draft: EstimationDraft;
   reportSent: boolean;
   outlier: boolean;
+  brokerageToken?: string | null;
 }
 export function saveResult(r: StoredResult) {
   if (typeof window === "undefined") return;
