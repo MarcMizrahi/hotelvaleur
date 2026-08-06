@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, cleanup, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
 
@@ -62,7 +62,10 @@ describe("AgentPhotoField", () => {
 
   it("bloque un type non supporté sans appeler le stockage", async () => {
     const { onChange } = setup();
-    await userEvent.upload(input(), makeFile("doc.pdf", "application/pdf", 1000));
+    // fireEvent contourne l'attribut accept pour simuler un fichier interdit
+    const el = input();
+    Object.defineProperty(el, "files", { value: [makeFile("doc.pdf", "application/pdf", 1000)] });
+    fireEvent.change(el);
     await waitFor(() => expect(toastError).toHaveBeenCalled());
     expect(toastError.mock.calls[0][0]).toBe("Format non supporté");
     expect(upload).not.toHaveBeenCalled();
