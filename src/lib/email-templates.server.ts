@@ -11,6 +11,7 @@ export interface ReportInput {
   unsubscribeUrl: string;
   siteUrl: string;
   regionSlug: string;
+  brokerageUrl?: string | null;
 }
 
 function esc(s: string): string {
@@ -26,7 +27,8 @@ export function buildReportSubject(low: number, high: number): string {
 }
 
 export function buildReportHtml(input: ReportInput): string {
-  const { low, high, methodUsed, draft, unsubscribeUrl, siteUrl, regionSlug } = input;
+  const { low, high, methodUsed, draft, unsubscribeUrl, siteUrl, regionSlug, brokerageUrl } =
+    input;
   const region = regions.find((r) => r.slug === regionSlug);
   const dep = region?.departments.find((d) => d.code === draft.departmentCode);
   const txLabel =
@@ -80,6 +82,18 @@ export function buildReportHtml(input: ReportInput): string {
     <li>Le contexte local : attractivité touristique, saisonnalité, concurrence.</li>
   </ol>
 
+  ${
+    brokerageUrl
+      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;background:#f5f7fa;border-radius:8px;">
+    <tr><td style="padding:20px;">
+      <h2 style="font-size:18px;margin:0 0 8px;">Être accompagné par un expert</h2>
+      <p style="font-size:14px;line-height:1.5;color:#333333;margin:0 0 14px;">Un agent spécialisé en hôtellerie, sélectionné selon votre région et votre segment, peut affiner cette valorisation et vous accompagner. Sans engagement.</p>
+      <a href="${esc(brokerageUrl)}" style="display:inline-block;background:#0f3057;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:6px;font-size:14px;">Être mis en relation</a>
+    </td></tr>
+  </table>`
+      : ""
+  }
+
   <h2 style="font-size:18px;margin:24px 0 8px;">Pour aller plus loin</h2>
   <p style="font-size:14px;margin:0;">
     <a href="${esc(siteUrl)}/guides/vendre-son-hotel-etapes" style="color:#0f3057;">Vendre son hôtel : les étapes</a><br>
@@ -102,7 +116,8 @@ export function buildReportHtml(input: ReportInput): string {
 }
 
 export function buildReportText(input: ReportInput): string {
-  const { low, high, methodUsed, draft, unsubscribeUrl, siteUrl, regionSlug } = input;
+  const { low, high, methodUsed, draft, unsubscribeUrl, siteUrl, regionSlug, brokerageUrl } =
+    input;
   const region = regions.find((r) => r.slug === regionSlug);
   const dep = region?.departments.find((d) => d.code === draft.departmentCode);
   const txLabel =
@@ -124,6 +139,7 @@ export function buildReportText(input: ReportInput): string {
     `2. L'état du bien et les travaux à prévoir.`,
     `3. Le contexte local et la saisonnalité.`,
     ``,
+    brokerageUrl ? `Être mis en relation avec un expert : ${brokerageUrl}` : "",
     `Guide : ${siteUrl}/guides/vendre-son-hotel-etapes`,
     region ? `Prix dans votre région : ${siteUrl}/prix-hotel/${region.slug}` : "",
     ``,

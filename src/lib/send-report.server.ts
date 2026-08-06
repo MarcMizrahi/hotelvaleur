@@ -52,6 +52,19 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
   const token = signToken({ purpose: "unsubscribe", subject: emailLower, exp });
   const unsubscribeUrl = `${siteUrl}/desabonnement?email=${encodeURIComponent(emailLower)}&token=${encodeURIComponent(token)}`;
 
+  let brokerageUrl: string | null = null;
+  try {
+    brokerageUrl = `${siteUrl}/mise-en-relation/${encodeURIComponent(
+      signToken({
+        purpose: "brokerage",
+        subject: input.estimationId,
+        exp: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,
+      }),
+    )}`;
+  } catch (err) {
+    console.error("brokerage token signing failed", err);
+  }
+
   // 3. Compose + send
   const subject = buildReportSubject(input.low, input.high);
   const html = buildReportHtml({
@@ -62,6 +75,7 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
     unsubscribeUrl,
     siteUrl,
     regionSlug: input.regionSlug,
+    brokerageUrl,
   });
   const text = buildReportText({
     low: input.low,
@@ -71,6 +85,7 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
     unsubscribeUrl,
     siteUrl,
     regionSlug: input.regionSlug,
+    brokerageUrl,
   });
 
   const result = await sendEmail({ to: emailLower, subject, html, text });
