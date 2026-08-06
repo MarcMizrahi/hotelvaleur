@@ -32,7 +32,7 @@ export function validateAgentPhotoFile(file: {
   return { ok: true };
 }
 
-export function agentPhotoObjectPath(fileName: string, id = crypto.randomUUID()) {
+export function agentPhotoObjectPath(fileName: string, id: string = crypto.randomUUID()) {
   const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
   return `agents/${id}.${ext}`;
 }
