@@ -2,7 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT } from "@/hooks/use-t";
 import { site } from "@/config/site";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, LineChart, FileText, ArrowRight } from "lucide-react";
+import {
+  ShieldCheck,
+  LineChart,
+  FileText,
+  ArrowRight,
+  Clock,
+  Lock,
+  BadgeEuro,
+  Check,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
