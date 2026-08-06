@@ -20,11 +20,13 @@ export function SiteHeader() {
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link
           to="/"
-          className="font-serif text-xl font-medium text-navy tracking-tight"
+          className="min-w-0 truncate font-serif text-xl font-bold tracking-tight text-navy"
           aria-label={site.name}
         >
           {site.name}
+          <span className="text-gold">.</span>
         </Link>
+
 
         <nav className="hidden md:flex items-center gap-8" aria-label="Navigation principale">
           {links.map((l) => (
