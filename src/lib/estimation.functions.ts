@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { computeValuation, type Coefficient } from "@/lib/valuation";
+import { selectComparables, type ComparableRow } from "@/lib/comparables";
 
 const submitSchema = z.object({
   regionSlug: z.string().min(1).max(80),
