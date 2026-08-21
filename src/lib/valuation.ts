@@ -243,40 +243,18 @@ export function computeValuation(
   const adjustments: Array<{ label: string; factor: number }> = [];
 
   // 5a. Type de transaction
-  // Cas particulier "fonds seul" : si l'on dispose d'un EBITDA (réel ou estimé)
-  // et d'un CA, on retraite l'EBITDA d'un loyer implicite de 10 % du CA
-  // (fourchette usuelle 8–12 % en hôtellerie) et on applique un multiple 3–5×,
-  // conforme aux pratiques de marché pour le fonds de commerce seul.
-  let fondsRepriced = false;
-  if (
-    input.transactionType === "fonds" &&
-    ebitdaBand &&
-    input.annualRevenueCents &&
-    input.annualRevenueCents > 0
-  ) {
-    const impliedRent = Math.round(input.annualRevenueCents * 0.1);
-    const ebitdaFonds = Math.max(0, ebitdaBand.used - impliedRent);
-    if (ebitdaFonds > 0) {
-      combined = { low: ebitdaFonds * 3, high: ebitdaFonds * 5 };
-      fondsRepriced = true;
-      adjustments.push({
-        label: "Fonds seul : EBITDA retraité (loyer implicite 10 % du CA) × 3–5",
-        factor: 1.0,
-      });
-    }
-  }
+  // Les trois natures d'opération sont désormais traitées à part entière
+  // (multiplicateur = 1) pour refléter la valorisation intégrale de l'actif.
+  const txMap: Record<TransactionType, number> = {
+    murs_fonds: 1.0,
+    fonds: 1.0,
+    murs: 1.0,
+  };
+  adjustments.push({
+    label: `Type de transaction : ${input.transactionType}`,
+    factor: txMap[input.transactionType],
+  });
 
-  if (!fondsRepriced) {
-    const txMap: Record<TransactionType, number> = {
-      murs_fonds: 1.0,
-      fonds: 0.28,
-      murs: 0.6,
-    };
-    adjustments.push({
-      label: `Type de transaction : ${input.transactionType}`,
-      factor: txMap[input.transactionType],
-    });
-  }
 
   // 5b. Durée du bail commercial (pertinent pour "fonds")
   if (
