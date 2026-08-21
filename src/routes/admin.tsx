@@ -121,9 +121,8 @@ function AdminLayout({ email }: { email: string }) {
             <div className="font-serif text-lg">Administration</div>
             <nav aria-label="Sections admin" className="flex gap-1 text-sm">
               {nav.map((n) => {
-                const active = n.exact
-                  ? location.pathname === n.to
-                  : location.pathname.startsWith(n.to);
+                const active = location.pathname.startsWith(n.to);
+
                 return (
                   <Link
                     key={n.to}
