@@ -320,11 +320,13 @@ export function computeValuation(
   // Approximation d'une actualisation sur la durée restante :
   //   factor = 1 - exp(-années / 30)
   // 99 ans → ×0.96, 50 → ×0.81, 30 → ×0.63, 15 → ×0.39, 5 → ×0.15.
+  // Au-delà de 60 ans, le bail est considéré comme quasi-perpétuel : pas d'impact.
   if (
     input.isEmphyteotic &&
     (input.transactionType === "murs" || input.transactionType === "murs_fonds") &&
     typeof input.emphyteoticYearsRemaining === "number" &&
-    input.emphyteoticYearsRemaining > 0
+    input.emphyteoticYearsRemaining > 0 &&
+    input.emphyteoticYearsRemaining <= 60
   ) {
     const y = input.emphyteoticYearsRemaining;
     const f = 1 - Math.exp(-y / 30);
@@ -333,6 +335,7 @@ export function computeValuation(
       factor: Number(f.toFixed(3)),
     });
   }
+
 
   let low = combined.low;
   let high = combined.high;
