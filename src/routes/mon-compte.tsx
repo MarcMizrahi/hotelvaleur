@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { AccountSettings } from "@/components/account-settings";
 import { site } from "@/config/site";
+
 
 export const Route = createFileRoute("/mon-compte")({
   ssr: false,
