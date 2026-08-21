@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import type { StoredResult } from "@/lib/estimation-storage";
-import { formatEurosRange } from "@/lib/money";
+import { formatEuros, formatEurosRange } from "@/lib/money";
 import { regions } from "@/lib/regions";
 
 export function EstimationResultView({ result }: { result: StoredResult }) {
