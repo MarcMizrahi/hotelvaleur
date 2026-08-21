@@ -213,23 +213,32 @@ export function computeValuation(
     const meanA = (perRoom.low + perRoom.high) / 2;
     const meanB = (ebitdaBand.low + ebitdaBand.high) / 2;
     const relDiff = Math.abs(meanA - meanB) / Math.max(meanA, meanB);
-    if (relDiff > DIVERGENCE_THRESHOLD) {
-      divergent = true;
-      combined = {
-        low: Math.min(perRoom.low, ebitdaBand.low),
-        high: Math.max(perRoom.high, ebitdaBand.high),
-      };
-    } else {
-      // Pondération selon la qualité de la donnée :
-      // EBITDA déclaré → 60 % rendement / 40 % comparables ;
-      // EBITDA estimé depuis le CA → 40 % / 60 %, la méthode par chambre
-      // (recalée sur le marché) devenant la référence dominante.
-      const wEbitda = ebitdaBand.estimated ? 0.4 : 0.6;
-      const wPerRoom = 1 - wEbitda;
-      combined = {
-        low: wPerRoom * perRoom.low + wEbitda * ebitdaBand.low,
-        high: wPerRoom * perRoom.high + wEbitda * ebitdaBand.high,
-      };
+    divergent = relDiff > DIVERGENCE_THRESHOLD;
+
+    // Pondération selon la nature de l'opération : le prix par chambre est un
+    // indicateur d'actif (murs), le multiple d'EBITDA un indicateur de rendement
+    // (exploitation). Un fonds de commerce se valorise d'abord au rendement,
+    // des murs d'abord à l'actif.
+    const wEbitdaByTx: Record<TransactionType, number> = {
+      fonds: 0.8,
+      murs_fonds: 0.45,
+      murs: 0.3,
+    };
+    let wEbitda = wEbitdaByTx[input.transactionType];
+    // Un EBITDA estimé depuis le CA est moins fiable : on réduit son poids.
+    if (ebitdaBand.estimated) wEbitda = Math.max(0.25, wEbitda - 0.15);
+    const wPerRoom = 1 - wEbitda;
+
+    combined = {
+      low: wPerRoom * perRoom.low + wEbitda * ebitdaBand.low,
+      high: wPerRoom * perRoom.high + wEbitda * ebitdaBand.high,
+    };
+
+    if (divergent) {
+      // Les deux méthodes s'opposent : on élargit la fourchette de ±15 %
+      // (au lieu de prendre l'union des deux bandes, qui produisait des
+      // fourchettes allant du simple au sextuple).
+      combined = { low: combined.low * 0.85, high: combined.high * 1.15 };
     }
     methodUsed = "blended";
   } else {
@@ -238,6 +247,14 @@ export function computeValuation(
     combined = { low: perRoom.low * 0.9, high: perRoom.high * 1.1 };
     methodUsed = "per_room";
   }
+
+  // 4b. Fourchette lisible : le haut ne peut pas dépasser 2,2× le bas.
+  const MAX_RATIO = 2.2;
+  if (combined.low > 0 && combined.high / combined.low > MAX_RATIO) {
+    const mid = Math.sqrt(combined.low * combined.high);
+    combined = { low: mid / Math.sqrt(MAX_RATIO), high: mid * Math.sqrt(MAX_RATIO) };
+  }
+
 
   // 5. Ajustements multiplicatifs
   const adjustments: Array<{ label: string; factor: number }> = [];
