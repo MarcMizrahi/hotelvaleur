@@ -188,7 +188,7 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     ).toBe(true);
   });
 
-  it("« fonds seul » avec EBITDA et CA suit désormais la méthode mixte avec ancrage marché", () => {
+  it("« fonds seul » avec EBITDA se valorise au rendement seul (prix/chambre non applicable)", () => {
     const input: ValuationInput = {
       ...baseInput("ile-de-france", 3),
       transactionType: "fonds",
@@ -198,13 +198,16 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     const cmp = { medianPerRoomCents: Math.round(mid * 1.3), sampleSize: 10, scope: "segment" as const };
     const withCmp = computeValuation({ ...input, comparables: cmp }, coef);
     const without = computeValuation(input, coef);
-    // L'ancrage marché influe désormais le résultat car le fonds n'est plus retraité en dur.
-    expect(withCmp.valueHighCents).not.toBe(without.valueHighCents);
+    // Les murs n'étant pas cédés, l'ancrage prix/chambre n'entre pas dans le résultat.
+    expect(withCmp.valueHighCents).toBe(without.valueHighCents);
+    expect(withCmp.detail.marketAnchor).not.toBeNull();
     expect(
       withCmp.detail.adjustments.some((a) => a.label.includes("fonds")),
     ).toBe(true);
-    expect(withCmp.detail.marketAnchor).not.toBeNull();
+    // Fourchette lisible : jamais plus du simple au double et demi.
+    expect(withCmp.valueHighCents / withCmp.valueLowCents).toBeLessThanOrEqual(2.21);
   });
+
 
 
   it("le bail emphytéotique au-delà de 60 ans n'a pas d'impact", () => {
