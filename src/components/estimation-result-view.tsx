@@ -51,6 +51,13 @@ export function EstimationResultView({ result }: { result: StoredResult }) {
             ? "Nous avons combiné le multiple d'EBITDA et le prix par chambre observés dans votre région, en donnant davantage de poids à l'exploitation."
             : "Faute de données financières, nous avons utilisé les prix par chambre observés dans votre région et élargi la fourchette."}
         </p>
+        {typeof d.worksCostCents === "number" && d.worksCostCents > 0 && (
+          <p className="mt-4 rounded-md border border-border bg-muted/40 p-3 text-sm">
+            Le montant des travaux que vous avez indiqué ({formatEuros(d.worksCostCents)}) a été
+            déduit euro pour euro de la valorisation, en lieu et place de la décote forfaitaire
+            pour travaux.
+          </p>
+        )}
         {!hasFinancials && (
           <p className="mt-4 rounded-md bg-muted p-3 text-sm">
             Communiquez votre chiffre d'affaires pour affiner cette estimation.
@@ -66,6 +73,12 @@ export function EstimationResultView({ result }: { result: StoredResult }) {
           <li>Classement : {d.starRating ? `${d.starRating} étoiles` : "non classé"}</li>
           <li>Type de transaction : {txLabel}</li>
           {d.worksNeeded && <li>Travaux à prévoir : {d.worksNeeded}</li>}
+          {typeof d.worksCostCents === "number" && d.worksCostCents > 0 && (
+            <li>
+              Travaux chiffrés : {formatEuros(d.worksCostCents)}, déduits de la valeur de
+              l'actif
+            </li>
+          )}
           {d.hasRestaurant && <li>Restaurant présent</li>}
           {d.hasLicence4 && <li>Licence IV</li>}
           {typeof d.occupancyRate === "number" && (
