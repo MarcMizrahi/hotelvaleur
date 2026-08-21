@@ -128,7 +128,7 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
   const coef = coefficientFor("ile-de-france", 3);
   const mid = (coef.price_per_room_low_cents + coef.price_per_room_high_cents) / 2;
 
-  it("borne le recentrage à +40 % même sur un marché très supérieur", () => {
+  it("borne le recentrage à +25 % même sur un marché très supérieur", () => {
     const res = computeValuation(
       {
         ...baseInput("ile-de-france", 3),
@@ -137,9 +137,9 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
       coef,
     );
     const ref = computeValuation(baseInput("ile-de-france", 3), coef);
-    // poids max 0,5 et ratio borné à 1,4 → facteur max = 1,2
-    expect(res.valueHighCents / ref.valueHighCents).toBeLessThanOrEqual(1.2001);
-    expect(res.valueHighCents / ref.valueHighCents).toBeGreaterThan(1.19);
+    // poids max 0,5 et ratio borné à 1,25 → facteur max = 1,125
+    expect(res.valueHighCents / ref.valueHighCents).toBeLessThanOrEqual(1.13);
+    expect(res.valueHighCents / ref.valueHighCents).toBeGreaterThan(1.11);
   });
 
   it("borne le recentrage à -40 % sur un marché très inférieur", () => {
@@ -205,7 +205,7 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
       withCmp.detail.adjustments.some((a) => a.label.includes("fonds")),
     ).toBe(true);
     // Fourchette lisible : jamais plus du simple au double et demi.
-    expect(withCmp.valueHighCents / withCmp.valueLowCents).toBeLessThanOrEqual(2.21);
+    expect(withCmp.valueHighCents / withCmp.valueLowCents).toBeLessThanOrEqual(1.76);
   });
 
 

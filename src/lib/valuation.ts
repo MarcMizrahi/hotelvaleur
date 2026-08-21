@@ -161,7 +161,7 @@ export function computeValuation(
     const weight = Math.min(maxWeight, cmp.sampleSize / 10);
     // Le recentrage est borné à ±40 % pour rester robuste aux transactions atypiques.
     const rawRatio = cmp.medianPerRoomCents / mid;
-    const ratio = Math.min(1.4, Math.max(0.6, rawRatio));
+    const ratio = Math.min(1.25, Math.max(0.6, rawRatio));
     const factor = 1 + weight * (ratio - 1);
     perRoomLowUnit = perRoomLowUnit * factor;
     perRoomHighUnit = perRoomHighUnit * factor;
@@ -200,9 +200,9 @@ export function computeValuation(
     let low = ebitdaCents * coefficient.ebitda_multiple_low * multipleScope;
     let high = ebitdaCents * coefficient.ebitda_multiple_high * multipleScope;
     if (estimated) {
-      // Élargir de 15 % de chaque côté
+      // Élargir prudemment : plus bas en bas qu'en haut (EBITDA non audité)
       low = low * 0.85;
-      high = high * 1.15;
+      high = high * 1.08;
     }
     ebitdaBand = { low, high, used: ebitdaCents, estimated };
   }
@@ -247,18 +247,18 @@ export function computeValuation(
       // Les deux méthodes s'opposent : on élargit la fourchette de ±15 %
       // (au lieu de prendre l'union des deux bandes, qui produisait des
       // fourchettes allant du simple au sextuple).
-      combined = { low: combined.low * 0.85, high: combined.high * 1.15 };
+      combined = { low: combined.low * 0.85, high: combined.high * 1.08 };
     }
     methodUsed = "blended";
   } else {
     // Seule méthode A – les coefficients par chambre étant désormais calibrés
     // sur des fourchettes de marché déjà larges (±33 %), on n'élargit que de 10 %.
-    combined = { low: perRoom.low * 0.9, high: perRoom.high * 1.1 };
+    combined = { low: perRoom.low * 0.9, high: perRoom.high * 1.0 };
     methodUsed = "per_room";
   }
 
-  // 4b. Fourchette lisible : le haut ne peut pas dépasser 2,2× le bas.
-  const MAX_RATIO = 2.2;
+  // 4b. Fourchette lisible : le haut ne peut pas dépasser 1,75× le bas.
+  const MAX_RATIO = 1.75;
   if (combined.low > 0 && combined.high / combined.low > MAX_RATIO) {
     const mid = Math.sqrt(combined.low * combined.high);
     combined = { low: mid / Math.sqrt(MAX_RATIO), high: mid * Math.sqrt(MAX_RATIO) };
@@ -363,8 +363,12 @@ export function computeValuation(
   }
 
 
+  // 5d. Prudence sur la borne haute : les estimations en ligne surestiment
+  // structurellement le haut de fourchette (prix affichés ≠ prix actés).
+  const HIGH_PRUDENCE = 0.9;
+
   let low = combined.low;
-  let high = combined.high;
+  let high = combined.high * HIGH_PRUDENCE;
   for (const a of adjustments) {
     low *= a.factor;
     high *= a.factor;
