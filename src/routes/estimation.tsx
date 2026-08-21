@@ -47,7 +47,7 @@ export const Route = createFileRoute("/estimation")({
   component: EstimationPage,
 });
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 function EstimationPage() {
   const submit = useServerFn(submitEstimation);
@@ -163,6 +163,7 @@ function EstimationPage() {
           firstName: draft.firstName ?? null,
           lastName: draft.lastName ?? null,
           saleIntent: draft.saleIntent!,
+          priceExpectationCents: draft.priceExpectationCents ?? null,
           consentContact: draft.consentContact ?? false,
           consentMarketing: draft.consentMarketing ?? false,
           utm_source: attr.utm_source ?? null,
@@ -218,6 +219,7 @@ function EstimationPage() {
     "Chiffres",
     "Projet",
     "Contact",
+    "Prix en tête",
   ];
 
   return (
@@ -256,7 +258,7 @@ function EstimationPage() {
           </p>
         </div>
         <Progress value={(step / TOTAL_STEPS) * 100} className="mt-3 h-1.5" />
-        <ol className="mt-3 hidden gap-1 sm:grid sm:grid-cols-6" aria-hidden>
+        <ol className="mt-3 hidden gap-1 sm:grid sm:grid-cols-7" aria-hidden>
           {stepLabels.map((label, i) => (
             <li
               key={label}
@@ -277,6 +279,7 @@ function EstimationPage() {
         {step === 4 && <Step4 draft={draft} update={update} />}
         {step === 5 && <Step5 draft={draft} update={update} />}
         {step === 6 && <Step6 draft={draft} update={update} />}
+        {step === 7 && <Step7 draft={draft} update={update} />}
       </div>
 
       {error && (
@@ -446,6 +449,18 @@ function validateStep(step: number, d: EstimationDraft): FormError | null {
           "Horizon de projet manquant",
           "Cette information nous permet d'adapter les conseils du rapport.",
           "Sélectionnez l'échéance qui correspond le mieux.",
+        );
+      return null;
+    case 7:
+      if (
+        typeof d.priceExpectationCents === "number" &&
+        (d.priceExpectationCents <= 0 || d.priceExpectationCents > 500_000_000_00)
+      )
+        return err(
+          "Montant invalide",
+          "Le prix indiqué doit être un montant en euros réaliste.",
+          "Saisissez un montant positif, ou laissez le champ vide.",
+          "price-exp",
         );
       return null;
   }
@@ -1151,6 +1166,37 @@ function Step6({ draft, update }: StepProps) {
             </button>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+function Step7({ draft, update }: StepProps) {
+  return (
+    <section>
+      <h1 className="font-serif text-3xl">Avez-vous déjà un prix en tête ?</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Facultatif. Cette information reste confidentielle et n'influence pas le calcul de
+        votre fourchette : elle nous aide simplement à mieux vous conseiller.
+      </p>
+
+      <div className="mt-6">
+        <Label htmlFor="price-exp">Prix envisagé (€)</Label>
+        <Input
+          id="price-exp"
+          key={`price-exp-${draft.priceExpectationCents ?? ""}`}
+          inputMode="numeric"
+          placeholder="Ex. 2 500 000"
+          defaultValue={
+            draft.priceExpectationCents ? String(draft.priceExpectationCents / 100) : ""
+          }
+          onBlur={(e) =>
+            update({ priceExpectationCents: parseEuros(e.target.value) || undefined })
+          }
+        />
+        <p className="mt-2 text-xs text-muted-foreground">
+          Vous pouvez laisser ce champ vide et recevoir directement votre estimation.
+        </p>
       </div>
     </section>
   );
