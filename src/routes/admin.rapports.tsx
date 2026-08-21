@@ -72,6 +72,7 @@ function ReportsPage() {
       "methode",
       "intention",
       "statut",
+      "prix_souhaite_eur",
       "email",
     ];
     const lines = (rows as any[]).map((r) =>
@@ -87,6 +88,7 @@ function ReportsPage() {
         r.method_used,
         r.sale_intent,
         r.status,
+        r.price_expectation_cents ? Math.round(Number(r.price_expectation_cents) / 100) : "",
         r.email,
       ]
         .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
@@ -253,6 +255,7 @@ function ReportsPage() {
                 <th className="py-1 text-right">★</th>
                 <th className="py-1">Opération</th>
                 <th className="py-1 text-right">Fourchette</th>
+                <th className="py-1 text-right">Prix souhaité</th>
                 <th className="py-1">Méthode</th>
                 <th className="py-1">Contact</th>
               </tr>
@@ -272,13 +275,18 @@ function ReportsPage() {
                   <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
                     {formatEuros(Number(r.value_low_cents))} – {formatEuros(Number(r.value_high_cents))}
                   </td>
+                  <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
+                    {r.price_expectation_cents
+                      ? formatEuros(Number(r.price_expectation_cents))
+                      : "—"}
+                  </td>
                   <td className="py-1.5">{r.method_used}</td>
                   <td className="py-1.5 break-all">{r.email}</td>
                 </tr>
               ))}
               {rows.length === 0 && !estimations.isLoading && (
                 <tr>
-                  <td colSpan={8} className="py-3 text-muted-foreground">
+                  <td colSpan={9} className="py-3 text-muted-foreground">
                     Aucune estimation sur la période.
                   </td>
                 </tr>
