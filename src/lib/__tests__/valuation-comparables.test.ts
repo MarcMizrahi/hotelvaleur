@@ -207,7 +207,26 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
   });
 
 
-  it("le moteur reste déterministe (mêmes entrées → mêmes sorties)", () => {
+  it("le bail emphytéotique au-delà de 60 ans n'a pas d'impact", () => {
+    const input: ValuationInput = {
+      ...baseInput("ile-de-france", 3),
+      transactionType: "murs",
+      isEmphyteotic: true,
+    };
+    const withDiscount = computeValuation({ ...input, emphyteoticYearsRemaining: 60 }, coef);
+    const noImpact = computeValuation({ ...input, emphyteoticYearsRemaining: 61 }, coef);
+    const withoutEmphyteotic = computeValuation({ ...input, isEmphyteotic: false }, coef);
+    expect(
+      withDiscount.detail.adjustments.some((a) => a.label.startsWith("Bail emphytéotique")),
+    ).toBe(true);
+    expect(
+      noImpact.detail.adjustments.some((a) => a.label.startsWith("Bail emphytéotique")),
+    ).toBe(false);
+    expect(noImpact.valueHighCents).toBe(withoutEmphyteotic.valueHighCents);
+    expect(noImpact.valueLowCents).toBe(withoutEmphyteotic.valueLowCents);
+  });
+
+
     const input: ValuationInput = {
       ...baseInput("bretagne", 4),
       comparables: { medianPerRoomCents: 220_000_00, sampleSize: 4, scope: "segment" },
