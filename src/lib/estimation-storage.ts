@@ -31,6 +31,8 @@ export interface EstimationDraft {
   consentMarketing?: boolean;
   // Étape 6
   saleIntent?: SaleIntent;
+  // Étape 7 (facultative)
+  priceExpectationCents?: number;
 }
 
 const KEY = "hv_estimation_draft";

@@ -309,6 +309,7 @@ export type Database = {
           method_used: string
           occupancy_rate: number | null
           phone: string | null
+          price_expectation_cents: number | null
           referrer: string | null
           region_slug: string
           report_sent_at: string | null
@@ -346,6 +347,7 @@ export type Database = {
           method_used: string
           occupancy_rate?: number | null
           phone?: string | null
+          price_expectation_cents?: number | null
           referrer?: string | null
           region_slug: string
           report_sent_at?: string | null
@@ -383,6 +385,7 @@ export type Database = {
           method_used?: string
           occupancy_rate?: number | null
           phone?: string | null
+          price_expectation_cents?: number | null
           referrer?: string | null
           region_slug?: string
           report_sent_at?: string | null

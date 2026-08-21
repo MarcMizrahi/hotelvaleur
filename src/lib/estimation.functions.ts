@@ -26,6 +26,13 @@ const submitSchema = z.object({
   firstName: z.string().max(80).optional().nullable(),
   lastName: z.string().max(80).optional().nullable(),
   saleIntent: z.enum(["moins_1_an", "1_a_2_ans", "plus_2_ans", "curiosite"]),
+  priceExpectationCents: z
+    .number()
+    .int()
+    .positive()
+    .max(50_000_000_000)
+    .optional()
+    .nullable(),
   consentContact: z.boolean(),
   consentMarketing: z.boolean(),
   utm_source: z.string().max(100).optional().nullable(),
@@ -157,6 +164,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
         first_name: data.firstName ?? null,
         last_name: data.lastName ?? null,
         sale_intent: data.saleIntent,
+        price_expectation_cents: data.priceExpectationCents ?? null,
         consent_contact: data.consentContact,
         consent_marketing: data.consentMarketing,
         utm_source: data.utm_source ?? null,

@@ -1,0 +1,1 @@
+ALTER TABLE public.estimation ADD COLUMN IF NOT EXISTS price_expectation_cents bigint;
