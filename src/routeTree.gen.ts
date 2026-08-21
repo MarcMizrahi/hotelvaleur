@@ -29,6 +29,7 @@ import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relati
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
@@ -134,6 +135,11 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const AdminRapportsRoute = AdminRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -481,6 +493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/admin/rapports': {
+      id: '/admin/rapports'
+      path: '/rapports'
+      fullPath: '/admin/rapports'
+      preLoaderRoute: typeof AdminRapportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agents': {
       id: '/admin/agents'
       path: '/agents'
@@ -514,11 +533,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminRapportsRoute: typeof AdminRapportsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminRapportsRoute: AdminRapportsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
