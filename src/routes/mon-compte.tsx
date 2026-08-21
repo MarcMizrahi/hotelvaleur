@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { AccountSettings } from "@/components/account-settings";
 import { site } from "@/config/site";
+
 
 export const Route = createFileRoute("/mon-compte")({
   ssr: false,
@@ -30,9 +31,8 @@ export const Route = createFileRoute("/mon-compte")({
 
 function AccountPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [state, setState] = useState<
-    { kind: "loading" } | { kind: "ready"; email: string; isAdmin: boolean }
+    { kind: "loading" } | { kind: "ready"; email: string; role: string }
   >({ kind: "loading" });
 
   useEffect(() => {
@@ -53,20 +53,13 @@ function AccountPage() {
       setState({
         kind: "ready",
         email: data.user.email ?? "",
-        isAdmin: profile?.role === "admin",
+        role: profile?.role === "admin" ? "admin" : "user",
       });
     })();
     return () => {
       active = false;
     };
   }, [navigate]);
-
-  async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", search: {}, replace: true });
-  }
 
   if (state.kind === "loading") {
     return (
@@ -94,7 +87,7 @@ function AccountPage() {
               <Button asChild variant="outline">
                 <Link to="/mes-donnees">Mes données personnelles</Link>
               </Button>
-              {state.isAdmin && (
+              {state.role === "admin" && (
                 <Button asChild variant="outline">
                   <Link to="/admin">Espace administrateur</Link>
                 </Button>
@@ -102,19 +95,10 @@ function AccountPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-background p-6 flex items-center justify-between gap-4">
-            <div>
-              <div className="font-medium text-navy">Session</div>
-              <p className="text-sm text-muted-foreground">
-                Déconnectez-vous si vous utilisez un ordinateur partagé.
-              </p>
-            </div>
-            <Button variant="outline" onClick={signOut}>
-              Déconnexion
-            </Button>
-          </div>
+          <AccountSettings email={state.email} role={state.role} />
         </div>
       </div>
     </div>
   );
 }
+

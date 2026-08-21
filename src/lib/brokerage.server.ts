@@ -157,7 +157,7 @@ function agentHtml(est: EstimationSummary, lead: LeadRecord): string {
   <p>${esc([est.first_name, est.last_name].filter(Boolean).join(" ") || "—")}<br/>
   ${esc(est.email)}<br/>${esc(lead.phone ?? est.phone ?? "—")}</p>
   ${lead.message ? `<p><em>${esc(lead.message)}</em></p>` : ""}
-  <p><a href="${siteUrl()}/admin/mise-en-relation">Ouvrir dans l'administration</a></p>
+  <p><a href="${siteUrl()}/admin/rapports">Ouvrir dans l'administration</a></p>
 </div>`;
 }
 

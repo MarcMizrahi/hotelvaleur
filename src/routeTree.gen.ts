@@ -29,12 +29,8 @@ import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relati
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminMiseEnRelationRouteImport } from './routes/admin.mise-en-relation'
-import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
-import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
-import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
-import { Route as AdminBenchmarksRouteImport } from './routes/admin.benchmarks'
+import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
+import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
@@ -140,34 +136,14 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
+const AdminRapportsRoute = AdminRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminMiseEnRelationRoute = AdminMiseEnRelationRouteImport.update({
-  id: '/mise-en-relation',
-  path: '/mise-en-relation',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEmailsRoute = AdminEmailsRouteImport.update({
-  id: '/emails',
-  path: '/emails',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
-  id: '/coefficients',
-  path: '/coefficients',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBenchmarksRoute = AdminBenchmarksRouteImport.update({
-  id: '/benchmarks',
-  path: '/benchmarks',
+const AdminParametresRoute = AdminParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
@@ -207,12 +183,8 @@ export interface FileRoutesByFullPath {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
-  '/admin/benchmarks': typeof AdminBenchmarksRoute
-  '/admin/coefficients': typeof AdminCoefficientsRoute
-  '/admin/emails': typeof AdminEmailsRoute
-  '/admin/leads': typeof AdminLeadsRoute
-  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
-  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -238,12 +210,8 @@ export interface FileRoutesByTo {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
-  '/admin/benchmarks': typeof AdminBenchmarksRoute
-  '/admin/coefficients': typeof AdminCoefficientsRoute
-  '/admin/emails': typeof AdminEmailsRoute
-  '/admin/leads': typeof AdminLeadsRoute
-  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
-  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -271,12 +239,8 @@ export interface FileRoutesById {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
-  '/admin/benchmarks': typeof AdminBenchmarksRoute
-  '/admin/coefficients': typeof AdminCoefficientsRoute
-  '/admin/emails': typeof AdminEmailsRoute
-  '/admin/leads': typeof AdminLeadsRoute
-  '/admin/mise-en-relation': typeof AdminMiseEnRelationRoute
-  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -305,12 +269,8 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
-    | '/admin/benchmarks'
-    | '/admin/coefficients'
-    | '/admin/emails'
-    | '/admin/leads'
-    | '/admin/mise-en-relation'
-    | '/admin/transactions'
+    | '/admin/parametres'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -336,12 +296,8 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
-    | '/admin/benchmarks'
-    | '/admin/coefficients'
-    | '/admin/emails'
-    | '/admin/leads'
-    | '/admin/mise-en-relation'
-    | '/admin/transactions'
+    | '/admin/parametres'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -368,12 +324,8 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
-    | '/admin/benchmarks'
-    | '/admin/coefficients'
-    | '/admin/emails'
-    | '/admin/leads'
-    | '/admin/mise-en-relation'
-    | '/admin/transactions'
+    | '/admin/parametres'
+    | '/admin/rapports'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -553,46 +505,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
+    '/admin/rapports': {
+      id: '/admin/rapports'
+      path: '/rapports'
+      fullPath: '/admin/rapports'
+      preLoaderRoute: typeof AdminRapportsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/mise-en-relation': {
-      id: '/admin/mise-en-relation'
-      path: '/mise-en-relation'
-      fullPath: '/admin/mise-en-relation'
-      preLoaderRoute: typeof AdminMiseEnRelationRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/leads': {
-      id: '/admin/leads'
-      path: '/leads'
-      fullPath: '/admin/leads'
-      preLoaderRoute: typeof AdminLeadsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/emails': {
-      id: '/admin/emails'
-      path: '/emails'
-      fullPath: '/admin/emails'
-      preLoaderRoute: typeof AdminEmailsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/coefficients': {
-      id: '/admin/coefficients'
-      path: '/coefficients'
-      fullPath: '/admin/coefficients'
-      preLoaderRoute: typeof AdminCoefficientsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/benchmarks': {
-      id: '/admin/benchmarks'
-      path: '/benchmarks'
-      fullPath: '/admin/benchmarks'
-      preLoaderRoute: typeof AdminBenchmarksRouteImport
+    '/admin/parametres': {
+      id: '/admin/parametres'
+      path: '/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AdminParametresRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/agents': {
@@ -628,23 +552,15 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
-  AdminBenchmarksRoute: typeof AdminBenchmarksRoute
-  AdminCoefficientsRoute: typeof AdminCoefficientsRoute
-  AdminEmailsRoute: typeof AdminEmailsRoute
-  AdminLeadsRoute: typeof AdminLeadsRoute
-  AdminMiseEnRelationRoute: typeof AdminMiseEnRelationRoute
-  AdminTransactionsRoute: typeof AdminTransactionsRoute
+  AdminParametresRoute: typeof AdminParametresRoute
+  AdminRapportsRoute: typeof AdminRapportsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
-  AdminBenchmarksRoute: AdminBenchmarksRoute,
-  AdminCoefficientsRoute: AdminCoefficientsRoute,
-  AdminEmailsRoute: AdminEmailsRoute,
-  AdminLeadsRoute: AdminLeadsRoute,
-  AdminMiseEnRelationRoute: AdminMiseEnRelationRoute,
-  AdminTransactionsRoute: AdminTransactionsRoute,
+  AdminParametresRoute: AdminParametresRoute,
+  AdminRapportsRoute: AdminRapportsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

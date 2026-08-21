@@ -108,15 +108,11 @@ function AdminLayout({ email }: { email: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const nav = [
-    { to: "/admin", label: "Tableau de bord", exact: true },
-    { to: "/admin/leads", label: "Leads" },
-    { to: "/admin/mise-en-relation", label: "Mise en relation" },
     { to: "/admin/agents", label: "Agents" },
-    { to: "/admin/coefficients", label: "Coefficients" },
-    { to: "/admin/benchmarks", label: "Benchmarks" },
-    { to: "/admin/transactions", label: "Transactions" },
-    { to: "/admin/emails", label: "Emails" },
+    { to: "/admin/rapports", label: "Rapports" },
+    { to: "/admin/parametres", label: "Paramètres" },
   ];
+
   return (
     <div className="min-h-screen bg-surface">
       <header className="bg-navy text-navy-foreground border-b border-navy/20">
@@ -125,9 +121,8 @@ function AdminLayout({ email }: { email: string }) {
             <div className="font-serif text-lg">Administration</div>
             <nav aria-label="Sections admin" className="flex gap-1 text-sm">
               {nav.map((n) => {
-                const active = n.exact
-                  ? location.pathname === n.to
-                  : location.pathname.startsWith(n.to);
+                const active = location.pathname.startsWith(n.to);
+
                 return (
                   <Link
                     key={n.to}
