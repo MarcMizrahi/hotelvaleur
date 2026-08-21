@@ -225,14 +225,18 @@ export function computeValuation(
     // (exploitation). Un fonds de commerce se valorise d'abord au rendement,
     // des murs d'abord à l'actif.
     const wEbitdaByTx: Record<TransactionType, number> = {
-      fonds: 0.8,
+      // Fonds seul : le prix par chambre valorise un actif immobilier qui n'est
+      // pas cédé — il n'entre pas dans la combinaison.
+      fonds: 1,
       murs_fonds: 0.45,
       murs: 0.3,
     };
     let wEbitda = wEbitdaByTx[input.transactionType];
     // Un EBITDA estimé depuis le CA est moins fiable : on réduit son poids.
-    if (ebitdaBand.estimated) wEbitda = Math.max(0.25, wEbitda - 0.15);
+    if (input.transactionType !== "fonds" && ebitdaBand.estimated)
+      wEbitda = Math.max(0.25, wEbitda - 0.15);
     const wPerRoom = 1 - wEbitda;
+
 
     combined = {
       low: wPerRoom * perRoom.low + wEbitda * ebitdaBand.low,
