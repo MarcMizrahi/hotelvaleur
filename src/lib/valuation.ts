@@ -184,17 +184,21 @@ export function computeValuation(
   let ebitdaCents = input.ebitdaCents ?? null;
   let estimated = false;
   if ((!ebitdaCents || ebitdaCents <= 0) && input.annualRevenueCents && input.annualRevenueCents > 0) {
-    // Estimation EBITDA : marge dépendant du positionnement (observé 22–34 % du CA)
+    // Estimation EBITDA : marge nette observée par positionnement (18–28 % du CA).
     const marginByStar: Record<number, number> = {
-      0: 0.22, 1: 0.22, 2: 0.25, 3: 0.28, 4: 0.31, 5: 0.34,
+      0: 0.18, 1: 0.18, 2: 0.20, 3: 0.22, 4: 0.25, 5: 0.28,
     };
-    const margin = marginByStar[input.starRating] ?? 0.28;
+    const margin = marginByStar[input.starRating] ?? 0.22;
     ebitdaCents = Math.round(input.annualRevenueCents * margin);
     estimated = true;
   }
   if (ebitdaCents && ebitdaCents > 0) {
-    let low = ebitdaCents * coefficient.ebitda_multiple_low;
-    let high = ebitdaCents * coefficient.ebitda_multiple_high;
+    // Les multiples de la table sont des multiples d'actif complet (murs + fonds).
+    // Sur une cession de fonds seul, l'exploitant paiera un loyer : le multiple
+    // applicable au résultat d'exploitation est nettement plus faible (~×0,7).
+    const multipleScope = input.transactionType === "fonds" ? 0.7 : 1;
+    let low = ebitdaCents * coefficient.ebitda_multiple_low * multipleScope;
+    let high = ebitdaCents * coefficient.ebitda_multiple_high * multipleScope;
     if (estimated) {
       // Élargir de 15 % de chaque côté
       low = low * 0.85;
@@ -202,6 +206,7 @@ export function computeValuation(
     }
     ebitdaBand = { low, high, used: ebitdaCents, estimated };
   }
+
 
   // 4. Combinaison
   let methodUsed: ValuationMethod;
