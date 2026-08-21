@@ -226,8 +226,9 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     expect(noImpact.valueLowCents).toBe(withoutEmphyteotic.valueLowCents);
   });
 
-
+  it("le moteur reste déterministe (mêmes entrées → mêmes sorties)", () => {
     const input: ValuationInput = {
+
       ...baseInput("bretagne", 4),
       comparables: { medianPerRoomCents: 220_000_00, sampleSize: 4, scope: "segment" },
       annualRevenueCents: 1_200_000_00,
