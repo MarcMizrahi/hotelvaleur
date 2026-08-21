@@ -176,7 +176,7 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     }
   });
 
-  it("l'ancrage se propage à une estimation « fonds seul » sans EBITDA (facteur 0,28)", () => {
+  it("l'ancrage se propage à une estimation « fonds seul » sans EBITDA (facteur 1,0)", () => {
     const input: ValuationInput = { ...baseInput("ile-de-france", 3), transactionType: "fonds" };
     const cmp = { medianPerRoomCents: Math.round(mid * 1.2), sampleSize: 10, scope: "segment" as const };
     const withCmp = computeValuation({ ...input, comparables: cmp }, coef);
@@ -184,11 +184,11 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     expect(withCmp.detail.marketAnchor).not.toBeNull();
     expect(withCmp.valueHighCents).toBeGreaterThan(without.valueHighCents);
     expect(
-      without.detail.adjustments.some((a) => a.factor === 0.28),
+      without.detail.adjustments.some((a) => a.factor === 1.0 && a.label.includes("fonds")),
     ).toBe(true);
   });
 
-  it("« fonds seul » avec EBITDA et CA est repricé et n'utilise pas les comparables par chambre", () => {
+  it("« fonds seul » avec EBITDA et CA suit désormais la méthode mixte avec ancrage marché", () => {
     const input: ValuationInput = {
       ...baseInput("ile-de-france", 3),
       transactionType: "fonds",
@@ -198,15 +198,14 @@ describe("non-régression : bornes et exceptions de l'ancrage", () => {
     const cmp = { medianPerRoomCents: Math.round(mid * 1.3), sampleSize: 10, scope: "segment" as const };
     const withCmp = computeValuation({ ...input, comparables: cmp }, coef);
     const without = computeValuation(input, coef);
-    // EBITDA retraité : 400 k€ - 10 % × 1,5 M€ = 250 k€ → 750 k€ – 1,25 M€
-    expect(withCmp.valueLowCents).toBe(without.valueLowCents);
-    expect(withCmp.valueHighCents).toBe(without.valueHighCents);
+    // L'ancrage marché influe désormais le résultat car le fonds n'est plus retraité en dur.
+    expect(withCmp.valueHighCents).not.toBe(without.valueHighCents);
     expect(
-      withCmp.detail.adjustments.some((a) => a.label.startsWith("Fonds seul")),
+      withCmp.detail.adjustments.some((a) => a.label.includes("fonds")),
     ).toBe(true);
-    // L'ancrage reste tracé pour l'audit même s'il ne pilote pas le résultat.
     expect(withCmp.detail.marketAnchor).not.toBeNull();
   });
+
 
   it("le moteur reste déterministe (mêmes entrées → mêmes sorties)", () => {
     const input: ValuationInput = {
