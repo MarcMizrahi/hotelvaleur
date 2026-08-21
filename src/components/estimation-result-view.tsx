@@ -33,6 +33,17 @@ export function EstimationResultView({ result }: { result: StoredResult }) {
         {dep ? `, dans le ${dep.name}` : ""}, {txLabel}.
       </p>
 
+      {typeof d.priceExpectationCents === "number" && d.priceExpectationCents > 0 && (
+        <p className="mt-4 rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+          Prix que vous aviez en tête : {formatEuros(d.priceExpectationCents)} —{" "}
+          {d.priceExpectationCents < result.valueLowCents
+            ? "en dessous de notre fourchette."
+            : d.priceExpectationCents > result.valueHighCents
+              ? "au-dessus de notre fourchette."
+              : "dans notre fourchette."}
+        </p>
+      )}
+
       <section className="mt-10 rounded-lg border border-border bg-card p-6">
         <h3 className="font-serif text-2xl">La méthode</h3>
         <p className="mt-3 text-sm text-muted-foreground">
