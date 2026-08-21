@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MonCompteRouteImport } from './routes/mon-compte'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as EstimationRouteImport } from './routes/estimation'
@@ -42,6 +43,11 @@ import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/a
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonCompteRoute = MonCompteRouteImport.update({
+  id: '/mon-compte',
+  path: '/mon-compte',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -260,6 +268,7 @@ export interface FileRoutesById {
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/benchmarks': typeof AdminBenchmarksRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
+    | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
     | '/admin/benchmarks'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
+    | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
     | '/admin/benchmarks'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
+    | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
     | '/admin/benchmarks'
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   EstimationRoute: typeof EstimationRouteWithChildren
   ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  MonCompteRoute: typeof MonCompteRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   MesDonneesAccesRoute: typeof MesDonneesAccesRoute
@@ -405,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mon-compte': {
+      id: '/mon-compte'
+      path: '/mon-compte'
+      fullPath: '/mon-compte'
+      preLoaderRoute: typeof MonCompteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentions-legales': {
@@ -653,6 +673,7 @@ const rootRouteChildren: RootRouteChildren = {
   EstimationRoute: EstimationRouteWithChildren,
   ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  MonCompteRoute: MonCompteRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   MesDonneesAccesRoute: MesDonneesAccesRoute,
