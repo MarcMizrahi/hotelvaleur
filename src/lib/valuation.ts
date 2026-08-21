@@ -218,7 +218,7 @@ export function computeValuation(
     const meanA = (perRoom.low + perRoom.high) / 2;
     const meanB = (ebitdaBand.low + ebitdaBand.high) / 2;
     const relDiff = Math.abs(meanA - meanB) / Math.max(meanA, meanB);
-    divergent = relDiff > DIVERGENCE_THRESHOLD;
+    divergent = relDiff > DIVERGENCE_THRESHOLD && input.transactionType !== "fonds";
 
     // Pondération selon la nature de l'opération : le prix par chambre est un
     // indicateur d'actif (murs), le multiple d'EBITDA un indicateur de rendement
