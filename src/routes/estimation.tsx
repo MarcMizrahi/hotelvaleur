@@ -155,6 +155,7 @@ function EstimationPage() {
           hasRestaurant: draft.hasRestaurant ?? false,
           hasLicence4: draft.hasLicence4 ?? false,
           worksNeeded: draft.worksNeeded ?? null,
+          worksCostCents: draft.worksCostCents ?? null,
           annualRevenueCents: draft.annualRevenueCents ?? null,
           ebitdaCents: draft.ebitdaCents ?? null,
           occupancyRate: draft.occupancyRate ?? null,
@@ -880,6 +881,23 @@ function Step3({ draft, update }: StepProps) {
               );
             })}
           </div>
+          {(draft.worksNeeded === "legers" || draft.worksNeeded === "importants") && (
+            <div className="mt-4">
+              <Label htmlFor="works-cost">Montant estimé des travaux (€) — facultatif</Label>
+              <Input
+                id="works-cost"
+                key={`works-cost-${draft.worksCostCents ?? ""}`}
+                inputMode="numeric"
+                placeholder="Ex. 150 000"
+                defaultValue={draft.worksCostCents ? String(draft.worksCostCents / 100) : ""}
+                onBlur={(e) => update({ worksCostCents: parseEuros(e.target.value) || undefined })}
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                Si vous le renseignez, ce montant est directement déduit de la valeur de
+                l'actif (à la place de la décote forfaitaire pour travaux).
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>

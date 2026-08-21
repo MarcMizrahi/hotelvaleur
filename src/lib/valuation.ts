@@ -15,6 +15,8 @@ export interface ValuationInput {
   hotelName?: string | null;
 
   worksNeeded?: WorksNeeded | null;
+  /** Montant estimé des travaux à réaliser, en centimes — déduit de la valeur. */
+  worksCostCents?: number | null;
   hasRestaurant?: boolean;
   hasLicence4?: boolean;
   annualRevenueCents?: number | null;
@@ -63,6 +65,8 @@ export interface ValuationDetail {
   adjustments: Array<{ label: string; factor: number }>;
   outlier: boolean;
   divergent: boolean;
+  /** Montant des travaux déduit de la valeur, en centimes (0 si non renseigné). */
+  worksDeductionCents: number;
   /** Recentrage appliqué à partir des transactions observées, le cas échéant. */
   marketAnchor: {
     medianPerRoomCents: number;
@@ -296,7 +300,13 @@ export function computeValuation(
     adjustments.push({ label: `Bail commercial restant : ${y} an(s)`, factor: f });
   }
 
-  if (input.worksNeeded) {
+  const worksCost =
+    typeof input.worksCostCents === "number" && input.worksCostCents > 0
+      ? Math.round(input.worksCostCents)
+      : 0;
+  // Si le coût des travaux est chiffré, il est déduit en euros de la valeur :
+  // on n'applique alors pas en plus la décote forfaitaire, pour ne pas compter deux fois.
+  if (input.worksNeeded && worksCost === 0) {
     const worksMap: Record<WorksNeeded, number> = {
       aucun: 1.0,
       legers: 0.95,
@@ -374,6 +384,16 @@ export function computeValuation(
     high *= a.factor;
   }
 
+  // 5e. Déduction du coût des travaux chiffré (déduction en euros, pas en %).
+  let worksDeductionCents = 0;
+  if (worksCost > 0) {
+    // On ne peut pas déduire plus que 60 % de la borne basse : au-delà, l'actif
+    // relève d'une négociation spécifique et non d'une estimation automatique.
+    worksDeductionCents = Math.min(worksCost, Math.round(low * 0.6));
+    low -= worksDeductionCents;
+    high -= worksDeductionCents;
+  }
+
   // 6. Garde-fous
   let outlier = false;
   if (input.annualRevenueCents && input.roomCount > 0) {
@@ -405,6 +425,7 @@ export function computeValuation(
       adjustments,
       outlier,
       divergent,
+      worksDeductionCents,
       marketAnchor,
       coefficient: {
         region_slug: coefficient.region_slug,

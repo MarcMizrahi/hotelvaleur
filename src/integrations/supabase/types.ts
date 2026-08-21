@@ -323,6 +323,7 @@ export type Database = {
           utm_source: string | null
           value_high_cents: number
           value_low_cents: number
+          works_cost_cents: number | null
           works_needed: string | null
         }
         Insert: {
@@ -361,6 +362,7 @@ export type Database = {
           utm_source?: string | null
           value_high_cents: number
           value_low_cents: number
+          works_cost_cents?: number | null
           works_needed?: string | null
         }
         Update: {
@@ -399,6 +401,7 @@ export type Database = {
           utm_source?: string | null
           value_high_cents?: number
           value_low_cents?: number
+          works_cost_cents?: number | null
           works_needed?: string | null
         }
         Relationships: []

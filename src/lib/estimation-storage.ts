@@ -18,6 +18,7 @@ export interface EstimationDraft {
   hasRestaurant?: boolean;
   hasLicence4?: boolean;
   worksNeeded?: WorksNeeded;
+  worksCostCents?: number;
   // Étape 4
   annualRevenueCents?: number;
   ebitdaCents?: number;
