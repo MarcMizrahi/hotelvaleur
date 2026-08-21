@@ -18,6 +18,7 @@ const submitSchema = z.object({
   hasRestaurant: z.boolean().default(false),
   hasLicence4: z.boolean().default(false),
   worksNeeded: z.enum(["aucun", "legers", "importants"]).optional().nullable(),
+  worksCostCents: z.number().int().nonnegative().max(50_000_000_000).optional().nullable(),
   annualRevenueCents: z.number().int().nonnegative().optional().nullable(),
   ebitdaCents: z.number().int().nonnegative().optional().nullable(),
   occupancyRate: z.number().min(0).max(100).optional().nullable(),
@@ -124,6 +125,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
 
         transactionType: data.transactionType,
         worksNeeded: data.worksNeeded ?? null,
+        worksCostCents: data.worksCostCents ?? null,
         hasRestaurant: data.hasRestaurant,
         hasLicence4: data.hasLicence4,
         annualRevenueCents: data.annualRevenueCents ?? null,
@@ -152,6 +154,7 @@ export const submitEstimation = createServerFn({ method: "POST" })
         has_restaurant: data.hasRestaurant,
         has_licence_4: data.hasLicence4,
         works_needed: data.worksNeeded ?? null,
+        works_cost_cents: data.worksCostCents ?? null,
         annual_revenue_cents: data.annualRevenueCents ?? null,
         ebitda_cents: data.ebitdaCents ?? null,
         occupancy_rate: data.occupancyRate ?? null,
