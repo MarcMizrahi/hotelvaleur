@@ -51,6 +51,12 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to={signedIn ? "/mon-compte" : "/auth"}
+            className="text-[15px] text-foreground/80 hover:text-navy transition-colors"
+          >
+            {signedIn ? "Mon compte" : "Connexion"}
+          </Link>
           <Button asChild size="sm" className="bg-navy text-navy-foreground hover:bg-navy/90">
             <Link to="/estimation">{t.common.cta_estimate}</Link>
           </Button>
@@ -83,6 +89,13 @@ export function SiteHeader() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              to={signedIn ? "/mon-compte" : "/auth"}
+              onClick={() => setOpen(false)}
+              className="py-3 text-base text-foreground/90 border-t border-border"
+            >
+              {signedIn ? "Mon compte" : "Connexion"}
+            </Link>
             <Button
               asChild
               className="mt-3 bg-navy text-navy-foreground hover:bg-navy/90 h-12"
