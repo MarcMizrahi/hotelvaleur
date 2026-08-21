@@ -5,8 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { checkAdmin } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { site } from "@/config/site";
 
 export const Route = createFileRoute("/admin")({
@@ -60,7 +58,7 @@ function AdminShell() {
       </div>
     );
   }
-  if (state.kind === "signed-out") return <LoginForm />;
+  if (state.kind === "signed-out") return <RedirectToAuth />;
   if (state.kind === "not-admin") return <AccessDenied email={state.email} />;
   return <AdminLayout email={state.email} />;
 }
@@ -84,6 +82,7 @@ function AccessDenied({ email }: { email: string }) {
             Changer de compte
           </Button>
           <Button variant="outline" onClick={() => navigate({ to: "/" })}>
+
             Retour au site
           </Button>
         </div>
@@ -93,68 +92,14 @@ function AccessDenied({ email }: { email: string }) {
 }
 
 
-function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (err) setError("Email ou mot de passe incorrect.");
-  }
-
+function RedirectToAuth() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate({ to: "/auth", search: { redirect: "/admin" }, replace: true });
+  }, [navigate]);
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface px-4">
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-sm rounded-xl border border-border bg-background p-8 shadow-sm space-y-4"
-        aria-label="Connexion administrateur"
-      >
-        <div>
-          <h1 className="font-serif text-2xl text-navy">Espace administrateur</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Accès réservé. Les comptes sont créés manuellement.
-          </p>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="admin-email">Email</Label>
-          <Input
-            id="admin-email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="admin-password">Mot de passe</Label>
-          <Input
-            id="admin-password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && (
-          <div
-            role="alert"
-            className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800"
-          >
-            {error}
-          </div>
-        )}
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Connexion…" : "Se connecter"}
-        </Button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center text-muted-foreground">
+      Redirection vers la connexion…
     </div>
   );
 }

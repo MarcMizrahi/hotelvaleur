@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useT } from "@/hooks/use-t";
 import { site } from "@/config/site";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export function SiteHeader() {
   const t = useT();
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setSignedIn(!!session)
+    );
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const links = [
     { to: "/estimation", label: t.nav.estimation },
@@ -15,6 +25,7 @@ export function SiteHeader() {
     { to: "/guides", label: t.nav.guides },
     { to: "/experts", label: "Nos experts" },
   ] as const;
+
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -40,6 +51,12 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to={signedIn ? "/mon-compte" : "/auth"}
+            className="text-[15px] text-foreground/80 hover:text-navy transition-colors"
+          >
+            {signedIn ? "Mon compte" : "Connexion"}
+          </Link>
           <Button asChild size="sm" className="bg-navy text-navy-foreground hover:bg-navy/90">
             <Link to="/estimation">{t.common.cta_estimate}</Link>
           </Button>
@@ -72,6 +89,13 @@ export function SiteHeader() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              to={signedIn ? "/mon-compte" : "/auth"}
+              onClick={() => setOpen(false)}
+              className="py-3 text-base text-foreground/90 border-t border-border"
+            >
+              {signedIn ? "Mon compte" : "Connexion"}
+            </Link>
             <Button
               asChild
               className="mt-3 bg-navy text-navy-foreground hover:bg-navy/90 h-12"
