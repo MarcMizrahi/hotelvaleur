@@ -73,6 +73,9 @@ function ReportsPage() {
       "intention",
       "statut",
       "prix_souhaite_eur",
+      "travaux",
+      "travaux_montant_eur",
+      "travaux_deduction_eur",
       "email",
     ];
     const lines = (rows as any[]).map((r) =>
