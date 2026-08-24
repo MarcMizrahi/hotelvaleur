@@ -32,6 +32,11 @@ const STEP_LABELS: Record<string, string> = {
   "estimation.completed": "Estimation terminée",
 };
 
+function worksDeduction(r: any): number {
+  const d = r?.calculation_detail?.worksDeductionCents;
+  return typeof d === "number" && d > 0 ? d : 0;
+}
+
 function ReportsPage() {
   const [days, setDays] = useState<Period>("30");
   const metricsFn = useServerFn(getAdminMetrics);
@@ -73,6 +78,9 @@ function ReportsPage() {
       "intention",
       "statut",
       "prix_souhaite_eur",
+      "travaux",
+      "travaux_montant_eur",
+      "travaux_deduction_eur",
       "email",
     ];
     const lines = (rows as any[]).map((r) =>
@@ -89,6 +97,9 @@ function ReportsPage() {
         r.sale_intent,
         r.status,
         r.price_expectation_cents ? Math.round(Number(r.price_expectation_cents) / 100) : "",
+        r.works_needed ?? "",
+        r.works_cost_cents ? Math.round(Number(r.works_cost_cents) / 100) : "",
+        worksDeduction(r) ? Math.round(worksDeduction(r) / 100) : "",
         r.email,
       ]
         .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
@@ -256,6 +267,8 @@ function ReportsPage() {
                 <th className="py-1">Opération</th>
                 <th className="py-1 text-right">Fourchette</th>
                 <th className="py-1 text-right">Prix souhaité</th>
+                <th className="py-1 text-right">Travaux</th>
+                <th className="py-1 text-right">Déduction travaux</th>
                 <th className="py-1">Méthode</th>
                 <th className="py-1">Contact</th>
               </tr>
@@ -280,13 +293,19 @@ function ReportsPage() {
                       ? formatEuros(Number(r.price_expectation_cents))
                       : "—"}
                   </td>
+                  <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
+                    {r.works_cost_cents ? formatEuros(Number(r.works_cost_cents)) : "—"}
+                  </td>
+                  <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
+                    {worksDeduction(r) ? `− ${formatEuros(worksDeduction(r))}` : "—"}
+                  </td>
                   <td className="py-1.5">{r.method_used}</td>
                   <td className="py-1.5 break-all">{r.email}</td>
                 </tr>
               ))}
               {rows.length === 0 && !estimations.isLoading && (
                 <tr>
-                  <td colSpan={9} className="py-3 text-muted-foreground">
+                  <td colSpan={11} className="py-3 text-muted-foreground">
                     Aucune estimation sur la période.
                   </td>
                 </tr>
