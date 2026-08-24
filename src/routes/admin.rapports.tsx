@@ -305,7 +305,7 @@ function ReportsPage() {
               ))}
               {rows.length === 0 && !estimations.isLoading && (
                 <tr>
-                  <td colSpan={9} className="py-3 text-muted-foreground">
+                  <td colSpan={11} className="py-3 text-muted-foreground">
                     Aucune estimation sur la période.
                   </td>
                 </tr>
