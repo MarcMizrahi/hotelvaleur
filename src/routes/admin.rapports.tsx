@@ -32,6 +32,11 @@ const STEP_LABELS: Record<string, string> = {
   "estimation.completed": "Estimation terminée",
 };
 
+function worksDeduction(r: any): number {
+  const d = r?.calculation_detail?.worksDeductionCents;
+  return typeof d === "number" && d > 0 ? d : 0;
+}
+
 function ReportsPage() {
   const [days, setDays] = useState<Period>("30");
   const metricsFn = useServerFn(getAdminMetrics);
