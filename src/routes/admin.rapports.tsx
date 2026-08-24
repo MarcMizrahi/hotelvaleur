@@ -92,6 +92,9 @@ function ReportsPage() {
         r.sale_intent,
         r.status,
         r.price_expectation_cents ? Math.round(Number(r.price_expectation_cents) / 100) : "",
+        r.works_needed ?? "",
+        r.works_cost_cents ? Math.round(Number(r.works_cost_cents) / 100) : "",
+        worksDeduction(r) ? Math.round(worksDeduction(r) / 100) : "",
         r.email,
       ]
         .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
