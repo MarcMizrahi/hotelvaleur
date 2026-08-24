@@ -267,6 +267,8 @@ function ReportsPage() {
                 <th className="py-1">Opération</th>
                 <th className="py-1 text-right">Fourchette</th>
                 <th className="py-1 text-right">Prix souhaité</th>
+                <th className="py-1 text-right">Travaux</th>
+                <th className="py-1 text-right">Déduction travaux</th>
                 <th className="py-1">Méthode</th>
                 <th className="py-1">Contact</th>
               </tr>
