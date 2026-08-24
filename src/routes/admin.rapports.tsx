@@ -293,6 +293,12 @@ function ReportsPage() {
                       ? formatEuros(Number(r.price_expectation_cents))
                       : "—"}
                   </td>
+                  <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
+                    {r.works_cost_cents ? formatEuros(Number(r.works_cost_cents)) : "—"}
+                  </td>
+                  <td className="py-1.5 text-right whitespace-nowrap tabular-nums">
+                    {worksDeduction(r) ? `− ${formatEuros(worksDeduction(r))}` : "—"}
+                  </td>
                   <td className="py-1.5">{r.method_used}</td>
                   <td className="py-1.5 break-all">{r.email}</td>
                 </tr>
