@@ -161,7 +161,7 @@ export const listLeads = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("estimation")
       .select(
-        "id, created_at, region_slug, department_code, room_count, star_rating, transaction_type, value_low_cents, value_high_cents, sale_intent, status, email, consent_contact, consent_marketing, method_used, calculation_detail, annual_revenue_cents, ebitda_cents, price_expectation_cents, works_needed, works_cost_cents"
+        "id, created_at, region_slug, department_code, city, hotel_name, room_count, star_rating, transaction_type, value_low_cents, value_high_cents, sale_intent, status, email, phone, first_name, last_name, consent_contact, consent_marketing, method_used, calculation_detail, annual_revenue_cents, ebitda_cents, price_expectation_cents, works_needed, works_cost_cents, agent_id, assigned_at"
       )
       .order("created_at", { ascending: false })
       .limit(data.limit);
