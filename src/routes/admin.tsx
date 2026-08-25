@@ -118,23 +118,29 @@ function AdminLayout({ email }: { email: string }) {
     { to: "/admin/parametres", label: "Paramètres" },
   ];
 
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-surface">
       <header className="bg-navy text-navy-foreground border-b border-navy/20">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <div className="font-serif text-lg">Administration</div>
-            <nav aria-label="Sections admin" className="flex gap-1 text-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="font-serif text-base sm:text-lg">Administration</div>
+
+            {/* Desktop nav */}
+            <nav
+              aria-label="Sections admin"
+              className="hidden lg:flex flex-1 gap-1 text-sm overflow-x-auto"
+            >
               {nav.map((n) => {
                 const active = n.exact
                   ? location.pathname === "/admin" || location.pathname === "/admin/"
                   : location.pathname.startsWith(n.to);
-
                 return (
                   <Link
                     key={n.to}
                     to={n.to}
-                    className={`px-3 py-1.5 rounded-md transition-colors ${
+                    className={`whitespace-nowrap px-3 py-1.5 rounded-md transition-colors ${
                       active ? "bg-white/15" : "hover:bg-white/10"
                     }`}
                   >
@@ -143,22 +149,70 @@ function AdminLayout({ email }: { email: string }) {
                 );
               })}
             </nav>
+
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-navy-foreground/80 hidden xl:inline">{email}</span>
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  navigate({ to: "/" });
+                }}
+                className="hidden sm:inline-flex rounded-md border border-white/30 px-3 py-1.5 hover:bg-white/10"
+              >
+                Déconnexion
+              </button>
+              <button
+                type="button"
+                aria-label="Menu"
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+                className="lg:hidden rounded-md border border-white/30 px-3 py-1.5"
+              >
+                {open ? "Fermer" : "Menu"}
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-navy-foreground/80 hidden sm:inline">{email}</span>
-            <button
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate({ to: "/" });
-              }}
-              className="rounded-md border border-white/30 px-3 py-1.5 hover:bg-white/10"
+
+          {/* Mobile nav */}
+          {open && (
+            <nav
+              aria-label="Sections admin"
+              className="lg:hidden mt-3 grid gap-1 text-sm border-t border-white/15 pt-3"
             >
-              Déconnexion
-            </button>
-          </div>
+              {nav.map((n) => {
+                const active = n.exact
+                  ? location.pathname === "/admin" || location.pathname === "/admin/"
+                  : location.pathname.startsWith(n.to);
+                return (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    onClick={() => setOpen(false)}
+                    className={`rounded-md px-3 py-2 transition-colors ${
+                      active ? "bg-white/15" : "hover:bg-white/10"
+                    }`}
+                  >
+                    {n.label}
+                  </Link>
+                );
+              })}
+              <div className="mt-2 border-t border-white/15 pt-2">
+                <div className="px-3 py-1 text-xs text-navy-foreground/70 break-all">{email}</div>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate({ to: "/" });
+                  }}
+                  className="w-full text-left rounded-md px-3 py-2 hover:bg-white/10"
+                >
+                  Déconnexion
+                </button>
+              </div>
+            </nav>
+          )}
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <Outlet />
       </main>
     </div>
