@@ -6,6 +6,7 @@ import { getAdminMetrics, listLeads } from "@/lib/admin.functions";
 import { formatEuros } from "@/lib/money";
 import { getRegionBySlug } from "@/lib/regions";
 import { Button } from "@/components/ui/button";
+import { downloadEstimationPdf, downloadReportsPdf } from "@/lib/report-pdf";
 
 export const Route = createFileRoute("/admin/rapports")({
   component: ReportsPage,
@@ -144,6 +145,12 @@ function ReportsPage() {
           <Button variant="outline" onClick={exportCsv} disabled={rows.length === 0}>
             Export CSV
           </Button>
+          <Button
+            onClick={() => downloadReportsPdf(rows as any[], days)}
+            disabled={rows.length === 0}
+          >
+            Export PDF
+          </Button>
         </div>
       </div>
 
@@ -271,6 +278,7 @@ function ReportsPage() {
                 <th className="py-1 text-right">Déduction travaux</th>
                 <th className="py-1">Méthode</th>
                 <th className="py-1">Contact</th>
+                <th className="py-1 text-right">PDF</th>
               </tr>
             </thead>
             <tbody>
@@ -301,11 +309,20 @@ function ReportsPage() {
                   </td>
                   <td className="py-1.5">{r.method_used}</td>
                   <td className="py-1.5 break-all">{r.email}</td>
+                  <td className="py-1.5 text-right">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => downloadEstimationPdf(r)}
+                    >
+                      PDF
+                    </Button>
+                  </td>
                 </tr>
               ))}
               {rows.length === 0 && !estimations.isLoading && (
                 <tr>
-                  <td colSpan={11} className="py-3 text-muted-foreground">
+                  <td colSpan={12} className="py-3 text-muted-foreground">
                     Aucune estimation sur la période.
                   </td>
                 </tr>
