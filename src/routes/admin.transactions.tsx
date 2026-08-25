@@ -25,8 +25,10 @@ function TransactionsPage() {
   const scrapeFn = useServerFn(runScrapeNow);
   const dedupFn = useServerFn(listDedupLog);
 
-  const [tab, setTab] = useState<Tab>("transactions");
-  const [filter, setFilter] = useState<string>("pending");
+  const [tab, setTab] = usePersistentState<Tab>("admin.tx.tab", "transactions");
+  const [filter, setFilter] = usePersistentState<string>("admin.tx.filter", "pending");
+  const [sort, setSort] = usePersistentState<string>("admin.tx.sort", "date_desc");
+
 
   const data = useQuery({
     queryKey: ["admin", "market"],
