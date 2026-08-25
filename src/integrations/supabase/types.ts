@@ -288,7 +288,9 @@ export type Database = {
       }
       estimation: {
         Row: {
+          agent_id: string | null
           annual_revenue_cents: number | null
+          assigned_at: string | null
           calculation_detail: Json | null
           city: string | null
           consent_contact: boolean
@@ -327,7 +329,9 @@ export type Database = {
           works_needed: string | null
         }
         Insert: {
+          agent_id?: string | null
           annual_revenue_cents?: number | null
+          assigned_at?: string | null
           calculation_detail?: Json | null
           city?: string | null
           consent_contact?: boolean
@@ -366,7 +370,9 @@ export type Database = {
           works_needed?: string | null
         }
         Update: {
+          agent_id?: string | null
           annual_revenue_cents?: number | null
+          assigned_at?: string | null
           calculation_detail?: Json | null
           city?: string | null
           consent_contact?: boolean
@@ -404,7 +410,15 @@ export type Database = {
           works_cost_cents?: number | null
           works_needed?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "estimation_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "broker_agent"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       market_transaction: {
         Row: {
