@@ -7,8 +7,10 @@ import { listLeads, updateLead } from "@/lib/admin.functions";
 import { assignEstimationAgent, listAgentsLite } from "@/lib/backoffice.functions";
 import { formatEuros } from "@/lib/money";
 import { getRegionBySlug } from "@/lib/regions";
+import { usePersistentState } from "@/hooks/use-persistent-state";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 
 export const Route = createFileRoute("/admin/leads")({
   component: LeadsPage,
@@ -36,9 +38,13 @@ function LeadsPage() {
   const assignFn = useServerFn(assignEstimationAgent);
   const updateFn = useServerFn(updateLead);
 
-  const [status, setStatus] = useState<string>("");
-  const [intent, setIntent] = useState<string>("");
-  const [onlyUnassigned, setOnlyUnassigned] = useState(false);
+  const [status, setStatus] = usePersistentState<string>("admin.leads.status", "");
+  const [intent, setIntent] = usePersistentState<string>("admin.leads.intent", "");
+  const [onlyUnassigned, setOnlyUnassigned] = usePersistentState<boolean>(
+    "admin.leads.unassigned",
+    false,
+  );
+  const [sort, setSort] = usePersistentState<string>("admin.leads.sort", "date_desc");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
 
@@ -58,8 +64,28 @@ function LeadsPage() {
 
   const rows = useMemo(() => {
     const all = (leads.data ?? []) as any[];
-    return onlyUnassigned ? all.filter((r) => !r.agent_id) : all;
-  }, [leads.data, onlyUnassigned]);
+    const filtered = onlyUnassigned ? all.filter((r) => !r.agent_id) : all;
+    const mid = (r: any) => (Number(r.value_low_cents) + Number(r.value_high_cents)) / 2;
+    const sorted = [...filtered];
+    sorted.sort((a, b) => {
+      switch (sort) {
+        case "date_asc":
+          return +new Date(a.created_at) - +new Date(b.created_at);
+        case "value_desc":
+          return mid(b) - mid(a);
+        case "value_asc":
+          return mid(a) - mid(b);
+        case "rooms_desc":
+          return Number(b.room_count) - Number(a.room_count);
+        case "name_asc":
+          return String(a.hotel_name ?? "").localeCompare(String(b.hotel_name ?? ""), "fr");
+        default:
+          return +new Date(b.created_at) - +new Date(a.created_at);
+      }
+    });
+    return sorted;
+  }, [leads.data, onlyUnassigned, sort]);
+
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -89,14 +115,28 @@ function LeadsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-2xl text-navy">Leads</h1>
-          <p className="text-sm text-muted-foreground">
-            Qualifiez les demandes d'estimation et attribuez-les à un agent.
-          </p>
-        </div>
+      <div>
+        <h1 className="font-serif text-2xl text-navy">Leads</h1>
+        <p className="text-sm text-muted-foreground">
+          Qualifiez les demandes d'estimation et attribuez-les à un agent.
+        </p>
+      </div>
+
+      <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
         <div className="flex flex-wrap items-center gap-2 text-sm">
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="rounded-md border border-border bg-background px-3 py-1.5"
+            aria-label="Trier les leads"
+          >
+            <option value="date_desc">Plus récents</option>
+            <option value="date_asc">Plus anciens</option>
+            <option value="value_desc">Valorisation ↓</option>
+            <option value="value_asc">Valorisation ↑</option>
+            <option value="rooms_desc">Nb de chambres ↓</option>
+            <option value="name_asc">Nom A→Z</option>
+          </select>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -129,8 +169,25 @@ function LeadsPage() {
             />
             Non attribués
           </label>
+          {(status || intent || onlyUnassigned || sort !== "date_desc") && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setStatus("");
+                setIntent("");
+                setOnlyUnassigned(false);
+                setSort("date_desc");
+              }}
+            >
+              Réinitialiser
+            </Button>
+          )}
+          <span className="ml-auto text-xs text-muted-foreground">{rows.length} lead(s)</span>
         </div>
       </div>
+
+
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <section className="rounded-xl border border-border bg-background p-4 overflow-x-auto">

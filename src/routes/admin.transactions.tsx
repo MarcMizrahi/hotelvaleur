@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { usePersistentState } from "@/hooks/use-persistent-state";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -25,8 +25,10 @@ function TransactionsPage() {
   const scrapeFn = useServerFn(runScrapeNow);
   const dedupFn = useServerFn(listDedupLog);
 
-  const [tab, setTab] = useState<Tab>("transactions");
-  const [filter, setFilter] = useState<string>("pending");
+  const [tab, setTab] = usePersistentState<Tab>("admin.tx.tab", "transactions");
+  const [filter, setFilter] = usePersistentState<string>("admin.tx.filter", "pending");
+  const [sort, setSort] = usePersistentState<string>("admin.tx.sort", "date_desc");
+
 
   const data = useQuery({
     queryKey: ["admin", "market"],
@@ -57,9 +59,24 @@ function TransactionsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const transactions = ((data.data?.transactions ?? []) as any[]).filter((t) =>
-    filter ? t.status === filter : true,
-  );
+  const transactions = ((data.data?.transactions ?? []) as any[])
+    .filter((t) => (filter ? t.status === filter : true))
+    .sort((a, b) => {
+      const d = (t: any) => +new Date(t.published_at ?? 0);
+      switch (sort) {
+        case "date_asc":
+          return d(a) - d(b);
+        case "price_desc":
+          return Number(b.price_cents ?? 0) - Number(a.price_cents ?? 0);
+        case "price_asc":
+          return Number(a.price_cents ?? 0) - Number(b.price_cents ?? 0);
+        case "confidence_desc":
+          return Number(b.confidence ?? 0) - Number(a.confidence ?? 0);
+        default:
+          return d(b) - d(a);
+      }
+    });
+
 
   return (
     <div className="space-y-6">
@@ -97,24 +114,42 @@ function TransactionsPage() {
 
       {tab === "transactions" && (
         <section className="space-y-4">
-          <div className="flex gap-2 text-sm">
-            {[
-              ["pending", "À valider"],
-              ["validated", "Validées"],
-              ["rejected", "Rejetées"],
-              ["", "Toutes"],
-            ].map(([v, l]) => (
-              <button
-                key={v}
-                onClick={() => setFilter(v)}
-                className={`rounded-md border border-border px-3 py-1.5 ${
-                  filter === v ? "bg-navy text-navy-foreground" : "hover:bg-muted"
-                }`}
-              >
-                {l}
-              </button>
-            ))}
+          <div className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-border bg-background/95 px-4 py-3 text-sm backdrop-blur lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
+            <div className="flex flex-wrap gap-2">
+              {[
+                ["pending", "À valider"],
+                ["validated", "Validées"],
+                ["rejected", "Rejetées"],
+                ["", "Toutes"],
+              ].map(([v, l]) => (
+                <button
+                  key={v}
+                  onClick={() => setFilter(v)}
+                  className={`rounded-md border border-border px-3 py-1.5 ${
+                    filter === v ? "bg-navy text-navy-foreground" : "hover:bg-muted"
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="rounded-md border border-border bg-background px-3 py-1.5"
+              aria-label="Trier les transactions"
+            >
+              <option value="date_desc">Plus récentes</option>
+              <option value="date_asc">Plus anciennes</option>
+              <option value="price_desc">Prix ↓</option>
+              <option value="price_asc">Prix ↑</option>
+              <option value="confidence_desc">Confiance ↓</option>
+            </select>
+            <span className="ml-auto text-xs text-muted-foreground">
+              {transactions.length} résultat(s)
+            </span>
           </div>
+
 
           <div className="space-y-3">
             {transactions.map((t) => (
