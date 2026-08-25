@@ -6,6 +6,7 @@ import { getAdminMetrics, listLeads } from "@/lib/admin.functions";
 import { formatEuros } from "@/lib/money";
 import { getRegionBySlug } from "@/lib/regions";
 import { Button } from "@/components/ui/button";
+import { downloadEstimationPdf, downloadReportsPdf } from "@/lib/report-pdf";
 
 export const Route = createFileRoute("/admin/rapports")({
   component: ReportsPage,
