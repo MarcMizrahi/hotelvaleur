@@ -38,7 +38,7 @@ function UsersPage() {
       </div>
 
       <section className="rounded-xl border border-border bg-background p-4 overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="min-w-[640px] w-full text-sm">
           <thead className="text-left text-muted-foreground">
             <tr>
               <th className="py-2">E-mail</th>

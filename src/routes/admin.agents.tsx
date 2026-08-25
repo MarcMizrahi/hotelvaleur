@@ -294,7 +294,7 @@ function AgentsAdmin() {
         <p className="text-muted-foreground">Chargement…</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-card">
-          <table className="w-full text-sm">
+          <table className="min-w-[760px] w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
                 <th className="p-3">Agent</th>

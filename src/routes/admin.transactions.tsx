@@ -185,7 +185,7 @@ function TransactionsPage() {
 
       {tab === "runs" && (
         <section className="rounded-xl border border-border bg-background p-6 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="min-w-[760px] w-full text-sm">
             <thead className="text-left text-muted-foreground">
               <tr>
                 <th className="py-1">Démarré</th>
@@ -216,7 +216,7 @@ function TransactionsPage() {
 
       {tab === "dedup" && (
         <section className="rounded-xl border border-border bg-background p-6 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="min-w-[760px] w-full text-sm">
             <thead className="text-left text-muted-foreground">
               <tr>
                 <th className="py-1">Date</th>
