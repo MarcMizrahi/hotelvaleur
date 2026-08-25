@@ -145,6 +145,12 @@ function ReportsPage() {
           <Button variant="outline" onClick={exportCsv} disabled={rows.length === 0}>
             Export CSV
           </Button>
+          <Button
+            onClick={() => downloadReportsPdf(rows as any[], days)}
+            disabled={rows.length === 0}
+          >
+            Export PDF
+          </Button>
         </div>
       </div>
 
