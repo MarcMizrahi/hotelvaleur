@@ -75,7 +75,7 @@ async function firecrawlSearch(query: string): Promise<SearchHit[]> {
       limit: 6,
       lang: "fr",
       country: "fr",
-      tbs: "qdr:m",
+      tbs: "qdr:y",
       scrapeOptions: { formats: ["markdown"] },
     }),
   });
@@ -86,11 +86,15 @@ async function firecrawlSearch(query: string): Promise<SearchHit[]> {
     throw new Error(`Firecrawl search failed [${res.status}]: ${body}`);
   }
 
-  const json = (await res.json()) as {
-    data?: Array<{ url?: string; title?: string; description?: string; markdown?: string }>;
-  };
-  return (json.data ?? [])
-    .filter((r): r is { url: string } & typeof r => Boolean(r.url))
+  type Doc = { url?: string; title?: string; description?: string; markdown?: string };
+  const json = (await res.json()) as { data?: Doc[] | { web?: Doc[]; news?: Doc[] } };
+  // Firecrawl v2 renvoie soit un tableau, soit un objet { web: [...], news: [...] }.
+  const raw = Array.isArray(json.data)
+    ? json.data
+    : [...(json.data?.web ?? []), ...(json.data?.news ?? [])];
+
+  return raw
+    .filter((r): r is { url: string } & Doc => Boolean(r.url))
     .map((r) => ({
       url: r.url,
       title: r.title,
@@ -100,6 +104,7 @@ async function firecrawlSearch(query: string): Promise<SearchHit[]> {
         SOURCES.find((s) => r.url.includes(s.domain))?.name ??
         new URL(r.url).hostname.replace(/^www\./, ""),
     }));
+
 }
 
 const EXTRACTION_PROMPT = `Tu analyses un article de presse hôtelière française.
