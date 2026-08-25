@@ -29,8 +29,12 @@ import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relati
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
@@ -136,6 +140,16 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
+  id: '/utilisateurs',
+  path: '/utilisateurs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRapportsRoute = AdminRapportsRouteImport.update({
   id: '/rapports',
   path: '/rapports',
@@ -144,6 +158,16 @@ const AdminRapportsRoute = AdminRapportsRouteImport.update({
 const AdminParametresRoute = AdminParametresRouteImport.update({
   id: '/parametres',
   path: '/parametres',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
+  id: '/coefficients',
+  path: '/coefficients',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
@@ -183,8 +207,12 @@ export interface FileRoutesByFullPath {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -210,8 +238,12 @@ export interface FileRoutesByTo {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -239,8 +271,12 @@ export interface FileRoutesById {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -269,8 +305,12 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
+    | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
+    | '/admin/transactions'
+    | '/admin/utilisateurs'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -296,8 +336,12 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
+    | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
+    | '/admin/transactions'
+    | '/admin/utilisateurs'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -324,8 +368,12 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
+    | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
+    | '/admin/transactions'
+    | '/admin/utilisateurs'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -505,6 +553,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/admin/utilisateurs': {
+      id: '/admin/utilisateurs'
+      path: '/utilisateurs'
+      fullPath: '/admin/utilisateurs'
+      preLoaderRoute: typeof AdminUtilisateursRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/rapports': {
       id: '/admin/rapports'
       path: '/rapports'
@@ -517,6 +579,20 @@ declare module '@tanstack/react-router' {
       path: '/parametres'
       fullPath: '/admin/parametres'
       preLoaderRoute: typeof AdminParametresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/coefficients': {
+      id: '/admin/coefficients'
+      path: '/coefficients'
+      fullPath: '/admin/coefficients'
+      preLoaderRoute: typeof AdminCoefficientsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/agents': {
@@ -552,15 +628,23 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminCoefficientsRoute: typeof AdminCoefficientsRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminParametresRoute: typeof AdminParametresRoute
   AdminRapportsRoute: typeof AdminRapportsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
+  AdminUtilisateursRoute: typeof AdminUtilisateursRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminCoefficientsRoute: AdminCoefficientsRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminParametresRoute: AdminParametresRoute,
   AdminRapportsRoute: AdminRapportsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
+  AdminUtilisateursRoute: AdminUtilisateursRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

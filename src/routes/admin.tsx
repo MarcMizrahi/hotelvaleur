@@ -108,8 +108,13 @@ function AdminLayout({ email }: { email: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const nav = [
+    { to: "/admin", label: "Tableau de bord", exact: true },
+    { to: "/admin/leads", label: "Leads" },
     { to: "/admin/agents", label: "Agents" },
+    { to: "/admin/transactions", label: "Transactions" },
+    { to: "/admin/coefficients", label: "Coefficients" },
     { to: "/admin/rapports", label: "Rapports" },
+    { to: "/admin/utilisateurs", label: "Utilisateurs" },
     { to: "/admin/parametres", label: "Paramètres" },
   ];
 
@@ -121,7 +126,9 @@ function AdminLayout({ email }: { email: string }) {
             <div className="font-serif text-lg">Administration</div>
             <nav aria-label="Sections admin" className="flex gap-1 text-sm">
               {nav.map((n) => {
-                const active = location.pathname.startsWith(n.to);
+                const active = n.exact
+                  ? location.pathname === "/admin" || location.pathname === "/admin/"
+                  : location.pathname.startsWith(n.to);
 
                 return (
                   <Link
