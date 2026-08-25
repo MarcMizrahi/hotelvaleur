@@ -38,9 +38,13 @@ function LeadsPage() {
   const assignFn = useServerFn(assignEstimationAgent);
   const updateFn = useServerFn(updateLead);
 
-  const [status, setStatus] = useState<string>("");
-  const [intent, setIntent] = useState<string>("");
-  const [onlyUnassigned, setOnlyUnassigned] = useState(false);
+  const [status, setStatus] = usePersistentState<string>("admin.leads.status", "");
+  const [intent, setIntent] = usePersistentState<string>("admin.leads.intent", "");
+  const [onlyUnassigned, setOnlyUnassigned] = usePersistentState<boolean>(
+    "admin.leads.unassigned",
+    false,
+  );
+  const [sort, setSort] = usePersistentState<string>("admin.leads.sort", "date_desc");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
 
@@ -60,8 +64,28 @@ function LeadsPage() {
 
   const rows = useMemo(() => {
     const all = (leads.data ?? []) as any[];
-    return onlyUnassigned ? all.filter((r) => !r.agent_id) : all;
-  }, [leads.data, onlyUnassigned]);
+    const filtered = onlyUnassigned ? all.filter((r) => !r.agent_id) : all;
+    const mid = (r: any) => (Number(r.value_low_cents) + Number(r.value_high_cents)) / 2;
+    const sorted = [...filtered];
+    sorted.sort((a, b) => {
+      switch (sort) {
+        case "date_asc":
+          return +new Date(a.created_at) - +new Date(b.created_at);
+        case "value_desc":
+          return mid(b) - mid(a);
+        case "value_asc":
+          return mid(a) - mid(b);
+        case "rooms_desc":
+          return Number(b.room_count) - Number(a.room_count);
+        case "name_asc":
+          return String(a.hotel_name ?? "").localeCompare(String(b.hotel_name ?? ""), "fr");
+        default:
+          return +new Date(b.created_at) - +new Date(a.created_at);
+      }
+    });
+    return sorted;
+  }, [leads.data, onlyUnassigned, sort]);
+
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
