@@ -309,11 +309,20 @@ function ReportsPage() {
                   </td>
                   <td className="py-1.5">{r.method_used}</td>
                   <td className="py-1.5 break-all">{r.email}</td>
+                  <td className="py-1.5 text-right">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => downloadEstimationPdf(r)}
+                    >
+                      PDF
+                    </Button>
+                  </td>
                 </tr>
               ))}
               {rows.length === 0 && !estimations.isLoading && (
                 <tr>
-                  <td colSpan={11} className="py-3 text-muted-foreground">
+                  <td colSpan={12} className="py-3 text-muted-foreground">
                     Aucune estimation sur la période.
                   </td>
                 </tr>
