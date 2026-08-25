@@ -59,9 +59,24 @@ function TransactionsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const transactions = ((data.data?.transactions ?? []) as any[]).filter((t) =>
-    filter ? t.status === filter : true,
-  );
+  const transactions = ((data.data?.transactions ?? []) as any[])
+    .filter((t) => (filter ? t.status === filter : true))
+    .sort((a, b) => {
+      const d = (t: any) => +new Date(t.published_at ?? 0);
+      switch (sort) {
+        case "date_asc":
+          return d(a) - d(b);
+        case "price_desc":
+          return Number(b.price_cents ?? 0) - Number(a.price_cents ?? 0);
+        case "price_asc":
+          return Number(a.price_cents ?? 0) - Number(b.price_cents ?? 0);
+        case "confidence_desc":
+          return Number(b.confidence ?? 0) - Number(a.confidence ?? 0);
+        default:
+          return d(b) - d(a);
+      }
+    });
+
 
   return (
     <div className="space-y-6">
