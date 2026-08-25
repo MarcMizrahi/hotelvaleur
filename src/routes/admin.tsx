@@ -108,8 +108,13 @@ function AdminLayout({ email }: { email: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const nav = [
+    { to: "/admin", label: "Tableau de bord", exact: true },
+    { to: "/admin/leads", label: "Leads" },
     { to: "/admin/agents", label: "Agents" },
+    { to: "/admin/transactions", label: "Transactions" },
+    { to: "/admin/coefficients", label: "Coefficients" },
     { to: "/admin/rapports", label: "Rapports" },
+    { to: "/admin/utilisateurs", label: "Utilisateurs" },
     { to: "/admin/parametres", label: "Paramètres" },
   ];
 
