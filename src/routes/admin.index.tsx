@@ -17,8 +17,7 @@ function DashboardPage() {
 
   const trend =
     data && data.estimationsPrev30 > 0
-      ? ((data.estimationsE30 ?? data.estimations30) - data.estimationsPrev30) /
-        data.estimationsPrev30
+      ? (data.estimations30 - data.estimationsPrev30) / data.estimationsPrev30
       : null;
 
   return (
