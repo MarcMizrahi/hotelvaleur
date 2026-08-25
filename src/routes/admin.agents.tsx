@@ -220,7 +220,7 @@ function AgentsAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-serif text-2xl text-navy">Agents partenaires</h1>
           <p className="text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ function AgentsAdmin() {
         <Button onClick={() => setForm({ ...emptyForm })}>Nouvel agent</Button>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Agents", value: agents.length },
           { label: "Actifs", value: agents.filter((a) => a.is_active).length },
