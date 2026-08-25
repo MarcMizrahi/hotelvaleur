@@ -114,24 +114,42 @@ function TransactionsPage() {
 
       {tab === "transactions" && (
         <section className="space-y-4">
-          <div className="flex gap-2 text-sm">
-            {[
-              ["pending", "À valider"],
-              ["validated", "Validées"],
-              ["rejected", "Rejetées"],
-              ["", "Toutes"],
-            ].map(([v, l]) => (
-              <button
-                key={v}
-                onClick={() => setFilter(v)}
-                className={`rounded-md border border-border px-3 py-1.5 ${
-                  filter === v ? "bg-navy text-navy-foreground" : "hover:bg-muted"
-                }`}
-              >
-                {l}
-              </button>
-            ))}
+          <div className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-border bg-background/95 px-4 py-3 text-sm backdrop-blur lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
+            <div className="flex flex-wrap gap-2">
+              {[
+                ["pending", "À valider"],
+                ["validated", "Validées"],
+                ["rejected", "Rejetées"],
+                ["", "Toutes"],
+              ].map(([v, l]) => (
+                <button
+                  key={v}
+                  onClick={() => setFilter(v)}
+                  className={`rounded-md border border-border px-3 py-1.5 ${
+                    filter === v ? "bg-navy text-navy-foreground" : "hover:bg-muted"
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="rounded-md border border-border bg-background px-3 py-1.5"
+              aria-label="Trier les transactions"
+            >
+              <option value="date_desc">Plus récentes</option>
+              <option value="date_asc">Plus anciennes</option>
+              <option value="price_desc">Prix ↓</option>
+              <option value="price_asc">Prix ↑</option>
+              <option value="confidence_desc">Confiance ↓</option>
+            </select>
+            <span className="ml-auto text-xs text-muted-foreground">
+              {transactions.length} résultat(s)
+            </span>
           </div>
+
 
           <div className="space-y-3">
             {transactions.map((t) => (
