@@ -128,7 +128,7 @@ function ReportsPage() {
             Indicateurs d'activité et détail des estimations réalisées.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-md border border-border overflow-hidden">
             {PERIODS.map((p) => (
               <button
@@ -264,7 +264,7 @@ function ReportsPage() {
           <span className="text-sm text-muted-foreground">{rows.length} ligne(s)</span>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="min-w-[1100px] w-full text-sm">
             <thead className="text-muted-foreground text-left">
               <tr>
                 <th className="py-1">Date</th>

@@ -134,7 +134,7 @@ function LeadsPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <section className="rounded-xl border border-border bg-background p-4 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="min-w-[680px] w-full text-sm">
             <thead className="text-left text-muted-foreground">
               <tr>
                 <th className="py-1">Date</th>
