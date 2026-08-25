@@ -33,6 +33,7 @@ import { Route as AdminTransactionsRouteImport } from './routes/admin.transactio
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
@@ -158,6 +159,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
+  id: '/coefficients',
+  path: '/coefficients',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
     | '/admin/rapports'
@@ -557,6 +569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/coefficients': {
+      id: '/admin/coefficients'
+      path: '/coefficients'
+      fullPath: '/admin/coefficients'
+      preLoaderRoute: typeof AdminCoefficientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agents': {
       id: '/admin/agents'
       path: '/agents'
@@ -590,6 +609,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminParametresRoute: typeof AdminParametresRoute
   AdminRapportsRoute: typeof AdminRapportsRoute
@@ -599,6 +619,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminParametresRoute: AdminParametresRoute,
   AdminRapportsRoute: AdminRapportsRoute,
