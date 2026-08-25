@@ -278,6 +278,7 @@ function ReportsPage() {
                 <th className="py-1 text-right">Déduction travaux</th>
                 <th className="py-1">Méthode</th>
                 <th className="py-1">Contact</th>
+                <th className="py-1 text-right">PDF</th>
               </tr>
             </thead>
             <tbody>
