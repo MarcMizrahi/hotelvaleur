@@ -5,11 +5,11 @@ import { getRegionBySlug } from "@/lib/regions";
 const NAVY: [number, number, number] = [26, 39, 68];
 const GOLD: [number, number, number] = [201, 169, 97];
 
-/** Montant en centimes -> "1 250 000 EUR" (espaces simples, compatibles PDF). */
+/** Montant en centimes -> "1 250 000 €" (espaces simples, compatibles PDF). */
 export function pdfEuros(cents: number | null | undefined): string {
   if (cents === null || cents === undefined || !Number.isFinite(Number(cents))) return "—";
   const euros = Math.round(Number(cents) / 100);
-  return `${euros.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ")} EUR`;
+  return `${euros.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ")} \u20ac`;
 }
 
 export function worksDeductionCents(row: any): number {
@@ -79,7 +79,7 @@ export function downloadReportsPdf(rows: any[], days: string) {
         "Date",
         "Établissement",
         "Ch.",
-        "★",
+        "Cat.",
         "Opération",
         "Fourchette",
         "Prix souhaité",
@@ -110,12 +110,17 @@ export function downloadReportsPdf(rows: any[], days: string) {
     headStyles: { fillColor: NAVY, textColor: 255, fontSize: 7 },
     alternateRowStyles: { fillColor: [246, 246, 248] },
     columnStyles: {
-      2: { halign: "right" },
-      3: { halign: "right" },
-      5: { halign: "right" },
-      6: { halign: "right" },
-      8: { halign: "right" },
-      9: { halign: "right" },
+      0: { cellWidth: 17 },
+      1: { cellWidth: 52 },
+      2: { cellWidth: 10, halign: "right" },
+      3: { cellWidth: 10, halign: "right" },
+      4: { cellWidth: 20 },
+      5: { cellWidth: 44, halign: "right" },
+      6: { cellWidth: 22, halign: "right" },
+      7: { cellWidth: 18 },
+      8: { cellWidth: 22, halign: "right" },
+      9: { cellWidth: 24, halign: "right" },
+      10: { cellWidth: 16 },
     },
     margin: { left: 10, right: 10 },
   });
