@@ -113,6 +113,7 @@ function AdminLayout({ email }: { email: string }) {
     { to: "/admin/agents", label: "Agents" },
     { to: "/admin/transactions", label: "Transactions" },
     { to: "/admin/coefficients", label: "Coefficients" },
+    { to: "/admin/calibrage", label: "Calibrage" },
     { to: "/admin/rapports", label: "Rapports" },
     { to: "/admin/utilisateurs", label: "Utilisateurs" },
     { to: "/admin/parametres", label: "Paramètres" },
