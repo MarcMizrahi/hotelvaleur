@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -244,6 +244,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      calibration_run: {
+        Row: {
+          actor: string | null
+          applied: boolean
+          created_at: string
+          detail: Json | null
+          error_message: string | null
+          id: string
+          mode: string
+          segments_adjusted: number
+          segments_considered: number
+          transactions_used: number
+        }
+        Insert: {
+          actor?: string | null
+          applied?: boolean
+          created_at?: string
+          detail?: Json | null
+          error_message?: string | null
+          id?: string
+          mode?: string
+          segments_adjusted?: number
+          segments_considered?: number
+          transactions_used?: number
+        }
+        Update: {
+          actor?: string | null
+          applied?: boolean
+          created_at?: string
+          detail?: Json | null
+          error_message?: string | null
+          id?: string
+          mode?: string
+          segments_adjusted?: number
+          segments_considered?: number
+          transactions_used?: number
+        }
+        Relationships: []
       }
       email_log: {
         Row: {

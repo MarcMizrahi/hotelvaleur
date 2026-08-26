@@ -35,10 +35,12 @@ import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
+import { Route as AdminCalibrageRouteImport } from './routes/admin.calibrage'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
 import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
+import { Route as ApiPublicHooksCalibrateCoefficientsRouteImport } from './routes/api/public/hooks/calibrate-coefficients'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -170,6 +172,11 @@ const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
   path: '/coefficients',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCalibrageRoute = AdminCalibrageRouteImport.update({
+  id: '/calibrage',
+  path: '/calibrage',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
@@ -192,6 +199,12 @@ const ApiPublicHooksScrapeTransactionsRoute =
     path: '/api/public/hooks/scrape-transactions',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCalibrateCoefficientsRoute =
+  ApiPublicHooksCalibrateCoefficientsRouteImport.update({
+    id: '/api/public/hooks/calibrate-coefficients',
+    path: '/api/public/hooks/calibrate-coefficients',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -207,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/calibrage': typeof AdminCalibrageRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -223,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/calibrate-coefficients': typeof ApiPublicHooksCalibrateCoefficientsRoute
   '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesByTo {
@@ -238,6 +253,7 @@ export interface FileRoutesByTo {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/calibrage': typeof AdminCalibrageRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -254,6 +270,7 @@ export interface FileRoutesByTo {
   '/prix-hotel': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/calibrate-coefficients': typeof ApiPublicHooksCalibrateCoefficientsRoute
   '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRoutesById {
@@ -271,6 +288,7 @@ export interface FileRoutesById {
   '/mon-compte': typeof MonCompteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/calibrage': typeof AdminCalibrageRoute
   '/admin/coefficients': typeof AdminCoefficientsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -287,6 +305,7 @@ export interface FileRoutesById {
   '/prix-hotel/': typeof PrixHotelIndexRoute
   '/prix-hotel/$region/$departement': typeof PrixHotelRegionDepartementRoute
   '/prix-hotel/$region/': typeof PrixHotelRegionIndexRoute
+  '/api/public/hooks/calibrate-coefficients': typeof ApiPublicHooksCalibrateCoefficientsRoute
   '/api/public/hooks/scrape-transactions': typeof ApiPublicHooksScrapeTransactionsRoute
 }
 export interface FileRouteTypes {
@@ -305,6 +324,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/calibrage'
     | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
@@ -321,6 +341,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/calibrate-coefficients'
     | '/api/public/hooks/scrape-transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -336,6 +357,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/calibrage'
     | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
@@ -352,6 +374,7 @@ export interface FileRouteTypes {
     | '/prix-hotel'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region'
+    | '/api/public/hooks/calibrate-coefficients'
     | '/api/public/hooks/scrape-transactions'
   id:
     | '__root__'
@@ -368,6 +391,7 @@ export interface FileRouteTypes {
     | '/mon-compte'
     | '/sitemap.xml'
     | '/admin/agents'
+    | '/admin/calibrage'
     | '/admin/coefficients'
     | '/admin/leads'
     | '/admin/parametres'
@@ -384,6 +408,7 @@ export interface FileRouteTypes {
     | '/prix-hotel/'
     | '/prix-hotel/$region/$departement'
     | '/prix-hotel/$region/'
+    | '/api/public/hooks/calibrate-coefficients'
     | '/api/public/hooks/scrape-transactions'
   fileRoutesById: FileRoutesById
 }
@@ -408,6 +433,7 @@ export interface RootRouteChildren {
   PrixHotelIndexRoute: typeof PrixHotelIndexRoute
   PrixHotelRegionDepartementRoute: typeof PrixHotelRegionDepartementRoute
   PrixHotelRegionIndexRoute: typeof PrixHotelRegionIndexRoute
+  ApiPublicHooksCalibrateCoefficientsRoute: typeof ApiPublicHooksCalibrateCoefficientsRoute
   ApiPublicHooksScrapeTransactionsRoute: typeof ApiPublicHooksScrapeTransactionsRoute
 }
 
@@ -595,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoefficientsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/calibrage': {
+      id: '/admin/calibrage'
+      path: '/calibrage'
+      fullPath: '/admin/calibrage'
+      preLoaderRoute: typeof AdminCalibrageRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agents': {
       id: '/admin/agents'
       path: '/agents'
@@ -623,11 +656,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksScrapeTransactionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/calibrate-coefficients': {
+      id: '/api/public/hooks/calibrate-coefficients'
+      path: '/api/public/hooks/calibrate-coefficients'
+      fullPath: '/api/public/hooks/calibrate-coefficients'
+      preLoaderRoute: typeof ApiPublicHooksCalibrateCoefficientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminCalibrageRoute: typeof AdminCalibrageRoute
   AdminCoefficientsRoute: typeof AdminCoefficientsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminParametresRoute: typeof AdminParametresRoute
@@ -639,6 +680,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminCalibrageRoute: AdminCalibrageRoute,
   AdminCoefficientsRoute: AdminCoefficientsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminParametresRoute: AdminParametresRoute,
@@ -683,6 +725,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrixHotelIndexRoute: PrixHotelIndexRoute,
   PrixHotelRegionDepartementRoute: PrixHotelRegionDepartementRoute,
   PrixHotelRegionIndexRoute: PrixHotelRegionIndexRoute,
+  ApiPublicHooksCalibrateCoefficientsRoute:
+    ApiPublicHooksCalibrateCoefficientsRoute,
   ApiPublicHooksScrapeTransactionsRoute: ApiPublicHooksScrapeTransactionsRoute,
 }
 export const routeTree = rootRouteImport
