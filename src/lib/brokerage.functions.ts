@@ -190,7 +190,10 @@ export const listBrokerageLeads = createServerFn({ method: "GET" })
           )
           .order("created_at", { ascending: false })
           .limit(300),
-        supabase.from("broker_agent").select("*").order("full_name"),
+        (await import("@/integrations/supabase/client.server")).supabaseAdmin
+          .from("broker_agent")
+          .select("*")
+          .order("full_name"),
         supabase
           .from("brokerage_lead_event")
           .select("*")
@@ -322,9 +325,10 @@ export const upsertAgent = createServerFn({ method: "POST" })
       is_active: data.isActive,
       is_public: data.isPublic,
     };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = data.id
-      ? await supabase.from("broker_agent").update(row).eq("id", data.id)
-      : await supabase.from("broker_agent").insert(row);
+      ? await supabaseAdmin.from("broker_agent").update(row).eq("id", data.id)
+      : await supabaseAdmin.from("broker_agent").insert(row);
     if (error) throw new Error("Enregistrement de l'agent impossible.");
     return { ok: true };
   });
@@ -334,8 +338,8 @@ export const deleteAgent = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context as never);
-    const { supabase } = context as never as { supabase: any };
-    const { error } = await supabase.from("broker_agent").delete().eq("id", data.id);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("broker_agent").delete().eq("id", data.id);
     if (error) throw new Error("Suppression impossible.");
     return { ok: true };
   });

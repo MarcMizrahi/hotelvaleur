@@ -16,8 +16,8 @@ export const listAgentsLite = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context as never);
-    const { supabase } = context as never as { supabase: any };
-    const { data } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
       .from("broker_agent")
       .select("id, full_name, company, email, is_active, regions, monthly_capacity")
       .order("full_name");
