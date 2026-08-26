@@ -306,7 +306,6 @@ export const upsertAgent = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => agentSchema.parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context as never);
-    const { supabase } = context as never as { supabase: any };
     const row = {
       full_name: data.fullName,
       company: data.company ?? null,
