@@ -1,0 +1,1 @@
+select cron.unschedule('scrape-hotel-transactions-weekly');
