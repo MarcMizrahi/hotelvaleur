@@ -103,7 +103,7 @@ export async function runCalibration(opts: {
     applied: opts.apply,
     mode: opts.mode,
     segmentsConsidered: proposals.length,
-    segmentsAdjusted: opts.apply ? adjusted.length : adjusted.length,
+    segmentsAdjusted: opts.apply ? adjusted.length : 0,
     transactionsUsed: transactions.length,
     proposals,
     runId: run?.id ?? null,
