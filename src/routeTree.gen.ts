@@ -32,6 +32,7 @@ import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
+import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
 import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
@@ -161,6 +162,12 @@ const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => EspaceAgentRoute,
 } as any)
+const EspaceAgentNotificationsRoute =
+  EspaceAgentNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => EspaceAgentRoute,
+  } as any)
 const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
   id: '/demandes',
   path: '/demandes',
@@ -253,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -289,6 +297,7 @@ export interface FileRoutesByTo {
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -328,6 +337,7 @@ export interface FileRoutesById {
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/admin/transactions'
     | '/admin/utilisateurs'
     | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
     | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/admin/transactions'
     | '/admin/utilisateurs'
     | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
     | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -442,6 +454,7 @@ export interface FileRouteTypes {
     | '/admin/transactions'
     | '/admin/utilisateurs'
     | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
     | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
@@ -647,6 +660,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
       parentRoute: typeof EspaceAgentRoute
     }
+    '/espace-agent/notifications': {
+      id: '/espace-agent/notifications'
+      path: '/notifications'
+      fullPath: '/espace-agent/notifications'
+      preLoaderRoute: typeof EspaceAgentNotificationsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
     '/espace-agent/demandes': {
       id: '/espace-agent/demandes'
       path: '/demandes'
@@ -769,12 +789,14 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EspaceAgentRouteChildren {
   EspaceAgentDemandesRoute: typeof EspaceAgentDemandesRoute
+  EspaceAgentNotificationsRoute: typeof EspaceAgentNotificationsRoute
   EspaceAgentTransactionsRoute: typeof EspaceAgentTransactionsRoute
   EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
 }
 
 const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
   EspaceAgentDemandesRoute: EspaceAgentDemandesRoute,
+  EspaceAgentNotificationsRoute: EspaceAgentNotificationsRoute,
   EspaceAgentTransactionsRoute: EspaceAgentTransactionsRoute,
   EspaceAgentIndexRoute: EspaceAgentIndexRoute,
 }
