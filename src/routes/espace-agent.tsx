@@ -8,9 +8,9 @@ import { site } from "@/config/site";
 
 const NAV = [
   { to: "/espace-agent", label: "Tableau de bord", exact: true },
-  { to: "/espace-agent/demandes", label: "Demandes de valorisation" },
-  { to: "/espace-agent/transactions", label: "Transactions en attente" },
-  { to: "/espace-agent/notifications", label: "Notifications" },
+  { to: "/espace-agent/demandes", label: "Demandes de valorisation", exact: false },
+  { to: "/espace-agent/transactions", label: "Transactions en attente", exact: false },
+  { to: "/espace-agent/notifications", label: "Notifications", exact: false },
 ] as const;
 
 export const Route = createFileRoute("/espace-agent")({
@@ -107,7 +107,7 @@ function AgentSpaceLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                activeOptions={{ exact: item.exact ?? false }}
+                activeOptions={{ exact: item.exact }}
                 className="px-4 py-2 text-sm rounded-t-md text-muted-foreground hover:text-navy transition-colors whitespace-nowrap"
                 activeProps={{
                   className:
