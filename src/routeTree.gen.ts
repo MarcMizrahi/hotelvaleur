@@ -31,6 +31,7 @@ import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relati
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
@@ -154,6 +155,11 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
 } as any)
+const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
+  id: '/demandes',
+  path: '/demandes',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
 const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
   id: '/utilisateurs',
   path: '/utilisateurs',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -274,6 +281,7 @@ export interface FileRoutesByTo {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
@@ -616,6 +628,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
     }
+    '/espace-agent/demandes': {
+      id: '/espace-agent/demandes'
+      path: '/demandes'
+      fullPath: '/espace-agent/demandes'
+      preLoaderRoute: typeof EspaceAgentDemandesRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
     '/admin/utilisateurs': {
       id: '/admin/utilisateurs'
       path: '/utilisateurs'
@@ -730,10 +749,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EspaceAgentRouteChildren {
+  EspaceAgentDemandesRoute: typeof EspaceAgentDemandesRoute
   EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
 }
 
 const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
+  EspaceAgentDemandesRoute: EspaceAgentDemandesRoute,
   EspaceAgentIndexRoute: EspaceAgentIndexRoute,
 }
 
