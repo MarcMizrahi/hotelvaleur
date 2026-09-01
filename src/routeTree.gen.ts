@@ -25,11 +25,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as EspaceAgentIndexRouteImport } from './routes/espace-agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
+import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
+import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
@@ -123,6 +127,11 @@ const GuidesIndexRoute = GuidesIndexRouteImport.update({
   path: '/guides/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EspaceAgentIndexRoute = EspaceAgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -147,6 +156,22 @@ const EstimationResultatRoute = EstimationResultatRouteImport.update({
   id: '/resultat',
   path: '/resultat',
   getParentRoute: () => EstimationRoute,
+} as any)
+const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentNotificationsRoute =
+  EspaceAgentNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => EspaceAgentRoute,
+  } as any)
+const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
+  id: '/demandes',
+  path: '/demandes',
+  getParentRoute: () => EspaceAgentRoute,
 } as any)
 const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
   id: '/utilisateurs',
@@ -220,7 +245,7 @@ export interface FileRoutesByFullPath {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
+  '/espace-agent': typeof EspaceAgentRouteWithChildren
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -234,11 +259,15 @@ export interface FileRoutesByFullPath {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
+  '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
+  '/espace-agent/': typeof EspaceAgentIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -254,7 +283,6 @@ export interface FileRoutesByTo {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -268,11 +296,15 @@ export interface FileRoutesByTo {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
+  '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin': typeof AdminIndexRoute
+  '/espace-agent': typeof EspaceAgentIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
   '/prix-hotel': typeof PrixHotelIndexRoute
@@ -290,7 +322,7 @@ export interface FileRoutesById {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
+  '/espace-agent': typeof EspaceAgentRouteWithChildren
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -304,11 +336,15 @@ export interface FileRoutesById {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
+  '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
+  '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/estimation/resultat': typeof EstimationResultatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
+  '/espace-agent/': typeof EspaceAgentIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -341,11 +377,15 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
+    | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin/'
+    | '/espace-agent/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -361,7 +401,6 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/cookies'
     | '/desabonnement'
-    | '/espace-agent'
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
@@ -375,11 +414,15 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
+    | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin'
+    | '/espace-agent'
     | '/guides'
     | '/mes-donnees'
     | '/prix-hotel'
@@ -410,11 +453,15 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
+    | '/espace-agent/demandes'
+    | '/espace-agent/notifications'
+    | '/espace-agent/transactions'
     | '/estimation/resultat'
     | '/guides/$slug'
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin/'
+    | '/espace-agent/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -432,7 +479,7 @@ export interface RootRouteChildren {
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
-  EspaceAgentRoute: typeof EspaceAgentRoute
+  EspaceAgentRoute: typeof EspaceAgentRouteWithChildren
   EstimationRoute: typeof EstimationRouteWithChildren
   ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -564,6 +611,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/espace-agent/': {
+      id: '/espace-agent/'
+      path: '/'
+      fullPath: '/espace-agent/'
+      preLoaderRoute: typeof EspaceAgentIndexRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -598,6 +652,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/estimation/resultat'
       preLoaderRoute: typeof EstimationResultatRouteImport
       parentRoute: typeof EstimationRoute
+    }
+    '/espace-agent/transactions': {
+      id: '/espace-agent/transactions'
+      path: '/transactions'
+      fullPath: '/espace-agent/transactions'
+      preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/notifications': {
+      id: '/espace-agent/notifications'
+      path: '/notifications'
+      fullPath: '/espace-agent/notifications'
+      preLoaderRoute: typeof EspaceAgentNotificationsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/demandes': {
+      id: '/espace-agent/demandes'
+      path: '/demandes'
+      fullPath: '/espace-agent/demandes'
+      preLoaderRoute: typeof EspaceAgentDemandesRouteImport
+      parentRoute: typeof EspaceAgentRoute
     }
     '/admin/utilisateurs': {
       id: '/admin/utilisateurs'
@@ -712,6 +787,24 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface EspaceAgentRouteChildren {
+  EspaceAgentDemandesRoute: typeof EspaceAgentDemandesRoute
+  EspaceAgentNotificationsRoute: typeof EspaceAgentNotificationsRoute
+  EspaceAgentTransactionsRoute: typeof EspaceAgentTransactionsRoute
+  EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
+}
+
+const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
+  EspaceAgentDemandesRoute: EspaceAgentDemandesRoute,
+  EspaceAgentNotificationsRoute: EspaceAgentNotificationsRoute,
+  EspaceAgentTransactionsRoute: EspaceAgentTransactionsRoute,
+  EspaceAgentIndexRoute: EspaceAgentIndexRoute,
+}
+
+const EspaceAgentRouteWithChildren = EspaceAgentRoute._addFileChildren(
+  EspaceAgentRouteChildren,
+)
+
 interface EstimationRouteChildren {
   EstimationResultatRoute: typeof EstimationResultatRoute
 }
@@ -732,7 +825,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfidentialiteRoute: ConfidentialiteRoute,
   CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
-  EspaceAgentRoute: EspaceAgentRoute,
+  EspaceAgentRoute: EspaceAgentRouteWithChildren,
   EstimationRoute: EstimationRouteWithChildren,
   ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
