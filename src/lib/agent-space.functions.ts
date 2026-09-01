@@ -118,8 +118,10 @@ export const updateAgentLeadStatus = createServerFn({ method: "POST" })
     const agentId = await resolveAgentId(context as any);
     if (!agentId) throw new Error("Forbidden");
 
-    const patch: Record<string, unknown> = { status: data.status };
-    if (data.status === "qualifie") patch['contacted_at'] = new Date().toISOString();
+    const patch = {
+      status: data.status,
+      ...(data.status === "qualifie" ? { contacted_at: new Date().toISOString() } : {}),
+    };
 
     const { error } = await context.supabase
       .from("brokerage_lead")
