@@ -87,6 +87,9 @@ function AccountPage() {
               <Button asChild variant="outline">
                 <Link to="/mes-donnees">Mes données personnelles</Link>
               </Button>
+              <Button asChild variant="outline">
+                <Link to="/espace-agent">Espace agent</Link>
+              </Button>
               {state.role === "admin" && (
                 <Button asChild variant="outline">
                   <Link to="/admin">Espace administrateur</Link>
