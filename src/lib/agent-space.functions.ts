@@ -232,7 +232,7 @@ export const getAgentPendingTransactions = createServerFn({ method: "GET" })
       .limit(150);
     if (error) throw new Error(error.message);
 
-    const regions = ((agent?.regions ?? []) as string[]) ?? [];
+    const regions = (agent?.regions ?? []) as string[];
     const rows = data ?? [];
     return {
       transactions: rows.map((t: any) => ({
