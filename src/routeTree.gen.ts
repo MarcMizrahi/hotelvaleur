@@ -25,6 +25,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as EspaceAgentIndexRouteImport } from './routes/espace-agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
 import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
@@ -123,6 +124,11 @@ const GuidesIndexRoute = GuidesIndexRouteImport.update({
   path: '/guides/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EspaceAgentIndexRoute = EspaceAgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -220,7 +226,7 @@ export interface FileRoutesByFullPath {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
+  '/espace-agent': typeof EspaceAgentRouteWithChildren
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -239,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
+  '/espace-agent/': typeof EspaceAgentIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -254,7 +261,6 @@ export interface FileRoutesByTo {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -273,6 +279,7 @@ export interface FileRoutesByTo {
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin': typeof AdminIndexRoute
+  '/espace-agent': typeof EspaceAgentIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/mes-donnees': typeof MesDonneesIndexRoute
   '/prix-hotel': typeof PrixHotelIndexRoute
@@ -290,7 +297,7 @@ export interface FileRoutesById {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
-  '/espace-agent': typeof EspaceAgentRoute
+  '/espace-agent': typeof EspaceAgentRouteWithChildren
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -309,6 +316,7 @@ export interface FileRoutesById {
   '/mes-donnees/acces': typeof MesDonneesAccesRoute
   '/mise-en-relation/$token': typeof MiseEnRelationTokenRoute
   '/admin/': typeof AdminIndexRoute
+  '/espace-agent/': typeof EspaceAgentIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/mes-donnees/': typeof MesDonneesIndexRoute
   '/prix-hotel/': typeof PrixHotelIndexRoute
@@ -346,6 +354,7 @@ export interface FileRouteTypes {
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin/'
+    | '/espace-agent/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -361,7 +370,6 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/cookies'
     | '/desabonnement'
-    | '/espace-agent'
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
@@ -380,6 +388,7 @@ export interface FileRouteTypes {
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin'
+    | '/espace-agent'
     | '/guides'
     | '/mes-donnees'
     | '/prix-hotel'
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/mes-donnees/acces'
     | '/mise-en-relation/$token'
     | '/admin/'
+    | '/espace-agent/'
     | '/guides/'
     | '/mes-donnees/'
     | '/prix-hotel/'
@@ -432,7 +442,7 @@ export interface RootRouteChildren {
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
-  EspaceAgentRoute: typeof EspaceAgentRoute
+  EspaceAgentRoute: typeof EspaceAgentRouteWithChildren
   EstimationRoute: typeof EstimationRouteWithChildren
   ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -563,6 +573,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guides/'
       preLoaderRoute: typeof GuidesIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/espace-agent/': {
+      id: '/espace-agent/'
+      path: '/'
+      fullPath: '/espace-agent/'
+      preLoaderRoute: typeof EspaceAgentIndexRouteImport
+      parentRoute: typeof EspaceAgentRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -712,6 +729,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface EspaceAgentRouteChildren {
+  EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
+}
+
+const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
+  EspaceAgentIndexRoute: EspaceAgentIndexRoute,
+}
+
+const EspaceAgentRouteWithChildren = EspaceAgentRoute._addFileChildren(
+  EspaceAgentRouteChildren,
+)
+
 interface EstimationRouteChildren {
   EstimationResultatRoute: typeof EstimationResultatRoute
 }
@@ -732,7 +761,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfidentialiteRoute: ConfidentialiteRoute,
   CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
-  EspaceAgentRoute: EspaceAgentRoute,
+  EspaceAgentRoute: EspaceAgentRouteWithChildren,
   EstimationRoute: EstimationRouteWithChildren,
   ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
