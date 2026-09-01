@@ -15,39 +15,79 @@ export const Route = createFileRoute("/admin")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
+  errorComponent: AdminError,
   component: AdminShell,
 });
+
+function AdminError({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4 bg-surface">
+      <div className="max-w-md space-y-4 text-center">
+        <h1 className="font-serif text-2xl text-navy">Espace admin indisponible</h1>
+        <p className="text-sm text-muted-foreground break-words">{error.message}</p>
+        <Button onClick={reset}>Réessayer</Button>
+      </div>
+    </div>
+  );
+}
 
 function AdminShell() {
   const [state, setState] = useState<
     | { kind: "loading" }
     | { kind: "signed-out" }
+    | { kind: "error"; message: string }
     | { kind: "not-admin"; email: string }
     | { kind: "admin"; email: string }
   >({ kind: "loading" });
   const check = useServerFn(checkAdmin);
 
   async function refresh() {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
+    setState({ kind: "loading" });
+    let user: { id: string; email?: string | null } | null = null;
+    try {
+      const { data } = await supabase.auth.getUser();
+      user = data.user ?? null;
+    } catch {
+      setState({ kind: "error", message: "Connexion au service impossible." });
+      return;
+    }
+    if (!user) {
       setState({ kind: "signed-out" });
       return;
     }
+    const email = user.email ?? "";
+
+    // 1) Vérification serveur (source de vérité).
     try {
       const r = await check();
+      setState(r.isAdmin ? { kind: "admin", email } : { kind: "not-admin", email });
+      return;
+    } catch {
+      // 2) Repli client si le serveur est injoignable : lecture du profil.
+    }
+    try {
+      const { data: profile, error } = await supabase
+        .from("profile")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
       setState(
-        r.isAdmin
-          ? { kind: "admin", email: data.user.email ?? "" }
-          : { kind: "not-admin", email: data.user.email ?? "" }
+        profile?.role === "admin" ? { kind: "admin", email } : { kind: "not-admin", email },
       );
     } catch {
-      setState({ kind: "not-admin", email: data.user.email ?? "" });
+      setState({
+        kind: "error",
+        message: "Impossible de vérifier vos droits. Vérifiez votre connexion puis réessayez.",
+      });
     }
   }
 
   useEffect(() => {
     refresh();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => refresh());
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") refresh();
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -58,10 +98,22 @@ function AdminShell() {
       </div>
     );
   }
+  if (state.kind === "error") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-surface">
+        <div className="max-w-md space-y-4 text-center">
+          <h1 className="font-serif text-2xl text-navy">Espace admin indisponible</h1>
+          <p className="text-sm text-muted-foreground">{state.message}</p>
+          <Button onClick={() => refresh()}>Réessayer</Button>
+        </div>
+      </div>
+    );
+  }
   if (state.kind === "signed-out") return <RedirectToAuth />;
   if (state.kind === "not-admin") return <AccessDenied email={state.email} />;
   return <AdminLayout email={state.email} />;
 }
+
 
 function AccessDenied({ email }: { email: string }) {
   const navigate = useNavigate();
