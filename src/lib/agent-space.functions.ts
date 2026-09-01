@@ -131,3 +131,174 @@ export const updateAgentLeadStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+/** Demandes de valorisation : dossiers de la zone couverte par l'agent. */
+export const getAgentValuationRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: agent } = await supabaseAdmin
+      .from("broker_agent")
+      .select("id, regions, star_ratings, min_rooms, max_rooms")
+      .eq("id", agentId)
+      .maybeSingle();
+    if (!agent) throw new Error("Forbidden");
+
+    let query = supabaseAdmin
+      .from("estimation")
+      .select(
+        "id, hotel_name, city, region_slug, department_code, room_count, star_rating, transaction_type, sale_intent, status, value_low_cents, value_high_cents, price_expectation_cents, agent_id, assigned_at, created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit(120);
+
+    const regions = (agent.regions ?? []) as string[];
+    if (regions.length > 0) query = query.in("region_slug", regions);
+
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+
+    const rows = (data ?? []).filter(
+      (e: any) => e.agent_id === agentId || e.agent_id === null,
+    );
+
+    return {
+      agentId,
+      requests: rows.map((e: any) => ({
+        id: e.id,
+        hotel_name: e.hotel_name,
+        city: e.city,
+        region_slug: e.region_slug,
+        department_code: e.department_code,
+        room_count: e.room_count,
+        star_rating: e.star_rating,
+        transaction_type: e.transaction_type,
+        sale_intent: e.sale_intent,
+        status: e.status,
+        value_low_cents: e.value_low_cents,
+        value_high_cents: e.value_high_cents,
+        price_expectation_cents: e.price_expectation_cents,
+        created_at: e.created_at,
+        mine: e.agent_id === agentId,
+      })),
+    };
+  });
+
+/** L'agent se positionne sur une demande encore non attribuée. */
+export const claimValuationRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: updated, error } = await supabaseAdmin
+      .from("estimation")
+      .update({ agent_id: agentId, assigned_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .is("agent_id", null)
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!updated) throw new Error("Cette demande a déjà été attribuée.");
+    return { ok: true as const };
+  });
+
+/** Transactions de marché en attente de validation, filtrées sur la zone de l'agent. */
+export const getAgentPendingTransactions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: agent } = await supabaseAdmin
+      .from("broker_agent")
+      .select("regions")
+      .eq("id", agentId)
+      .maybeSingle();
+
+    const { data, error } = await supabaseAdmin
+      .from("market_transaction")
+      .select(
+        "id, source_name, source_url, title, published_at, hotel_name, city, department_code, region_slug, star_rating, room_count, transaction_type, price_cents, price_per_room_cents, confidence, created_at",
+      )
+      .eq("status", "pending")
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(150);
+    if (error) throw new Error(error.message);
+
+    const regions = ((agent?.regions ?? []) as string[]) ?? [];
+    const rows = data ?? [];
+    return {
+      transactions: rows.map((t: any) => ({
+        ...t,
+        inMyRegion: regions.length === 0 || regions.includes(t.region_slug ?? ""),
+      })),
+    };
+  });
+
+/** Fil de notifications dérivé de l'activité récente de l'agent. */
+export const getAgentNotifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - 90 * 24 * 3600 * 1000).toISOString();
+
+    const [estRes, leadRes, txRes] = await Promise.all([
+      supabaseAdmin
+        .from("estimation")
+        .select("id, hotel_name, city, assigned_at, created_at")
+        .eq("agent_id", agentId)
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabaseAdmin
+        .from("brokerage_lead")
+        .select("id, operation_type, sale_horizon, status, created_at")
+        .eq("agent_id", agentId)
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabaseAdmin
+        .from("market_transaction")
+        .select("id, hotel_name, city, created_at")
+        .eq("status", "pending")
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+
+    const items = [
+      ...(estRes.data ?? []).map((e: any) => ({
+        id: `est-${e.id}`,
+        type: "estimation" as const,
+        title: `Estimation attribuée : ${e.hotel_name || "hôtel non nommé"}`,
+        detail: e.city ?? "",
+        at: e.assigned_at ?? e.created_at,
+      })),
+      ...(leadRes.data ?? []).map((l: any) => ({
+        id: `lead-${l.id}`,
+        type: "lead" as const,
+        title: `Mise en relation ${l.operation_type}`,
+        detail: `Horizon ${l.sale_horizon} · statut ${l.status}`,
+        at: l.created_at,
+      })),
+      ...(txRes.data ?? []).map((t: any) => ({
+        id: `tx-${t.id}`,
+        type: "transaction" as const,
+        title: `Transaction à valider : ${t.hotel_name || "sans nom"}`,
+        detail: t.city ?? "",
+        at: t.created_at,
+      })),
+    ].sort((a, b) => (a.at < b.at ? 1 : -1));
+
+    return { items };
+  });
