@@ -14,6 +14,7 @@ import { Route as MonCompteRouteImport } from './routes/mon-compte'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as EstimationRouteImport } from './routes/estimation'
+import { Route as EspaceAgentRouteImport } from './routes/espace-agent'
 import { Route as DesabonnementRouteImport } from './routes/desabonnement'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
@@ -65,6 +66,11 @@ const ExpertsRoute = ExpertsRouteImport.update({
 const EstimationRoute = EstimationRouteImport.update({
   id: '/estimation',
   path: '/estimation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspaceAgentRoute = EspaceAgentRouteImport.update({
+  id: '/espace-agent',
+  path: '/espace-agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesabonnementRoute = DesabonnementRouteImport.update({
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
+  '/espace-agent': typeof EspaceAgentRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
+  '/espace-agent': typeof EspaceAgentRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/confidentialite': typeof ConfidentialiteRoute
   '/cookies': typeof CookiesRoute
   '/desabonnement': typeof DesabonnementRoute
+  '/espace-agent': typeof EspaceAgentRoute
   '/estimation': typeof EstimationRouteWithChildren
   '/experts': typeof ExpertsRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/cookies'
     | '/desabonnement'
+    | '/espace-agent'
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/cookies'
     | '/desabonnement'
+    | '/espace-agent'
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
@@ -385,6 +396,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/cookies'
     | '/desabonnement'
+    | '/espace-agent'
     | '/estimation'
     | '/experts'
     | '/mentions-legales'
@@ -420,6 +432,7 @@ export interface RootRouteChildren {
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   CookiesRoute: typeof CookiesRoute
   DesabonnementRoute: typeof DesabonnementRoute
+  EspaceAgentRoute: typeof EspaceAgentRoute
   EstimationRoute: typeof EstimationRouteWithChildren
   ExpertsRoute: typeof ExpertsRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -472,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/estimation'
       fullPath: '/estimation'
       preLoaderRoute: typeof EstimationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espace-agent': {
+      id: '/espace-agent'
+      path: '/espace-agent'
+      fullPath: '/espace-agent'
+      preLoaderRoute: typeof EspaceAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/desabonnement': {
@@ -712,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfidentialiteRoute: ConfidentialiteRoute,
   CookiesRoute: CookiesRoute,
   DesabonnementRoute: DesabonnementRoute,
+  EspaceAgentRoute: EspaceAgentRoute,
   EstimationRoute: EstimationRouteWithChildren,
   ExpertsRoute: ExpertsRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
