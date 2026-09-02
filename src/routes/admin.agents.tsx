@@ -369,6 +369,9 @@ function AgentsAdmin() {
                     {a.is_public ? " · public" : " · masqué"}
                   </td>
                   <td className="p-3 whitespace-nowrap">
+                    <Button variant="ghost" size="sm" onClick={() => void openDetail(a)}>
+                      Détails
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => edit(a)}>
                       Modifier
                     </Button>
