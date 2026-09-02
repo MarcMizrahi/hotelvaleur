@@ -83,6 +83,7 @@ function AgentsAdmin() {
   const load = useServerFn(listBrokerageLeads);
   const save = useServerFn(upsertAgent);
   const remove = useServerFn(deleteAgent);
+  const loadDetail = useServerFn(getAgentDetail);
 
   const [agents, setAgents] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
@@ -91,6 +92,24 @@ function AgentsAdmin() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [regionFilter, setRegionFilter] = useState("all");
+  const [detail, setDetail] = useState<
+    | { kind: "loading"; agentId: string }
+    | { kind: "ready"; agent: any; estimations: any[]; leads: any[] }
+    | null
+  >(null);
+
+  async function openDetail(a: any) {
+    setDetail({ kind: "loading", agentId: a.id });
+    try {
+      const r = await loadDetail({ data: { agentId: a.id } });
+      setDetail({ kind: "ready", agent: r.agent, estimations: r.estimations, leads: r.leads });
+    } catch (err) {
+      setDetail(null);
+      toast.error("Fiche agent indisponible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
 
 
   async function refresh() {
