@@ -667,3 +667,156 @@ function AgentsAdmin() {
     </div>
   );
 }
+
+function eur(cents: number | null | undefined) {
+  if (cents == null) return "—";
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(cents / 100);
+}
+
+function fmtDate(iso: string | null | undefined) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("fr-FR");
+}
+
+const LEAD_STATUS: Record<string, string> = {
+  nouveau: "Nouveau",
+  attribue: "Attribué",
+  contacte: "Contacté",
+  mandat: "Mandat",
+  perdu: "Perdu",
+};
+
+function AgentDetailView({
+  agent,
+  estimations,
+  leads,
+}: {
+  agent: any;
+  estimations: any[];
+  leads: any[];
+}) {
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">Agent</div>
+          <div className="mt-1 font-medium">{agent.full_name}</div>
+          <div className="text-sm text-muted-foreground">{agent.company ?? "—"}</div>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+            Coordonnées
+          </div>
+          <div className="mt-1 text-sm">{agent.email}</div>
+          <div className="text-sm text-muted-foreground">{agent.phone ?? "—"}</div>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">État</div>
+          <div className="mt-1 text-sm">
+            {agent.is_active ? "Actif" : "Inactif"}
+            {agent.is_public ? " · public" : " · masqué"}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="font-medium">
+          Estimations attribuées{" "}
+          <span className="text-muted-foreground">({estimations.length})</span>
+        </h3>
+        {estimations.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucune estimation attribuée.</p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="min-w-[640px] w-full text-sm">
+              <thead className="bg-muted/50 text-left">
+                <tr>
+                  <th className="p-3">Hôtel</th>
+                  <th className="p-3">Lieu</th>
+                  <th className="p-3">Fourchette</th>
+                  <th className="p-3">Contact</th>
+                  <th className="p-3">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {estimations.map((e) => (
+                  <tr key={e.id} className="border-t border-border align-top">
+                    <td className="p-3">
+                      <div className="font-medium">{e.hotel_name ?? "Hôtel"}</div>
+                      <div className="text-muted-foreground">
+                        {e.room_count} ch. · {e.star_rating}★
+                      </div>
+                    </td>
+                    <td className="p-3 text-muted-foreground">{e.city ?? e.region_slug}</td>
+                    <td className="p-3 tabular-nums">
+                      {eur(e.value_low_cents)} – {eur(e.value_high_cents)}
+                    </td>
+                    <td className="p-3 text-muted-foreground">{e.email}</td>
+                    <td className="p-3 text-muted-foreground">{fmtDate(e.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="font-medium">
+          Demandes de mise en relation{" "}
+          <span className="text-muted-foreground">({leads.length})</span>
+        </h3>
+        {leads.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucune demande attribuée.</p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="min-w-[640px] w-full text-sm">
+              <thead className="bg-muted/50 text-left">
+                <tr>
+                  <th className="p-3">Propriétaire</th>
+                  <th className="p-3">Hôtel</th>
+                  <th className="p-3">Opération</th>
+                  <th className="p-3">Statut</th>
+                  <th className="p-3">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((l) => (
+                  <tr key={l.id} className="border-t border-border align-top">
+                    <td className="p-3">
+                      <div className="font-medium">
+                        {[l.estimation?.first_name, l.estimation?.last_name]
+                          .filter(Boolean)
+                          .join(" ") || "—"}
+                      </div>
+                      <div className="text-muted-foreground">{l.estimation?.email}</div>
+                      {l.phone && (
+                        <div className="text-muted-foreground">{l.phone}</div>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      <div>{l.estimation?.hotel_name ?? "Hôtel"}</div>
+                      <div className="text-muted-foreground">
+                        {l.estimation?.city} · {eur(l.estimation?.value_low_cents)} –{" "}
+                        {eur(l.estimation?.value_high_cents)}
+                      </div>
+                    </td>
+                    <td className="p-3 text-muted-foreground">
+                      {l.operation_type} · {l.sale_horizon}
+                    </td>
+                    <td className="p-3">{LEAD_STATUS[l.status] ?? l.status}</td>
+                    <td className="p-3 text-muted-foreground">{fmtDate(l.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
