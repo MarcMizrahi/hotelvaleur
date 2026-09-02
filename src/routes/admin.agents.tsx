@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { regions } from "@/lib/regions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
-import { listBrokerageLeads, upsertAgent, deleteAgent } from "@/lib/brokerage.functions";
+import { listBrokerageLeads, upsertAgent, deleteAgent, getAgentDetail } from "@/lib/brokerage.functions";
 import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
 import { photoUrlForPayload } from "@/lib/agent-photo";
 
