@@ -332,6 +332,35 @@ export const upsertAgent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const getAgentDetail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ agentId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabase } = context as never as { supabase: any };
+    const [{ data: agent }, { data: estimations }, { data: leads }] = await Promise.all([
+      supabase.from("broker_agent").select("*").eq("id", data.agentId).maybeSingle(),
+      supabase
+        .from("estimation")
+        .select(
+          "id, hotel_name, city, region_slug, room_count, star_rating, status, value_low_cents, value_high_cents, email, created_at, assigned_at",
+        )
+        .eq("agent_id", data.agentId)
+        .order("assigned_at", { ascending: false })
+        .limit(100),
+      supabase
+        .from("brokerage_lead")
+        .select(
+          "id, status, sale_horizon, operation_type, phone, created_at, assigned_at, contacted_at, estimation:estimation_id (id, hotel_name, city, room_count, star_rating, value_low_cents, value_high_cents, first_name, last_name, email)",
+        )
+        .eq("agent_id", data.agentId)
+        .order("created_at", { ascending: false })
+        .limit(100),
+    ]);
+    if (!agent) throw new Error("Agent introuvable.");
+    return { agent, estimations: estimations ?? [], leads: leads ?? [] };
+  });
+
 export const deleteAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
