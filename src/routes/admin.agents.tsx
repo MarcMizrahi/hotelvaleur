@@ -421,6 +421,30 @@ function AgentsAdmin() {
         </div>
       )}
 
+      {detail && (
+        <section
+          aria-label="Fiche détaillée de l'agent"
+          className="space-y-6 rounded-lg border border-border bg-card p-6"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="font-serif text-xl text-navy">Fiche agent</h2>
+            <Button variant="ghost" size="sm" onClick={() => setDetail(null)}>
+              Fermer
+            </Button>
+          </div>
+
+          {detail.kind === "loading" ? (
+            <p className="text-muted-foreground">Chargement…</p>
+          ) : (
+            <AgentDetailView
+              agent={detail.agent}
+              estimations={detail.estimations}
+              leads={detail.leads}
+            />
+          )}
+        </section>
+      )}
+
       {form && (
         <form
           onSubmit={onSave}
