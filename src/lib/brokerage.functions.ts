@@ -339,27 +339,63 @@ export const getAgentDetail = createServerFn({ method: "POST" })
     await assertAdmin(context as never);
     const { supabase } = context as never as { supabase: any };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: agent }, { data: estimations }, { data: leads }] = await Promise.all([
-      supabaseAdmin.from("broker_agent").select("*").eq("id", data.agentId).maybeSingle(),
-      supabase
-        .from("estimation")
-        .select(
-          "id, hotel_name, city, region_slug, room_count, star_rating, status, value_low_cents, value_high_cents, email, created_at, assigned_at",
-        )
-        .eq("agent_id", data.agentId)
-        .order("assigned_at", { ascending: false })
-        .limit(100),
-      supabase
-        .from("brokerage_lead")
-        .select(
-          "id, status, sale_horizon, operation_type, phone, created_at, assigned_at, contacted_at, estimation:estimation_id (id, hotel_name, city, room_count, star_rating, value_low_cents, value_high_cents, first_name, last_name, email)",
-        )
-        .eq("agent_id", data.agentId)
-        .order("created_at", { ascending: false })
-        .limit(100),
-    ]);
+    const [{ data: agent }, { data: estimations }, { data: leads }, { data: requests }] =
+      await Promise.all([
+        supabaseAdmin.from("broker_agent").select("*").eq("id", data.agentId).maybeSingle(),
+        supabase
+          .from("estimation")
+          .select(
+            "id, hotel_name, city, region_slug, room_count, star_rating, status, value_low_cents, value_high_cents, email, created_at, assigned_at",
+          )
+          .eq("agent_id", data.agentId)
+          .order("assigned_at", { ascending: false })
+          .limit(100),
+        supabase
+          .from("brokerage_lead")
+          .select(
+            "id, status, sale_horizon, operation_type, phone, created_at, assigned_at, contacted_at, estimation:estimation_id (id, hotel_name, city, room_count, star_rating, value_low_cents, value_high_cents, first_name, last_name, email)",
+          )
+          .eq("agent_id", data.agentId)
+          .order("created_at", { ascending: false })
+          .limit(100),
+        supabaseAdmin
+          .from("agent_valuation_request")
+          .select("*")
+          .eq("agent_id", data.agentId)
+          .order("created_at", { ascending: false })
+          .limit(100),
+      ]);
     if (!agent) throw new Error("Agent introuvable.");
-    return { agent, estimations: estimations ?? [], leads: leads ?? [] };
+    return {
+      agent,
+      estimations: estimations ?? [],
+      leads: leads ?? [],
+      requests: requests ?? [],
+    };
+  });
+
+export const updateAgentRequestStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["nouveau", "en_cours", "traite", "refuse"]),
+        adminNotes: z.string().max(2000).optional().nullable(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch: Record<string, unknown> = { status: data.status };
+    if (data.adminNotes !== undefined) patch["admin_notes"] = data.adminNotes;
+    const { error } = await supabaseAdmin
+      .from("agent_valuation_request")
+      .update(patch)
+      .eq("id", data.id);
+    if (error) throw new Error("Mise à jour impossible.");
+    return { ok: true };
   });
 
 export const deleteAgent = createServerFn({ method: "POST" })
