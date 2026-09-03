@@ -388,8 +388,8 @@ export const updateAgentRequestStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = { status: data.status };
-    if (data.adminNotes !== undefined) patch["admin_notes"] = data.adminNotes;
+    const patch: { status: string; admin_notes?: string | null } = { status: data.status };
+    if (data.adminNotes !== undefined) patch.admin_notes = data.adminNotes;
     const { error } = await supabaseAdmin
       .from("agent_valuation_request")
       .update(patch)
