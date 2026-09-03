@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_valuation_request: {
+        Row: {
+          admin_notes: string | null
+          agent_id: string
+          city: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          department_code: string | null
+          hotel_name: string
+          id: string
+          message: string | null
+          region_slug: string | null
+          room_count: number | null
+          star_rating: number | null
+          status: string
+          transaction_type: string | null
+          updated_at: string
+          urgency: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          agent_id: string
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          department_code?: string | null
+          hotel_name: string
+          id?: string
+          message?: string | null
+          region_slug?: string | null
+          room_count?: number | null
+          star_rating?: number | null
+          status?: string
+          transaction_type?: string | null
+          updated_at?: string
+          urgency?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          agent_id?: string
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          department_code?: string | null
+          hotel_name?: string
+          id?: string
+          message?: string | null
+          region_slug?: string | null
+          room_count?: number | null
+          star_rating?: number | null
+          status?: string
+          transaction_type?: string | null
+          updated_at?: string
+          urgency?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_valuation_request_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "broker_agent"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_event: {
         Row: {
           created_at: string
