@@ -302,3 +302,66 @@ export const getAgentNotifications = createServerFn({ method: "GET" })
 
     return { items };
   });
+
+/** L'agent soumet une demande de valorisation à l'administration. */
+export const submitAgentRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        hotelName: z.string().trim().min(2).max(160),
+        city: z.string().trim().max(120).optional().nullable(),
+        regionSlug: z.string().trim().max(80).optional().nullable(),
+        departmentCode: z.string().trim().max(5).optional().nullable(),
+        roomCount: z.number().int().min(1).max(2000).optional().nullable(),
+        starRating: z.number().int().min(0).max(5).optional().nullable(),
+        transactionType: z.enum(["murs_fonds", "fonds", "murs", "bail"]).optional().nullable(),
+        contactName: z.string().trim().max(120).optional().nullable(),
+        contactEmail: z.string().trim().email().max(200).optional().nullable().or(z.literal("")),
+        contactPhone: z.string().trim().max(40).optional().nullable(),
+        urgency: z.enum(["normale", "prioritaire", "urgente"]),
+        message: z.string().trim().max(2000).optional().nullable(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { error } = await context.supabase.from("agent_valuation_request").insert({
+      agent_id: agentId,
+      hotel_name: data.hotelName,
+      city: data.city || null,
+      region_slug: data.regionSlug || null,
+      department_code: data.departmentCode || null,
+      room_count: data.roomCount ?? null,
+      star_rating: data.starRating ?? null,
+      transaction_type: data.transactionType ?? null,
+      contact_name: data.contactName || null,
+      contact_email: data.contactEmail ? String(data.contactEmail).toLowerCase() : null,
+      contact_phone: data.contactPhone || null,
+      urgency: data.urgency,
+      message: data.message || null,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+/** Historique des demandes envoyées par l'agent à l'administration. */
+export const listMyAgentRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { data, error } = await context.supabase
+      .from("agent_valuation_request")
+      .select(
+        "id, hotel_name, city, region_slug, department_code, room_count, star_rating, transaction_type, contact_name, contact_email, contact_phone, urgency, message, status, admin_notes, created_at",
+      )
+      .eq("agent_id", agentId)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { requests: data ?? [] };
+  });
