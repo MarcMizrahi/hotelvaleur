@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { regions } from "@/lib/regions";
+import { updateAgentRequestStatus } from "@/lib/brokerage.functions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
 import { listBrokerageLeads, upsertAgent, deleteAgent, getAgentDetail } from "@/lib/brokerage.functions";
 import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
@@ -94,7 +95,7 @@ function AgentsAdmin() {
   const [regionFilter, setRegionFilter] = useState("all");
   const [detail, setDetail] = useState<
     | { kind: "loading"; agentId: string }
-    | { kind: "ready"; agent: any; estimations: any[]; leads: any[] }
+    | { kind: "ready"; agent: any; estimations: any[]; leads: any[]; requests: any[] }
     | null
   >(null);
 
@@ -102,7 +103,13 @@ function AgentsAdmin() {
     setDetail({ kind: "loading", agentId: a.id });
     try {
       const r = await loadDetail({ data: { agentId: a.id } });
-      setDetail({ kind: "ready", agent: r.agent, estimations: r.estimations, leads: r.leads });
+      setDetail({
+        kind: "ready",
+        agent: r.agent,
+        estimations: r.estimations,
+        leads: r.leads,
+        requests: (r as any).requests ?? [],
+      });
     } catch (err) {
       setDetail(null);
       toast.error("Fiche agent indisponible", {
@@ -440,6 +447,8 @@ function AgentsAdmin() {
               agent={detail.agent}
               estimations={detail.estimations}
               leads={detail.leads}
+              requests={detail.requests}
+              onRefresh={() => void openDetail({ id: detail.agent.id })}
             />
           )}
         </section>
@@ -690,14 +699,116 @@ const LEAD_STATUS: Record<string, string> = {
   perdu: "Perdu",
 };
 
+const REQUEST_STATUS: Record<string, string> = {
+  nouveau: "Nouvelle",
+  en_cours: "En cours",
+  traite: "Traitée",
+  refuse: "Refusée",
+};
+
+function AgentRequestsTable({
+  requests,
+  onRefresh,
+}: {
+  requests: any[];
+  onRefresh: () => void;
+}) {
+  const updateStatus = useServerFn(updateAgentRequestStatus);
+
+  async function change(id: string, status: string) {
+    try {
+      await updateStatus({ data: { id, status: status as any } });
+      toast.success("Statut mis à jour.");
+      onRefresh();
+    } catch (e) {
+      toast.error("Mise à jour impossible", {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="font-medium">
+        Demandes de valorisation envoyées par l'agent{" "}
+        <span className="text-muted-foreground">({requests.length})</span>
+      </h3>
+      {requests.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Aucune demande envoyée.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="min-w-[720px] w-full text-sm">
+            <thead className="bg-muted/50 text-left">
+              <tr>
+                <th className="p-3">Hôtel</th>
+                <th className="p-3">Lieu</th>
+                <th className="p-3">Contact</th>
+                <th className="p-3">Urgence</th>
+                <th className="p-3">Statut</th>
+                <th className="p-3">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requests.map((r) => (
+                <tr key={r.id} className="border-t border-border align-top">
+                  <td className="p-3">
+                    <div className="font-medium">{r.hotel_name}</div>
+                    <div className="text-muted-foreground">
+                      {[r.room_count ? `${r.room_count} ch.` : null,
+                        r.star_rating != null ? `${r.star_rating}★` : null,
+                        r.transaction_type]
+                        .filter(Boolean)
+                        .join(" · ") || "—"}
+                    </div>
+                    {r.message && (
+                      <div className="mt-1 max-w-md text-muted-foreground">{r.message}</div>
+                    )}
+                  </td>
+                  <td className="p-3 text-muted-foreground">
+                    {r.city ?? r.region_slug ?? "—"}
+                  </td>
+                  <td className="p-3 text-muted-foreground">
+                    <div>{r.contact_name ?? "—"}</div>
+                    <div>{r.contact_email ?? ""}</div>
+                    <div>{r.contact_phone ?? ""}</div>
+                  </td>
+                  <td className="p-3 text-muted-foreground">{r.urgency}</td>
+                  <td className="p-3">
+                    <select
+                      value={r.status}
+                      onChange={(e) => void change(r.id, e.target.value)}
+                      className="rounded-md border border-border bg-background px-2 py-1 text-sm"
+                    >
+                      {Object.entries(REQUEST_STATUS).map(([v, label]) => (
+                        <option key={v} value={v}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="p-3 text-muted-foreground">{fmtDate(r.created_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function AgentDetailView({
   agent,
   estimations,
   leads,
+  requests,
+  onRefresh,
 }: {
   agent: any;
   estimations: any[];
   leads: any[];
+  requests: any[];
+  onRefresh: () => void;
 }) {
   return (
     <div className="space-y-8">
@@ -722,6 +833,8 @@ function AgentDetailView({
           </div>
         </div>
       </div>
+
+      <AgentRequestsTable requests={requests} onRefresh={onRefresh} />
 
       <div className="space-y-3">
         <h3 className="font-medium">
