@@ -338,8 +338,9 @@ export const getAgentDetail = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context as never);
     const { supabase } = context as never as { supabase: any };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [{ data: agent }, { data: estimations }, { data: leads }] = await Promise.all([
-      supabase.from("broker_agent").select("*").eq("id", data.agentId).maybeSingle(),
+      supabaseAdmin.from("broker_agent").select("*").eq("id", data.agentId).maybeSingle(),
       supabase
         .from("estimation")
         .select(
