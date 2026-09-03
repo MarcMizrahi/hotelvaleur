@@ -9,6 +9,7 @@ import { site } from "@/config/site";
 const NAV = [
   { to: "/espace-agent", label: "Tableau de bord", exact: true },
   { to: "/espace-agent/demandes", label: "Demandes de valorisation", exact: false },
+  { to: "/espace-agent/nouvelle-demande", label: "Nouvelle demande", exact: false },
   { to: "/espace-agent/transactions", label: "Transactions en attente", exact: false },
   { to: "/espace-agent/notifications", label: "Notifications", exact: false },
 ] as const;
