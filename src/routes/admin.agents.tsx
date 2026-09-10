@@ -409,11 +409,23 @@ function AgentsAdmin() {
                   <td className="p-3">
                     {a.is_active ? "Actif" : "Inactif"}
                     {a.is_public ? " · public" : " · masqué"}
+                    <div className="text-xs text-muted-foreground">
+                      {a.user_id ? "Accès espace agent ✓" : "Sans accès"}
+                    </div>
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <Button variant="ghost" size="sm" onClick={() => void openDetail(a)}>
                       Détails
                     </Button>
+                    {a.user_id ? (
+                      <Button variant="ghost" size="sm" onClick={() => void revokeBroker(a)}>
+                        Retirer l'accès
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" size="sm" onClick={() => void inviteBroker(a)}>
+                        Inviter
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => edit(a)}>
                       Modifier
                     </Button>
