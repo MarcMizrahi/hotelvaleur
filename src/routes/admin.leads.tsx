@@ -10,6 +10,7 @@ import { getRegionBySlug } from "@/lib/regions";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { RecomputePanel } from "@/components/admin-recompute";
 
 
 export const Route = createFileRoute("/admin/leads")({
