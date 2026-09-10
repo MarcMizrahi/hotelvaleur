@@ -753,6 +753,16 @@ const REQUEST_STATUS: Record<string, string> = {
   refuse: "Refusée",
 };
 
+const ESTIMATION_STATUS: Record<string, string> = {
+  nouveau: "Nouveau",
+  rapport_envoye: "Rapport envoyé",
+  en_cours: "En cours",
+  qualifie: "Qualifié",
+  converti: "Converti",
+  perdu: "Perdu",
+  archive: "Archivé",
+};
+
 function AgentRequestsTable({
   requests,
   onRefresh,
@@ -892,14 +902,15 @@ function AgentDetailView({
           <p className="text-sm text-muted-foreground">Aucune estimation attribuée.</p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="min-w-[640px] w-full text-sm">
+            <table className="min-w-[760px] w-full text-sm">
               <thead className="bg-muted/50 text-left">
                 <tr>
                   <th className="p-3">Hôtel</th>
                   <th className="p-3">Lieu</th>
                   <th className="p-3">Fourchette</th>
                   <th className="p-3">Contact</th>
-                  <th className="p-3">Date</th>
+                  <th className="p-3">Statut</th>
+                  <th className="p-3">Attribution</th>
                 </tr>
               </thead>
               <tbody>
@@ -916,7 +927,8 @@ function AgentDetailView({
                       {eur(e.value_low_cents)} – {eur(e.value_high_cents)}
                     </td>
                     <td className="p-3 text-muted-foreground">{e.email}</td>
-                    <td className="p-3 text-muted-foreground">{fmtDate(e.created_at)}</td>
+                    <td className="p-3">{ESTIMATION_STATUS[e.status] ?? e.status ?? "—"}</td>
+                    <td className="p-3 text-muted-foreground">{fmtDate(e.assigned_at ?? e.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
