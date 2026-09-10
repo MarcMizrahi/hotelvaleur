@@ -299,19 +299,21 @@ export async function generateAndSendEstimationReport(
     }
   }
 
-  let agent: {
+  type AgentContact = {
     id: string;
     full_name: string;
     email: string;
     company: string | null;
-  } | null = null;
+  };
+  let agent: AgentContact | null = null;
   if (row.agent_id) {
     const { data: a } = await supabaseAdmin
       .from("broker_agent")
       .select("id, full_name, email, company")
       .eq("id", row.agent_id)
       .maybeSingle();
-    agent = (a as typeof agent) ?? null;
+    agent = (a as AgentContact | null) ?? null;
+
   }
 
   let bytes: Uint8Array;
