@@ -533,6 +533,54 @@ export type Database = {
           },
         ]
       }
+      estimation_report: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          error_message: string | null
+          estimation_id: string
+          id: string
+          sent_to: string | null
+          status: string
+          storage_path: string
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          estimation_id: string
+          id?: string
+          sent_to?: string | null
+          status?: string
+          storage_path: string
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          estimation_id?: string
+          id?: string
+          sent_to?: string | null
+          status?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimation_report_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "broker_agent"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estimation_report_estimation_id_fkey"
+            columns: ["estimation_id"]
+            isOneToOne: false
+            referencedRelation: "estimation"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_transaction: {
         Row: {
           buyer: string | null
