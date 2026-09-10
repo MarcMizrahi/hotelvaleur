@@ -10,6 +10,7 @@ import { getRegionBySlug } from "@/lib/regions";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { RecomputePanel } from "@/components/admin-recompute";
 
 
 export const Route = createFileRoute("/admin/leads")({
@@ -308,6 +309,9 @@ function LeadsPage() {
                 />
                 <Row label="Méthode" value={selected.method_used} />
               </dl>
+
+              <RecomputePanel estimation={selected as never} />
+
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Agent attribué</label>

@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Coefficient } from "@/lib/valuation";
+import type { ComparableRow } from "@/lib/comparables";
 
 // Ensures the caller is an admin. Throws otherwise.
 async function assertAdmin(ctx: { supabase: any; userId: string }) {
@@ -320,4 +322,149 @@ export const listEmailLog = createServerFn({ method: "GET" })
       .limit(200);
     if (error) throw new Error(error.message);
     return data ?? [];
+  });
+
+/**
+ * Recalcul automatique de la fourchette d'une estimation à partir du moteur
+ * déterministe (coefficients région × étoiles + comparables marché validés).
+ * `apply: false` renvoie une simulation, `apply: true` enregistre le résultat.
+ */
+const recomputeSchema = z.object({
+  id: z.string().uuid(),
+  apply: z.boolean().default(false),
+  overrides: z
+    .object({
+      roomCount: z.number().int().min(1).max(2000).nullable().optional(),
+      starRating: z.number().int().min(0).max(5).nullable().optional(),
+      annualRevenueCents: z.number().int().min(0).nullable().optional(),
+      ebitdaCents: z.number().int().min(0).nullable().optional(),
+      occupancyRate: z.number().min(0).max(100).nullable().optional(),
+      worksCostCents: z.number().int().min(0).nullable().optional(),
+    })
+    .default({}),
+});
+
+export const recomputeEstimation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => recomputeSchema.parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { computeValuation } = await import("@/lib/valuation");
+    const { selectComparables } = await import("@/lib/comparables");
+
+    const { data: row, error } = await supabaseAdmin
+      .from("estimation")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Estimation introuvable");
+
+    const o = data.overrides ?? {};
+    const pick = <T,>(override: T | null | undefined, current: T | null): T | null =>
+      override === undefined ? current : override;
+
+    const starRating = pick(o.starRating, row.star_rating) ?? row.star_rating;
+    const roomCount = pick(o.roomCount, row.room_count) ?? row.room_count;
+
+    const { data: coef } = await supabaseAdmin
+      .from("valuation_coefficient")
+      .select("*")
+      .eq("region_slug", row.region_slug)
+      .eq("star_rating", starRating)
+      .maybeSingle();
+    if (!coef) throw new Error("Coefficient introuvable pour cette région / ce classement.");
+
+    const { data: comps } = await supabaseAdmin
+      .from("market_transaction")
+      .select("star_rating, price_per_room_cents, transaction_type")
+      .eq("status", "validated")
+      .eq("region_slug", row.region_slug)
+      .not("price_per_room_cents", "is", null);
+
+    const comparables = selectComparables((comps ?? []) as ComparableRow[], starRating);
+
+    const result = computeValuation(
+      {
+        regionSlug: row.region_slug,
+        starRating,
+        roomCount,
+        hotelName: row.hotel_name,
+        transactionType: row.transaction_type as never,
+        worksNeeded: row.works_needed as never,
+        worksCostCents: pick(o.worksCostCents, row.works_cost_cents as number | null),
+        hasRestaurant: row.has_restaurant,
+        hasLicence4: row.has_licence_4,
+        annualRevenueCents: pick(o.annualRevenueCents, row.annual_revenue_cents as number | null),
+        ebitdaCents: pick(o.ebitdaCents, row.ebitda_cents as number | null),
+        occupancyRate: pick(o.occupancyRate, row.occupancy_rate as number | null),
+        comparables,
+      },
+      coef as unknown as Coefficient,
+    );
+
+    if (data.apply) {
+      const { error: upErr } = await supabaseAdmin
+        .from("estimation")
+        .update({
+          star_rating: starRating,
+          room_count: roomCount,
+          annual_revenue_cents: pick(o.annualRevenueCents, row.annual_revenue_cents as number | null),
+          ebitda_cents: pick(o.ebitdaCents, row.ebitda_cents as number | null),
+          occupancy_rate: pick(o.occupancyRate, row.occupancy_rate as number | null),
+          works_cost_cents: pick(o.worksCostCents, row.works_cost_cents as number | null),
+          value_low_cents: result.valueLowCents,
+          value_high_cents: result.valueHighCents,
+          method_used: result.methodUsed,
+          calculation_detail: result.detail as never,
+        })
+        .eq("id", data.id);
+      if (upErr) throw new Error(upErr.message);
+    }
+
+    const d = result.detail;
+    const formula: string[] = [];
+    if (d.perRoom) {
+      formula.push(
+        `Prix par chambre : ${roomCount} chambres × ${(coef.price_per_room_low_cents / 100_000).toFixed(0)} k€–${(coef.price_per_room_high_cents / 100_000).toFixed(0)} k€`,
+      );
+    }
+    if (d.ebitda) {
+      formula.push(
+        `Multiple d'EBITDA : EBITDA ${(d.ebitda.used / 100_000).toFixed(0)} k€${d.ebitda.estimated ? " (estimé)" : ""} × ${coef.ebitda_multiple_low}–${coef.ebitda_multiple_high}`,
+      );
+    }
+    if (d.perRoom && d.ebitda) {
+      formula.push("Combinaison pondérée des deux méthodes");
+    }
+    if (d.marketAnchor) {
+      formula.push(
+        `Recentrage marché : médiane ${(d.marketAnchor.medianPerRoomCents / 100_000).toFixed(0)} k€/chambre sur ${d.marketAnchor.sampleSize} transaction(s) (poids ${Math.round(d.marketAnchor.weight * 100)} %)`,
+      );
+    }
+    for (const a of d.adjustments) {
+      formula.push(`Ajustement ${a.label} : ×${a.factor.toFixed(2)}`);
+    }
+    if (d.worksDeductionCents > 0) {
+      formula.push(`Déduction travaux : −${(d.worksDeductionCents / 100_000).toFixed(0)} k€`);
+    }
+
+    return {
+      applied: data.apply,
+      previous: {
+        valueLowCents: Number(row.value_low_cents),
+        valueHighCents: Number(row.value_high_cents),
+        methodUsed: row.method_used,
+      },
+      valueLowCents: result.valueLowCents,
+      valueHighCents: result.valueHighCents,
+      methodUsed: result.methodUsed,
+      formula,
+      warnings: [
+        ...(d.outlier ? ["Valeur atypique par rapport au segment"] : []),
+        ...(d.divergent ? ["Méthodes divergentes (> 60 % d'écart)"] : []),
+      ],
+    };
   });
