@@ -9,6 +9,7 @@ import { site } from "@/config/site";
 const NAV = [
   { to: "/espace-agent", label: "Tableau de bord", exact: true },
   { to: "/espace-agent/estimations", label: "Mes estimations", exact: false },
+  { to: "/espace-agent/rapports", label: "Rapports reçus", exact: false },
   { to: "/espace-agent/zones", label: "Par zone", exact: false },
   { to: "/espace-agent/profil", label: "Profil", exact: false },
   { to: "/espace-agent/demandes", label: "Demandes de valorisation", exact: false },

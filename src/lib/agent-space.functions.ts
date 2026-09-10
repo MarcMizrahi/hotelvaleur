@@ -370,3 +370,76 @@ export const listMyAgentRequests = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return { requests: data ?? [] };
   });
+
+/** Rapports PDF de valorisation reçus par l'agent connecté. */
+export const listMyReports = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("estimation_report")
+      .select("id, estimation_id, storage_path, sent_to, status, error_message, created_at")
+      .eq("agent_id", agentId)
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+
+    const reports = rows ?? [];
+    const ids = Array.from(new Set(reports.map((r) => r.estimation_id)));
+    let estimations: Record<
+      string,
+      {
+        hotel_name: string | null;
+        city: string | null;
+        department_code: string;
+        room_count: number;
+        star_rating: number;
+        value_low_cents: number;
+        value_high_cents: number;
+      }
+    > = {};
+    if (ids.length > 0) {
+      const { data: est } = await supabaseAdmin
+        .from("estimation")
+        .select(
+          "id, hotel_name, city, department_code, room_count, star_rating, value_low_cents, value_high_cents",
+        )
+        .in("id", ids)
+        .eq("agent_id", agentId);
+      for (const e of est ?? []) {
+        const { id, ...rest } = e as any;
+        estimations[id] = rest;
+      }
+    }
+
+    return {
+      reports: reports.map((r) => ({ ...r, estimation: estimations[r.estimation_id] ?? null })),
+    };
+  });
+
+/** Lien de téléchargement signé pour un rapport appartenant à l'agent. */
+export const getMyReportUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const agentId = await resolveAgentId(context as any);
+    if (!agentId) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: report } = await supabaseAdmin
+      .from("estimation_report")
+      .select("storage_path")
+      .eq("id", data.id)
+      .eq("agent_id", agentId)
+      .maybeSingle();
+    if (!report) throw new Error("Forbidden");
+
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("estimation-reports")
+      .createSignedUrl(report.storage_path, 600);
+    if (error || !signed?.signedUrl) throw new Error(error?.message ?? "Lien indisponible");
+    return { url: signed.signedUrl };
+  });
