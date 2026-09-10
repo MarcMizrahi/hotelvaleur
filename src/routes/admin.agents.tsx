@@ -909,7 +909,8 @@ function AgentDetailView({
                   <th className="p-3">Lieu</th>
                   <th className="p-3">Fourchette</th>
                   <th className="p-3">Contact</th>
-                  <th className="p-3">Date</th>
+                  <th className="p-3">Statut</th>
+                  <th className="p-3">Attribution</th>
                 </tr>
               </thead>
               <tbody>
@@ -926,7 +927,8 @@ function AgentDetailView({
                       {eur(e.value_low_cents)} – {eur(e.value_high_cents)}
                     </td>
                     <td className="p-3 text-muted-foreground">{e.email}</td>
-                    <td className="p-3 text-muted-foreground">{fmtDate(e.created_at)}</td>
+                    <td className="p-3">{ESTIMATION_STATUS[e.status] ?? e.status ?? "—"}</td>
+                    <td className="p-3 text-muted-foreground">{fmtDate(e.assigned_at ?? e.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
