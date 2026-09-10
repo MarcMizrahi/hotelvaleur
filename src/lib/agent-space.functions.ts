@@ -14,7 +14,8 @@ async function resolveAgentId(context: {
   userId: string;
   claims: any;
 }): Promise<string | null> {
-  const { data: own } = await context.supabase
+  const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+  const { data: own } = await admin
     .from("broker_agent")
     .select("id")
     .eq("user_id", context.userId)
@@ -48,12 +49,14 @@ export const getAgentSpace = createServerFn({ method: "GET" })
     const agentId = await resolveAgentId(context as any);
     if (!agentId) return { isAgent: false as const };
 
-    const { data: agent } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: agent } = await supabaseAdmin
       .from("broker_agent")
       .select(
         "id, full_name, company, email, phone, photo_url, bio, regions, star_ratings, transaction_types, min_rooms, max_rooms, languages, transactions_count, monthly_capacity, is_active, is_public, created_at",
       )
       .eq("id", agentId)
+      .eq("user_id", context.userId)
       .maybeSingle();
     if (!agent) return { isAgent: false as const };
 
@@ -101,10 +104,12 @@ export const updateAgentContact = createServerFn({ method: "POST" })
     const agentId = await resolveAgentId(context as any);
     if (!agentId) throw new Error("Forbidden");
 
-    const { error } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("broker_agent")
       .update(data)
-      .eq("id", agentId);
+      .eq("id", agentId)
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
