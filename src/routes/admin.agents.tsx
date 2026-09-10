@@ -83,6 +83,42 @@ function AgentsAdmin() {
   const load = useServerFn(listBrokerageLeads);
   const save = useServerFn(upsertAgent);
   const remove = useServerFn(deleteAgent);
+  const invite = useServerFn(inviteAgent);
+  const revoke = useServerFn(revokeAgentAccess);
+
+  async function inviteBroker(a: any) {
+    try {
+      const r: any = await invite({ data: { id: a.id } });
+      if (r.alreadyLinked) {
+        toast.info("Ce broker a déjà un accès.", { description: r.email });
+      } else if (r.tempPassword) {
+        toast.success(`Accès créé pour ${r.email}`, {
+          description: `Mot de passe provisoire : ${r.tempPassword} (à communiquer au broker)`,
+          duration: 30000,
+        });
+      } else {
+        toast.success("Compte existant relié à cette fiche broker.", { description: r.email });
+      }
+      await refresh();
+    } catch (err) {
+      toast.error("Invitation impossible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
+
+  async function revokeBroker(a: any) {
+    if (!confirm(`Retirer l'accès espace agent de ${a.full_name} ?`)) return;
+    try {
+      await revoke({ data: { id: a.id } });
+      toast.success("Accès retiré");
+      await refresh();
+    } catch (err) {
+      toast.error("Révocation impossible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
   const loadDetail = useServerFn(getAgentDetail);
 
   const [agents, setAgents] = useState<any[]>([]);
