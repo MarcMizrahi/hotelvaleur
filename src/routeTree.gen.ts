@@ -33,6 +33,7 @@ import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as EspaceAgentZonesRouteImport } from './routes/espace-agent.zones'
 import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
+import { Route as EspaceAgentRapportsRouteImport } from './routes/espace-agent.rapports'
 import { Route as EspaceAgentProfilRouteImport } from './routes/espace-agent.profil'
 import { Route as EspaceAgentNouvelleDemandeRouteImport } from './routes/espace-agent.nouvelle-demande'
 import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
@@ -171,6 +172,11 @@ const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => EspaceAgentRoute,
 } as any)
+const EspaceAgentRapportsRoute = EspaceAgentRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
 const EspaceAgentProfilRoute = EspaceAgentProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
   '/espace-agent/profil': typeof EspaceAgentProfilRoute
+  '/espace-agent/rapports': typeof EspaceAgentRapportsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -330,6 +337,7 @@ export interface FileRoutesByTo {
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
   '/espace-agent/profil': typeof EspaceAgentProfilRoute
+  '/espace-agent/rapports': typeof EspaceAgentRapportsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -374,6 +382,7 @@ export interface FileRoutesById {
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
   '/espace-agent/profil': typeof EspaceAgentProfilRoute
+  '/espace-agent/rapports': typeof EspaceAgentRapportsRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
     | '/espace-agent/profil'
+    | '/espace-agent/rapports'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
     | '/espace-agent/profil'
+    | '/espace-agent/rapports'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -503,6 +514,7 @@ export interface FileRouteTypes {
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
     | '/espace-agent/profil'
+    | '/espace-agent/rapports'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -716,6 +728,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
       parentRoute: typeof EspaceAgentRoute
     }
+    '/espace-agent/rapports': {
+      id: '/espace-agent/rapports'
+      path: '/rapports'
+      fullPath: '/espace-agent/rapports'
+      preLoaderRoute: typeof EspaceAgentRapportsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
     '/espace-agent/profil': {
       id: '/espace-agent/profil'
       path: '/profil'
@@ -870,6 +889,7 @@ interface EspaceAgentRouteChildren {
   EspaceAgentNotificationsRoute: typeof EspaceAgentNotificationsRoute
   EspaceAgentNouvelleDemandeRoute: typeof EspaceAgentNouvelleDemandeRoute
   EspaceAgentProfilRoute: typeof EspaceAgentProfilRoute
+  EspaceAgentRapportsRoute: typeof EspaceAgentRapportsRoute
   EspaceAgentTransactionsRoute: typeof EspaceAgentTransactionsRoute
   EspaceAgentZonesRoute: typeof EspaceAgentZonesRoute
   EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
@@ -881,6 +901,7 @@ const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
   EspaceAgentNotificationsRoute: EspaceAgentNotificationsRoute,
   EspaceAgentNouvelleDemandeRoute: EspaceAgentNouvelleDemandeRoute,
   EspaceAgentProfilRoute: EspaceAgentProfilRoute,
+  EspaceAgentRapportsRoute: EspaceAgentRapportsRoute,
   EspaceAgentTransactionsRoute: EspaceAgentTransactionsRoute,
   EspaceAgentZonesRoute: EspaceAgentZonesRoute,
   EspaceAgentIndexRoute: EspaceAgentIndexRoute,
