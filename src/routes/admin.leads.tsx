@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { listLeads, updateLead } from "@/lib/admin.functions";
+import { listLeads, sendEstimationReport, updateLead } from "@/lib/admin.functions";
 import { assignEstimationAgent, listAgentsLite } from "@/lib/backoffice.functions";
 import { formatEuros } from "@/lib/money";
 import { getRegionBySlug } from "@/lib/regions";
@@ -103,12 +103,30 @@ function LeadsPage() {
   const save = useMutation({
     mutationFn: (v: { id: string; status?: any; internal_notes?: string }) =>
       updateFn({ data: v }),
-    onSuccess: () => {
-      toast.success("Lead mis à jour");
+    onSuccess: (res: any) => {
+      const r = res?.report;
+      if (r?.sentTo && r.ok && !r.reason) {
+        toast.success(`Lead validé — rapport envoyé à ${r.sentTo}`);
+      } else if (r) {
+        toast.success(`Lead mis à jour — ${r.reason ?? "rapport généré"}`);
+      } else {
+        toast.success("Lead mis à jour");
+      }
       qc.invalidateQueries({ queryKey: ["admin", "leads"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const reportFn = useServerFn(sendEstimationReport);
+  const sendReport = useMutation({
+    mutationFn: (id: string) => reportFn({ data: { id, force: true } }),
+    onSuccess: (res: any) => {
+      if (res?.sentTo && !res.reason) toast.success(`Rapport envoyé à ${res.sentTo}`);
+      else toast.success(res?.reason ?? "Rapport généré");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const agentName = (id: string | null) =>
     (agents.data?.agents ?? []).find((a: any) => a.id === id)?.full_name ?? null;
@@ -333,7 +351,28 @@ function LeadsPage() {
                     </option>
                   ))}
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  Passer le statut à « Qualifié » génère le rapport PDF et l'envoie
+                  automatiquement à l'agent attribué.
+                </p>
               </div>
+
+              <div className="space-y-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => sendReport.mutate(selected.id)}
+                  disabled={sendReport.isPending}
+                >
+                  {sendReport.isPending ? "Envoi…" : "Renvoyer le rapport à l'agent"}
+                </Button>
+                {!selected.agent_id && (
+                  <p className="text-xs text-muted-foreground">
+                    Aucun agent attribué : le rapport sera seulement archivé.
+                  </p>
+                )}
+              </div>
+
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Notes internes</label>
