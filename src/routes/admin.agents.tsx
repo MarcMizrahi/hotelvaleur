@@ -903,6 +903,13 @@ function AgentDetailView({
         ) : (
           <div className="overflow-x-auto rounded-lg border border-border">
             <table className="min-w-[760px] w-full text-sm">
+              <thead className="bg-muted/50 text-left">
+                <tr>
+                  <th className="p-3">Hôtel</th>
+                  <th className="p-3">Lieu</th>
+                  <th className="p-3">Fourchette</th>
+                  <th className="p-3">Contact</th>
+                  <th className="p-3">Statut</th>
                   <th className="p-3">Attribution</th>
                 </tr>
               </thead>
