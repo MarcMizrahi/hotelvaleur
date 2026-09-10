@@ -398,6 +398,77 @@ export const updateAgentRequestStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** Crée (ou relie) le compte de connexion d'un broker pour qu'il accède à l'espace agent. */
+export const inviteAgent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: agent } = await supabaseAdmin
+      .from("broker_agent")
+      .select("id, email, full_name, user_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!agent) throw new Error("Agent introuvable.");
+    if (agent.user_id) return { ok: true, alreadyLinked: true, email: agent.email };
+
+    const email = String(agent.email).toLowerCase();
+
+    // Compte déjà existant sur la plateforme ?
+    let userId: string | null = null;
+    for (let page = 1; page <= 10 && !userId; page++) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({
+        page,
+        perPage: 200,
+      });
+      if (error) throw new Error("Recherche du compte impossible.");
+      const found = list.users.find((u) => (u.email ?? "").toLowerCase() === email);
+      if (found) userId = found.id;
+      if (list.users.length < 200) break;
+    }
+
+    let tempPassword: string | null = null;
+    if (!userId) {
+      tempPassword = `HV-${Math.random().toString(36).slice(2, 8)}${Math.random()
+        .toString(36)
+        .slice(2, 6)
+        .toUpperCase()}!`;
+      const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password: tempPassword,
+        email_confirm: true,
+        user_metadata: { full_name: agent.full_name, role: "agent" },
+      });
+      if (error || !created.user) throw new Error("Création du compte impossible.");
+      userId = created.user.id;
+    }
+
+    const { error: linkError } = await supabaseAdmin
+      .from("broker_agent")
+      .update({ user_id: userId, is_active: true })
+      .eq("id", agent.id);
+    if (linkError) throw new Error("Liaison du compte impossible (compte déjà relié ?).");
+
+    return { ok: true, alreadyLinked: false, email, tempPassword };
+  });
+
+/** Retire l'accès espace agent (le compte de connexion reste, mais n'est plus lié). */
+export const revokeAgentAccess = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("broker_agent")
+      .update({ user_id: null })
+      .eq("id", data.id);
+    if (error) throw new Error("Révocation impossible.");
+    return { ok: true };
+  });
+
 export const deleteAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
