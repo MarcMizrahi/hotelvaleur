@@ -87,7 +87,7 @@ export function buildJustifications(row: any): string[] {
   }
 
   for (const a of d.adjustments ?? []) {
-    out.push(`Ajustement — ${a.label} : ${pct(Number(a.factor))}.`);
+    out.push(`Ajustement - ${humanizeLabel(String(a.label))} : ${pct(Number(a.factor))}.`);
   }
 
   if (d.marketAnchor) {
@@ -101,7 +101,7 @@ export function buildJustifications(row: any): string[] {
   }
 
   out.push(
-    "Prudence appliquée sur la borne haute (−10 %) : les prix affichés en ligne surestiment structurellement les prix actés.",
+    "Prudence appliquée sur la borne haute (-10 %) : les prix affichés en ligne surestiment structurellement les prix actés.",
   );
 
   const deduction = Number(d.worksDeductionCents ?? 0);
@@ -228,7 +228,7 @@ export function buildEstimationReportPdf(row: any): Uint8Array {
       ],
       ["E-mail", row.email ?? "—"],
       ["Téléphone", row.phone ?? "—"],
-      ["Horizon de cession", row.sale_intent ?? "—"],
+      ["Horizon de cession", INTENT_LABELS[row.sale_intent] ?? row.sale_intent ?? "—"],
     ],
     styles: { fontSize: 9, cellPadding: 2 },
     headStyles: { fillColor: NAVY, textColor: 255 },
