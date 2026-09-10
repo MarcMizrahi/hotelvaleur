@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Coefficient } from "@/lib/valuation";
+import type { ComparableRow } from "@/lib/comparables";
 
 // Ensures the caller is an admin. Throws otherwise.
 async function assertAdmin(ctx: { supabase: any; userId: string }) {
@@ -349,8 +351,8 @@ export const recomputeEstimation = createServerFn({ method: "POST" })
     await assertAdmin(context);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { computeValuation, type Coefficient } = await import("@/lib/valuation");
-    const { selectComparables, type ComparableRow } = await import("@/lib/comparables");
+    const { computeValuation } = await import("@/lib/valuation");
+    const { selectComparables } = await import("@/lib/comparables");
 
     const { data: row, error } = await supabaseAdmin
       .from("estimation")
