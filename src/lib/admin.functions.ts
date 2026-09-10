@@ -213,8 +213,58 @@ export const updateLead = createServerFn({ method: "POST" })
     if (data.internal_notes !== undefined) patch.internal_notes = data.internal_notes;
     const { error } = await context.supabase.from("estimation").update(patch as any).eq("id", data.id);
     if (error) throw new Error(error.message);
-    return { ok: true };
+
+    // Estimation validée (qualifiée) → rapport PDF généré et envoyé à l'agent.
+    let report: { ok: boolean; sentTo?: string; reason?: string } | null = null;
+    if (data.status === "qualifie") {
+      try {
+        const { generateAndSendEstimationReport } = await import(
+          "@/lib/estimation-report.server"
+        );
+        const res = await generateAndSendEstimationReport(data.id);
+        report = {
+          ok: res.ok,
+          ...(res.sentTo ? { sentTo: res.sentTo } : {}),
+          ...(res.reason ? { reason: res.reason } : {}),
+        };
+      } catch (err) {
+        console.error("[report] auto delivery failed", err);
+        report = { ok: false, reason: "Rapport non généré" };
+      }
+    }
+    return { ok: true, report };
   });
+
+/** Génère (ou régénère) le rapport PDF d'une estimation et l'envoie à l'agent. */
+export const sendEstimationReport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), force: z.boolean().default(true) }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { generateAndSendEstimationReport } = await import(
+      "@/lib/estimation-report.server"
+    );
+    const res = await generateAndSendEstimationReport(data.id, { force: data.force });
+    return res;
+  });
+
+/** Historique des rapports générés pour une estimation (admin). */
+export const listEstimationReports = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { data: rows, error } = await context.supabase
+      .from("estimation_report")
+      .select("*")
+      .eq("estimation_id", data.id)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 
 export const listCoefficients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
