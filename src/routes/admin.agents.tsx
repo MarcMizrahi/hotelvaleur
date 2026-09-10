@@ -753,6 +753,16 @@ const REQUEST_STATUS: Record<string, string> = {
   refuse: "Refusée",
 };
 
+const ESTIMATION_STATUS: Record<string, string> = {
+  nouveau: "Nouveau",
+  rapport_envoye: "Rapport envoyé",
+  en_cours: "En cours",
+  qualifie: "Qualifié",
+  converti: "Converti",
+  perdu: "Perdu",
+  archive: "Archivé",
+};
+
 function AgentRequestsTable({
   requests,
   onRefresh,
