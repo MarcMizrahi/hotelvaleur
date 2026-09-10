@@ -32,6 +32,29 @@ const METHOD_LABELS: Record<string, string> = {
   blended: "Approche combinée (EBITDA + prix par chambre)",
 };
 
+const INTENT_LABELS: Record<string, string> = {
+  moins_1_an: "Moins d'un an",
+  "1_a_2_ans": "1 à 2 ans",
+  plus_2_ans: "Plus de 2 ans",
+  curiosite: "Simple curiosité",
+};
+
+/** Remplace les codes techniques par leur libellé lisible dans un texte. */
+function humanizeLabel(label: string): string {
+  let out = label;
+  for (const [code, human] of Object.entries({
+    ...OPERATION_LABELS,
+    ...INTENT_LABELS,
+    aucun: "aucun",
+    legers: "légers",
+    importants: "importants",
+  })) {
+    out = out.replace(new RegExp(`\\b${code}\\b`, "g"), human.toLowerCase());
+  }
+  return out;
+}
+
+
 function siteUrl(): string {
   return process.env.SITE_URL ?? "https://hotelvaleur.lovable.app";
 }
