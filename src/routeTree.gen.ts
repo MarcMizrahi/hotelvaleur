@@ -33,11 +33,11 @@ import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
 import { Route as EspaceAgentZonesRouteImport } from './routes/espace-agent.zones'
 import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
+import { Route as EspaceAgentProfilRouteImport } from './routes/espace-agent.profil'
 import { Route as EspaceAgentNouvelleDemandeRouteImport } from './routes/espace-agent.nouvelle-demande'
 import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
 import { Route as EspaceAgentEstimationsRouteImport } from './routes/espace-agent.estimations'
 import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
-import { Route as EspaceAgentCoordonneesRouteImport } from './routes/espace-agent.coordonnees'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
@@ -171,6 +171,11 @@ const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => EspaceAgentRoute,
 } as any)
+const EspaceAgentProfilRoute = EspaceAgentProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
 const EspaceAgentNouvelleDemandeRoute =
   EspaceAgentNouvelleDemandeRouteImport.update({
     id: '/nouvelle-demande',
@@ -191,11 +196,6 @@ const EspaceAgentEstimationsRoute = EspaceAgentEstimationsRouteImport.update({
 const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
   id: '/demandes',
   path: '/demandes',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentCoordonneesRoute = EspaceAgentCoordonneesRouteImport.update({
-  id: '/coordonnees',
-  path: '/coordonnees',
   getParentRoute: () => EspaceAgentRoute,
 } as any)
 const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
@@ -284,11 +284,11 @@ export interface FileRoutesByFullPath {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
+  '/espace-agent/profil': typeof EspaceAgentProfilRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -325,11 +325,11 @@ export interface FileRoutesByTo {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
+  '/espace-agent/profil': typeof EspaceAgentProfilRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -369,11 +369,11 @@ export interface FileRoutesById {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
   '/espace-agent/nouvelle-demande': typeof EspaceAgentNouvelleDemandeRoute
+  '/espace-agent/profil': typeof EspaceAgentProfilRoute
   '/espace-agent/transactions': typeof EspaceAgentTransactionsRoute
   '/espace-agent/zones': typeof EspaceAgentZonesRoute
   '/estimation/resultat': typeof EstimationResultatRoute
@@ -414,11 +414,11 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
+    | '/espace-agent/profil'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -455,11 +455,11 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
+    | '/espace-agent/profil'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -498,11 +498,11 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
     | '/espace-agent/nouvelle-demande'
+    | '/espace-agent/profil'
     | '/espace-agent/transactions'
     | '/espace-agent/zones'
     | '/estimation/resultat'
@@ -716,6 +716,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
       parentRoute: typeof EspaceAgentRoute
     }
+    '/espace-agent/profil': {
+      id: '/espace-agent/profil'
+      path: '/profil'
+      fullPath: '/espace-agent/profil'
+      preLoaderRoute: typeof EspaceAgentProfilRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
     '/espace-agent/nouvelle-demande': {
       id: '/espace-agent/nouvelle-demande'
       path: '/nouvelle-demande'
@@ -742,13 +749,6 @@ declare module '@tanstack/react-router' {
       path: '/demandes'
       fullPath: '/espace-agent/demandes'
       preLoaderRoute: typeof EspaceAgentDemandesRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/coordonnees': {
-      id: '/espace-agent/coordonnees'
-      path: '/coordonnees'
-      fullPath: '/espace-agent/coordonnees'
-      preLoaderRoute: typeof EspaceAgentCoordonneesRouteImport
       parentRoute: typeof EspaceAgentRoute
     }
     '/admin/utilisateurs': {
@@ -865,22 +865,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EspaceAgentRouteChildren {
-  EspaceAgentCoordonneesRoute: typeof EspaceAgentCoordonneesRoute
   EspaceAgentDemandesRoute: typeof EspaceAgentDemandesRoute
   EspaceAgentEstimationsRoute: typeof EspaceAgentEstimationsRoute
   EspaceAgentNotificationsRoute: typeof EspaceAgentNotificationsRoute
   EspaceAgentNouvelleDemandeRoute: typeof EspaceAgentNouvelleDemandeRoute
+  EspaceAgentProfilRoute: typeof EspaceAgentProfilRoute
   EspaceAgentTransactionsRoute: typeof EspaceAgentTransactionsRoute
   EspaceAgentZonesRoute: typeof EspaceAgentZonesRoute
   EspaceAgentIndexRoute: typeof EspaceAgentIndexRoute
 }
 
 const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
-  EspaceAgentCoordonneesRoute: EspaceAgentCoordonneesRoute,
   EspaceAgentDemandesRoute: EspaceAgentDemandesRoute,
   EspaceAgentEstimationsRoute: EspaceAgentEstimationsRoute,
   EspaceAgentNotificationsRoute: EspaceAgentNotificationsRoute,
   EspaceAgentNouvelleDemandeRoute: EspaceAgentNouvelleDemandeRoute,
+  EspaceAgentProfilRoute: EspaceAgentProfilRoute,
   EspaceAgentTransactionsRoute: EspaceAgentTransactionsRoute,
   EspaceAgentZonesRoute: EspaceAgentZonesRoute,
   EspaceAgentIndexRoute: EspaceAgentIndexRoute,
