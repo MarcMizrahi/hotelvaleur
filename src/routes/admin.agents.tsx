@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { regions } from "@/lib/regions";
 import { OPERATION_TYPES } from "@/lib/brokerage-matching";
-import { listBrokerageLeads, upsertAgent, deleteAgent, getAgentDetail, updateAgentRequestStatus } from "@/lib/brokerage.functions";
+import { listBrokerageLeads, upsertAgent, deleteAgent, getAgentDetail, updateAgentRequestStatus, inviteAgent, revokeAgentAccess } from "@/lib/brokerage.functions";
 import { AgentPhotoField } from "@/components/admin/AgentPhotoField";
 import { photoUrlForPayload } from "@/lib/agent-photo";
 
@@ -83,6 +83,42 @@ function AgentsAdmin() {
   const load = useServerFn(listBrokerageLeads);
   const save = useServerFn(upsertAgent);
   const remove = useServerFn(deleteAgent);
+  const invite = useServerFn(inviteAgent);
+  const revoke = useServerFn(revokeAgentAccess);
+
+  async function inviteBroker(a: any) {
+    try {
+      const r: any = await invite({ data: { id: a.id } });
+      if (r.alreadyLinked) {
+        toast.info("Ce broker a déjà un accès.", { description: r.email });
+      } else if (r.tempPassword) {
+        toast.success(`Accès créé pour ${r.email}`, {
+          description: `Mot de passe provisoire : ${r.tempPassword} (à communiquer au broker)`,
+          duration: 30000,
+        });
+      } else {
+        toast.success("Compte existant relié à cette fiche broker.", { description: r.email });
+      }
+      await refresh();
+    } catch (err) {
+      toast.error("Invitation impossible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
+
+  async function revokeBroker(a: any) {
+    if (!confirm(`Retirer l'accès espace agent de ${a.full_name} ?`)) return;
+    try {
+      await revoke({ data: { id: a.id } });
+      toast.success("Accès retiré");
+      await refresh();
+    } catch (err) {
+      toast.error("Révocation impossible", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
   const loadDetail = useServerFn(getAgentDetail);
 
   const [agents, setAgents] = useState<any[]>([]);
@@ -373,11 +409,23 @@ function AgentsAdmin() {
                   <td className="p-3">
                     {a.is_active ? "Actif" : "Inactif"}
                     {a.is_public ? " · public" : " · masqué"}
+                    <div className="text-xs text-muted-foreground">
+                      {a.user_id ? "Accès espace agent ✓" : "Sans accès"}
+                    </div>
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <Button variant="ghost" size="sm" onClick={() => void openDetail(a)}>
                       Détails
                     </Button>
+                    {a.user_id ? (
+                      <Button variant="ghost" size="sm" onClick={() => void revokeBroker(a)}>
+                        Retirer l'accès
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" size="sm" onClick={() => void inviteBroker(a)}>
+                        Inviter
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => edit(a)}>
                       Modifier
                     </Button>
