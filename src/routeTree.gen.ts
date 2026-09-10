@@ -38,7 +38,6 @@ import { Route as EspaceAgentNouvelleDemandeRouteImport } from './routes/espace-
 import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
 import { Route as EspaceAgentEstimationsRouteImport } from './routes/espace-agent.estimations'
 import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
-import { Route as EspaceAgentCoordonneesRouteImport } from './routes/espace-agent.coordonnees'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
@@ -199,11 +198,6 @@ const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
   path: '/demandes',
   getParentRoute: () => EspaceAgentRoute,
 } as any)
-const EspaceAgentCoordonneesRoute = EspaceAgentCoordonneesRouteImport.update({
-  id: '/coordonnees',
-  path: '/coordonnees',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
 const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
   id: '/utilisateurs',
   path: '/utilisateurs',
@@ -290,7 +284,6 @@ export interface FileRoutesByFullPath {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
@@ -332,7 +325,6 @@ export interface FileRoutesByTo {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
@@ -377,7 +369,6 @@ export interface FileRoutesById {
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
-  '/espace-agent/coordonnees': typeof EspaceAgentCoordonneesRoute
   '/espace-agent/demandes': typeof EspaceAgentDemandesRoute
   '/espace-agent/estimations': typeof EspaceAgentEstimationsRoute
   '/espace-agent/notifications': typeof EspaceAgentNotificationsRoute
@@ -423,7 +414,6 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
@@ -465,7 +455,6 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
@@ -509,7 +498,6 @@ export interface FileRouteTypes {
     | '/admin/rapports'
     | '/admin/transactions'
     | '/admin/utilisateurs'
-    | '/espace-agent/coordonnees'
     | '/espace-agent/demandes'
     | '/espace-agent/estimations'
     | '/espace-agent/notifications'
@@ -763,13 +751,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspaceAgentDemandesRouteImport
       parentRoute: typeof EspaceAgentRoute
     }
-    '/espace-agent/coordonnees': {
-      id: '/espace-agent/coordonnees'
-      path: '/coordonnees'
-      fullPath: '/espace-agent/coordonnees'
-      preLoaderRoute: typeof EspaceAgentCoordonneesRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
     '/admin/utilisateurs': {
       id: '/admin/utilisateurs'
       path: '/utilisateurs'
@@ -884,7 +865,6 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EspaceAgentRouteChildren {
-  EspaceAgentCoordonneesRoute: typeof EspaceAgentCoordonneesRoute
   EspaceAgentDemandesRoute: typeof EspaceAgentDemandesRoute
   EspaceAgentEstimationsRoute: typeof EspaceAgentEstimationsRoute
   EspaceAgentNotificationsRoute: typeof EspaceAgentNotificationsRoute
@@ -896,7 +876,6 @@ interface EspaceAgentRouteChildren {
 }
 
 const EspaceAgentRouteChildren: EspaceAgentRouteChildren = {
-  EspaceAgentCoordonneesRoute: EspaceAgentCoordonneesRoute,
   EspaceAgentDemandesRoute: EspaceAgentDemandesRoute,
   EspaceAgentEstimationsRoute: EspaceAgentEstimationsRoute,
   EspaceAgentNotificationsRoute: EspaceAgentNotificationsRoute,
