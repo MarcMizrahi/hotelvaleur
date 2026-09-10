@@ -351,7 +351,28 @@ function LeadsPage() {
                     </option>
                   ))}
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  Passer le statut à « Qualifié » génère le rapport PDF et l'envoie
+                  automatiquement à l'agent attribué.
+                </p>
               </div>
+
+              <div className="space-y-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => sendReport.mutate(selected.id)}
+                  disabled={sendReport.isPending}
+                >
+                  {sendReport.isPending ? "Envoi…" : "Renvoyer le rapport à l'agent"}
+                </Button>
+                {!selected.agent_id && (
+                  <p className="text-xs text-muted-foreground">
+                    Aucun agent attribué : le rapport sera seulement archivé.
+                  </p>
+                )}
+              </div>
+
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Notes internes</label>
