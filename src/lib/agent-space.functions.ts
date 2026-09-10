@@ -14,7 +14,8 @@ async function resolveAgentId(context: {
   userId: string;
   claims: any;
 }): Promise<string | null> {
-  const { data: own } = await context.supabase
+  const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+  const { data: own } = await admin
     .from("broker_agent")
     .select("id")
     .eq("user_id", context.userId)
