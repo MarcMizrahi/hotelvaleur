@@ -309,6 +309,9 @@ function LeadsPage() {
                 <Row label="Méthode" value={selected.method_used} />
               </dl>
 
+              <RecomputePanel estimation={selected as never} />
+
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Agent attribué</label>
                 <select
