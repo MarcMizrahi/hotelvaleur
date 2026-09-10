@@ -104,10 +104,12 @@ export const updateAgentContact = createServerFn({ method: "POST" })
     const agentId = await resolveAgentId(context as any);
     if (!agentId) throw new Error("Forbidden");
 
-    const { error } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("broker_agent")
       .update(data)
-      .eq("id", agentId);
+      .eq("id", agentId)
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
