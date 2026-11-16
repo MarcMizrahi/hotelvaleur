@@ -1,3 +1,4 @@
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -19,12 +20,12 @@ export const Route = createFileRoute("/admin")({
   component: AdminShell,
 });
 
-function AdminError({ error, reset }: { error: Error; reset: () => void }) {
+function AdminError({ error, reset }: ErrorComponentProps) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-surface">
       <div className="max-w-md space-y-4 text-center">
         <h1 className="font-serif text-2xl text-navy">Espace admin indisponible</h1>
-        <p className="text-sm text-muted-foreground break-words">{error.message}</p>
+        <p className="text-sm text-muted-foreground break-words">{error instanceof Error ? error.message : String(error)}</p>
         <Button onClick={reset}>Réessayer</Button>
       </div>
     </div>
