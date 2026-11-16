@@ -9,102 +9,52 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as MonCompteRouteImport } from './routes/mon-compte'
-import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
-import { Route as ExpertsRouteImport } from './routes/experts'
-import { Route as EstimationRouteImport } from './routes/estimation'
-import { Route as EspaceAgentRouteImport } from './routes/espace-agent'
-import { Route as DesabonnementRouteImport } from './routes/desabonnement'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
-import { Route as CguRouteImport } from './routes/cgu'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
-import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
-import { Route as GuidesIndexRouteImport } from './routes/guides.index'
-import { Route as EspaceAgentIndexRouteImport } from './routes/espace-agent.index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CguRouteImport } from './routes/cgu'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as DesabonnementRouteImport } from './routes/desabonnement'
+import { Route as EspaceAgentRouteImport } from './routes/espace-agent'
+import { Route as EstimationRouteImport } from './routes/estimation'
+import { Route as ExpertsRouteImport } from './routes/experts'
+import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as MonCompteRouteImport } from './routes/mon-compte'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
-import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
-import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
-import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
-import { Route as EspaceAgentZonesRouteImport } from './routes/espace-agent.zones'
-import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
-import { Route as EspaceAgentRapportsRouteImport } from './routes/espace-agent.rapports'
-import { Route as EspaceAgentProfilRouteImport } from './routes/espace-agent.profil'
-import { Route as EspaceAgentNouvelleDemandeRouteImport } from './routes/espace-agent.nouvelle-demande'
-import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
-import { Route as EspaceAgentEstimationsRouteImport } from './routes/espace-agent.estimations'
-import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
-import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
-import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
-import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
-import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
-import { Route as AdminCalibrageRouteImport } from './routes/admin.calibrage'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
+import { Route as AdminCalibrageRouteImport } from './routes/admin.calibrage'
+import { Route as AdminCoefficientsRouteImport } from './routes/admin.coefficients'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
+import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
+import { Route as EspaceAgentIndexRouteImport } from './routes/espace-agent.index'
+import { Route as EspaceAgentDemandesRouteImport } from './routes/espace-agent.demandes'
+import { Route as EspaceAgentEstimationsRouteImport } from './routes/espace-agent.estimations'
+import { Route as EspaceAgentNotificationsRouteImport } from './routes/espace-agent.notifications'
+import { Route as EspaceAgentNouvelleDemandeRouteImport } from './routes/espace-agent.nouvelle-demande'
+import { Route as EspaceAgentProfilRouteImport } from './routes/espace-agent.profil'
+import { Route as EspaceAgentRapportsRouteImport } from './routes/espace-agent.rapports'
+import { Route as EspaceAgentTransactionsRouteImport } from './routes/espace-agent.transactions'
+import { Route as EspaceAgentZonesRouteImport } from './routes/espace-agent.zones'
+import { Route as EstimationResultatRouteImport } from './routes/estimation.resultat'
+import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
+import { Route as MesDonneesIndexRouteImport } from './routes/mes-donnees.index'
+import { Route as MesDonneesAccesRouteImport } from './routes/mes-donnees.acces'
+import { Route as MiseEnRelationTokenRouteImport } from './routes/mise-en-relation.$token'
+import { Route as PrixHotelIndexRouteImport } from './routes/prix-hotel.index'
 import { Route as PrixHotelRegionIndexRouteImport } from './routes/prix-hotel.$region.index'
 import { Route as PrixHotelRegionDepartementRouteImport } from './routes/prix-hotel.$region.$departement'
-import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
 import { Route as ApiPublicHooksCalibrateCoefficientsRouteImport } from './routes/api/public/hooks/calibrate-coefficients'
+import { Route as ApiPublicHooksScrapeTransactionsRouteImport } from './routes/api/public/hooks/scrape-transactions'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MonCompteRoute = MonCompteRouteImport.update({
-  id: '/mon-compte',
-  path: '/mon-compte',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
-  id: '/mentions-legales',
-  path: '/mentions-legales',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExpertsRoute = ExpertsRouteImport.update({
-  id: '/experts',
-  path: '/experts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstimationRoute = EstimationRouteImport.update({
-  id: '/estimation',
-  path: '/estimation',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EspaceAgentRoute = EspaceAgentRouteImport.update({
-  id: '/espace-agent',
-  path: '/espace-agent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DesabonnementRoute = DesabonnementRouteImport.update({
-  id: '/desabonnement',
-  path: '/desabonnement',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
-  id: '/confidentialite',
-  path: '/confidentialite',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CguRoute = CguRouteImport.update({
-  id: '/cgu',
-  path: '/cgu',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -112,126 +62,69 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrixHotelIndexRoute = PrixHotelIndexRouteImport.update({
-  id: '/prix-hotel/',
-  path: '/prix-hotel/',
+const CguRoute = CguRouteImport.update({
+  id: '/cgu',
+  path: '/cgu',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MesDonneesIndexRoute = MesDonneesIndexRouteImport.update({
-  id: '/mes-donnees/',
-  path: '/mes-donnees/',
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GuidesIndexRoute = GuidesIndexRouteImport.update({
-  id: '/guides/',
-  path: '/guides/',
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspaceAgentIndexRoute = EspaceAgentIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => EspaceAgentRoute,
+const DesabonnementRoute = DesabonnementRouteImport.update({
+  id: '/desabonnement',
+  path: '/desabonnement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspaceAgentRoute = EspaceAgentRouteImport.update({
+  id: '/espace-agent',
+  path: '/espace-agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstimationRoute = EstimationRouteImport.update({
+  id: '/estimation',
+  path: '/estimation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+  id: '/mentions-legales',
+  path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonCompteRoute = MonCompteRouteImport.update({
+  id: '/mon-compte',
+  path: '/mon-compte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const MiseEnRelationTokenRoute = MiseEnRelationTokenRouteImport.update({
-  id: '/mise-en-relation/$token',
-  path: '/mise-en-relation/$token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
-  id: '/mes-donnees/acces',
-  path: '/mes-donnees/acces',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesSlugRoute = GuidesSlugRouteImport.update({
-  id: '/guides/$slug',
-  path: '/guides/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstimationResultatRoute = EstimationResultatRouteImport.update({
-  id: '/resultat',
-  path: '/resultat',
-  getParentRoute: () => EstimationRoute,
-} as any)
-const EspaceAgentZonesRoute = EspaceAgentZonesRouteImport.update({
-  id: '/zones',
-  path: '/zones',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentRapportsRoute = EspaceAgentRapportsRouteImport.update({
-  id: '/rapports',
-  path: '/rapports',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentProfilRoute = EspaceAgentProfilRouteImport.update({
-  id: '/profil',
-  path: '/profil',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentNouvelleDemandeRoute =
-  EspaceAgentNouvelleDemandeRouteImport.update({
-    id: '/nouvelle-demande',
-    path: '/nouvelle-demande',
-    getParentRoute: () => EspaceAgentRoute,
-  } as any)
-const EspaceAgentNotificationsRoute =
-  EspaceAgentNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => EspaceAgentRoute,
-  } as any)
-const EspaceAgentEstimationsRoute = EspaceAgentEstimationsRouteImport.update({
-  id: '/estimations',
-  path: '/estimations',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
-  id: '/demandes',
-  path: '/demandes',
-  getParentRoute: () => EspaceAgentRoute,
-} as any)
-const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
-  id: '/utilisateurs',
-  path: '/utilisateurs',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRapportsRoute = AdminRapportsRouteImport.update({
-  id: '/rapports',
-  path: '/rapports',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminParametresRoute = AdminParametresRouteImport.update({
-  id: '/parametres',
-  path: '/parametres',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
-  id: '/coefficients',
-  path: '/coefficients',
+const AdminAgentsRoute = AdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCalibrageRoute = AdminCalibrageRouteImport.update({
@@ -239,10 +132,117 @@ const AdminCalibrageRoute = AdminCalibrageRouteImport.update({
   path: '/calibrage',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAgentsRoute = AdminAgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
+const AdminCoefficientsRoute = AdminCoefficientsRouteImport.update({
+  id: '/coefficients',
+  path: '/coefficients',
   getParentRoute: () => AdminRoute,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminParametresRoute = AdminParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRapportsRoute = AdminRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
+  id: '/utilisateurs',
+  path: '/utilisateurs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const EspaceAgentIndexRoute = EspaceAgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentDemandesRoute = EspaceAgentDemandesRouteImport.update({
+  id: '/demandes',
+  path: '/demandes',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentEstimationsRoute = EspaceAgentEstimationsRouteImport.update({
+  id: '/estimations',
+  path: '/estimations',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentNotificationsRoute =
+  EspaceAgentNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => EspaceAgentRoute,
+  } as any)
+const EspaceAgentNouvelleDemandeRoute =
+  EspaceAgentNouvelleDemandeRouteImport.update({
+    id: '/nouvelle-demande',
+    path: '/nouvelle-demande',
+    getParentRoute: () => EspaceAgentRoute,
+  } as any)
+const EspaceAgentProfilRoute = EspaceAgentProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentRapportsRoute = EspaceAgentRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentTransactionsRoute = EspaceAgentTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EspaceAgentZonesRoute = EspaceAgentZonesRouteImport.update({
+  id: '/zones',
+  path: '/zones',
+  getParentRoute: () => EspaceAgentRoute,
+} as any)
+const EstimationResultatRoute = EstimationResultatRouteImport.update({
+  id: '/resultat',
+  path: '/resultat',
+  getParentRoute: () => EstimationRoute,
+} as any)
+const GuidesIndexRoute = GuidesIndexRouteImport.update({
+  id: '/guides/',
+  path: '/guides/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesSlugRoute = GuidesSlugRouteImport.update({
+  id: '/guides/$slug',
+  path: '/guides/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesDonneesIndexRoute = MesDonneesIndexRouteImport.update({
+  id: '/mes-donnees/',
+  path: '/mes-donnees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesDonneesAccesRoute = MesDonneesAccesRouteImport.update({
+  id: '/mes-donnees/acces',
+  path: '/mes-donnees/acces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiseEnRelationTokenRoute = MiseEnRelationTokenRouteImport.update({
+  id: '/mise-en-relation/$token',
+  path: '/mise-en-relation/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrixHotelIndexRoute = PrixHotelIndexRouteImport.update({
+  id: '/prix-hotel/',
+  path: '/prix-hotel/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PrixHotelRegionIndexRoute = PrixHotelRegionIndexRouteImport.update({
   id: '/prix-hotel/$region/',
@@ -255,16 +255,16 @@ const PrixHotelRegionDepartementRoute =
     path: '/prix-hotel/$region/$departement',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksScrapeTransactionsRoute =
-  ApiPublicHooksScrapeTransactionsRouteImport.update({
-    id: '/api/public/hooks/scrape-transactions',
-    path: '/api/public/hooks/scrape-transactions',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksCalibrateCoefficientsRoute =
   ApiPublicHooksCalibrateCoefficientsRouteImport.update({
     id: '/api/public/hooks/calibrate-coefficients',
     path: '/api/public/hooks/calibrate-coefficients',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksScrapeTransactionsRoute =
+  ApiPublicHooksScrapeTransactionsRouteImport.update({
+    id: '/api/public/hooks/scrape-transactions',
+    path: '/api/public/hooks/scrape-transactions',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -560,81 +560,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mon-compte': {
-      id: '/mon-compte'
-      path: '/mon-compte'
-      fullPath: '/mon-compte'
-      preLoaderRoute: typeof MonCompteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mentions-legales': {
-      id: '/mentions-legales'
-      path: '/mentions-legales'
-      fullPath: '/mentions-legales'
-      preLoaderRoute: typeof MentionsLegalesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/experts': {
-      id: '/experts'
-      path: '/experts'
-      fullPath: '/experts'
-      preLoaderRoute: typeof ExpertsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estimation': {
-      id: '/estimation'
-      path: '/estimation'
-      fullPath: '/estimation'
-      preLoaderRoute: typeof EstimationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/espace-agent': {
-      id: '/espace-agent'
-      path: '/espace-agent'
-      fullPath: '/espace-agent'
-      preLoaderRoute: typeof EspaceAgentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/desabonnement': {
-      id: '/desabonnement'
-      path: '/desabonnement'
-      fullPath: '/desabonnement'
-      preLoaderRoute: typeof DesabonnementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/confidentialite': {
-      id: '/confidentialite'
-      path: '/confidentialite'
-      fullPath: '/confidentialite'
-      preLoaderRoute: typeof ConfidentialiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cgu': {
-      id: '/cgu'
-      path: '/cgu'
-      fullPath: '/cgu'
-      preLoaderRoute: typeof CguRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -644,40 +574,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/prix-hotel/': {
-      id: '/prix-hotel/'
-      path: '/prix-hotel'
-      fullPath: '/prix-hotel/'
-      preLoaderRoute: typeof PrixHotelIndexRouteImport
+    '/cgu': {
+      id: '/cgu'
+      path: '/cgu'
+      fullPath: '/cgu'
+      preLoaderRoute: typeof CguRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mes-donnees/': {
-      id: '/mes-donnees/'
-      path: '/mes-donnees'
-      fullPath: '/mes-donnees/'
-      preLoaderRoute: typeof MesDonneesIndexRouteImport
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/guides/': {
-      id: '/guides/'
-      path: '/guides'
-      fullPath: '/guides/'
-      preLoaderRoute: typeof GuidesIndexRouteImport
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espace-agent/': {
-      id: '/espace-agent/'
-      path: '/'
-      fullPath: '/espace-agent/'
-      preLoaderRoute: typeof EspaceAgentIndexRouteImport
-      parentRoute: typeof EspaceAgentRoute
+    '/desabonnement': {
+      id: '/desabonnement'
+      path: '/desabonnement'
+      fullPath: '/desabonnement'
+      preLoaderRoute: typeof DesabonnementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espace-agent': {
+      id: '/espace-agent'
+      path: '/espace-agent'
+      fullPath: '/espace-agent'
+      preLoaderRoute: typeof EspaceAgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estimation': {
+      id: '/estimation'
+      path: '/estimation'
+      fullPath: '/estimation'
+      preLoaderRoute: typeof EstimationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentions-legales': {
+      id: '/mentions-legales'
+      path: '/mentions-legales'
+      fullPath: '/mentions-legales'
+      preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mon-compte': {
+      id: '/mon-compte'
+      path: '/mon-compte'
+      fullPath: '/mon-compte'
+      preLoaderRoute: typeof MonCompteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/': {
       id: '/admin/'
@@ -686,130 +658,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/mise-en-relation/$token': {
-      id: '/mise-en-relation/$token'
-      path: '/mise-en-relation/$token'
-      fullPath: '/mise-en-relation/$token'
-      preLoaderRoute: typeof MiseEnRelationTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mes-donnees/acces': {
-      id: '/mes-donnees/acces'
-      path: '/mes-donnees/acces'
-      fullPath: '/mes-donnees/acces'
-      preLoaderRoute: typeof MesDonneesAccesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/$slug': {
-      id: '/guides/$slug'
-      path: '/guides/$slug'
-      fullPath: '/guides/$slug'
-      preLoaderRoute: typeof GuidesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estimation/resultat': {
-      id: '/estimation/resultat'
-      path: '/resultat'
-      fullPath: '/estimation/resultat'
-      preLoaderRoute: typeof EstimationResultatRouteImport
-      parentRoute: typeof EstimationRoute
-    }
-    '/espace-agent/zones': {
-      id: '/espace-agent/zones'
-      path: '/zones'
-      fullPath: '/espace-agent/zones'
-      preLoaderRoute: typeof EspaceAgentZonesRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/transactions': {
-      id: '/espace-agent/transactions'
-      path: '/transactions'
-      fullPath: '/espace-agent/transactions'
-      preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/rapports': {
-      id: '/espace-agent/rapports'
-      path: '/rapports'
-      fullPath: '/espace-agent/rapports'
-      preLoaderRoute: typeof EspaceAgentRapportsRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/profil': {
-      id: '/espace-agent/profil'
-      path: '/profil'
-      fullPath: '/espace-agent/profil'
-      preLoaderRoute: typeof EspaceAgentProfilRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/nouvelle-demande': {
-      id: '/espace-agent/nouvelle-demande'
-      path: '/nouvelle-demande'
-      fullPath: '/espace-agent/nouvelle-demande'
-      preLoaderRoute: typeof EspaceAgentNouvelleDemandeRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/notifications': {
-      id: '/espace-agent/notifications'
-      path: '/notifications'
-      fullPath: '/espace-agent/notifications'
-      preLoaderRoute: typeof EspaceAgentNotificationsRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/estimations': {
-      id: '/espace-agent/estimations'
-      path: '/estimations'
-      fullPath: '/espace-agent/estimations'
-      preLoaderRoute: typeof EspaceAgentEstimationsRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/espace-agent/demandes': {
-      id: '/espace-agent/demandes'
-      path: '/demandes'
-      fullPath: '/espace-agent/demandes'
-      preLoaderRoute: typeof EspaceAgentDemandesRouteImport
-      parentRoute: typeof EspaceAgentRoute
-    }
-    '/admin/utilisateurs': {
-      id: '/admin/utilisateurs'
-      path: '/utilisateurs'
-      fullPath: '/admin/utilisateurs'
-      preLoaderRoute: typeof AdminUtilisateursRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/rapports': {
-      id: '/admin/rapports'
-      path: '/rapports'
-      fullPath: '/admin/rapports'
-      preLoaderRoute: typeof AdminRapportsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/parametres': {
-      id: '/admin/parametres'
-      path: '/parametres'
-      fullPath: '/admin/parametres'
-      preLoaderRoute: typeof AdminParametresRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/leads': {
-      id: '/admin/leads'
-      path: '/leads'
-      fullPath: '/admin/leads'
-      preLoaderRoute: typeof AdminLeadsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/coefficients': {
-      id: '/admin/coefficients'
-      path: '/coefficients'
-      fullPath: '/admin/coefficients'
-      preLoaderRoute: typeof AdminCoefficientsRouteImport
+    '/admin/agents': {
+      id: '/admin/agents'
+      path: '/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AdminAgentsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/calibrage': {
@@ -819,12 +672,159 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCalibrageRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/agents': {
-      id: '/admin/agents'
-      path: '/agents'
-      fullPath: '/admin/agents'
-      preLoaderRoute: typeof AdminAgentsRouteImport
+    '/admin/coefficients': {
+      id: '/admin/coefficients'
+      path: '/coefficients'
+      fullPath: '/admin/coefficients'
+      preLoaderRoute: typeof AdminCoefficientsRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/parametres': {
+      id: '/admin/parametres'
+      path: '/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AdminParametresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rapports': {
+      id: '/admin/rapports'
+      path: '/rapports'
+      fullPath: '/admin/rapports'
+      preLoaderRoute: typeof AdminRapportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/utilisateurs': {
+      id: '/admin/utilisateurs'
+      path: '/utilisateurs'
+      fullPath: '/admin/utilisateurs'
+      preLoaderRoute: typeof AdminUtilisateursRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/espace-agent/': {
+      id: '/espace-agent/'
+      path: '/'
+      fullPath: '/espace-agent/'
+      preLoaderRoute: typeof EspaceAgentIndexRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/demandes': {
+      id: '/espace-agent/demandes'
+      path: '/demandes'
+      fullPath: '/espace-agent/demandes'
+      preLoaderRoute: typeof EspaceAgentDemandesRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/estimations': {
+      id: '/espace-agent/estimations'
+      path: '/estimations'
+      fullPath: '/espace-agent/estimations'
+      preLoaderRoute: typeof EspaceAgentEstimationsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/notifications': {
+      id: '/espace-agent/notifications'
+      path: '/notifications'
+      fullPath: '/espace-agent/notifications'
+      preLoaderRoute: typeof EspaceAgentNotificationsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/nouvelle-demande': {
+      id: '/espace-agent/nouvelle-demande'
+      path: '/nouvelle-demande'
+      fullPath: '/espace-agent/nouvelle-demande'
+      preLoaderRoute: typeof EspaceAgentNouvelleDemandeRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/profil': {
+      id: '/espace-agent/profil'
+      path: '/profil'
+      fullPath: '/espace-agent/profil'
+      preLoaderRoute: typeof EspaceAgentProfilRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/rapports': {
+      id: '/espace-agent/rapports'
+      path: '/rapports'
+      fullPath: '/espace-agent/rapports'
+      preLoaderRoute: typeof EspaceAgentRapportsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/transactions': {
+      id: '/espace-agent/transactions'
+      path: '/transactions'
+      fullPath: '/espace-agent/transactions'
+      preLoaderRoute: typeof EspaceAgentTransactionsRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/espace-agent/zones': {
+      id: '/espace-agent/zones'
+      path: '/zones'
+      fullPath: '/espace-agent/zones'
+      preLoaderRoute: typeof EspaceAgentZonesRouteImport
+      parentRoute: typeof EspaceAgentRoute
+    }
+    '/estimation/resultat': {
+      id: '/estimation/resultat'
+      path: '/resultat'
+      fullPath: '/estimation/resultat'
+      preLoaderRoute: typeof EstimationResultatRouteImport
+      parentRoute: typeof EstimationRoute
+    }
+    '/guides/': {
+      id: '/guides/'
+      path: '/guides'
+      fullPath: '/guides/'
+      preLoaderRoute: typeof GuidesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/$slug': {
+      id: '/guides/$slug'
+      path: '/guides/$slug'
+      fullPath: '/guides/$slug'
+      preLoaderRoute: typeof GuidesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-donnees/': {
+      id: '/mes-donnees/'
+      path: '/mes-donnees'
+      fullPath: '/mes-donnees/'
+      preLoaderRoute: typeof MesDonneesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-donnees/acces': {
+      id: '/mes-donnees/acces'
+      path: '/mes-donnees/acces'
+      fullPath: '/mes-donnees/acces'
+      preLoaderRoute: typeof MesDonneesAccesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mise-en-relation/$token': {
+      id: '/mise-en-relation/$token'
+      path: '/mise-en-relation/$token'
+      fullPath: '/mise-en-relation/$token'
+      preLoaderRoute: typeof MiseEnRelationTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prix-hotel/': {
+      id: '/prix-hotel/'
+      path: '/prix-hotel'
+      fullPath: '/prix-hotel/'
+      preLoaderRoute: typeof PrixHotelIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/prix-hotel/$region/': {
       id: '/prix-hotel/$region/'
@@ -840,18 +840,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrixHotelRegionDepartementRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/scrape-transactions': {
-      id: '/api/public/hooks/scrape-transactions'
-      path: '/api/public/hooks/scrape-transactions'
-      fullPath: '/api/public/hooks/scrape-transactions'
-      preLoaderRoute: typeof ApiPublicHooksScrapeTransactionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/calibrate-coefficients': {
       id: '/api/public/hooks/calibrate-coefficients'
       path: '/api/public/hooks/calibrate-coefficients'
       fullPath: '/api/public/hooks/calibrate-coefficients'
       preLoaderRoute: typeof ApiPublicHooksCalibrateCoefficientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/scrape-transactions': {
+      id: '/api/public/hooks/scrape-transactions'
+      path: '/api/public/hooks/scrape-transactions'
+      fullPath: '/api/public/hooks/scrape-transactions'
+      preLoaderRoute: typeof ApiPublicHooksScrapeTransactionsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
