@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Read agent photos" ON storage.objects;
