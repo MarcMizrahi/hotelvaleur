@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { signToken, verifyToken } from "@/lib/hmac.server";
+import { getSiteUrl } from "@/config/site";
 
 // --- Envoi du lien d'accès à ses données ---
 export const requestDataAccess = createServerFn({ method: "POST" })
@@ -11,7 +12,7 @@ export const requestDataAccess = createServerFn({ method: "POST" })
     const email = data.email.toLowerCase().trim();
     const exp = Math.floor(Date.now() / 1000) + 24 * 3600;
     const token = signToken({ purpose: "data-access", subject: email, exp });
-    const siteUrl = process.env.SITE_URL ?? "https://example.fr";
+    const siteUrl = getSiteUrl();
     const link = `${siteUrl}/mes-donnees/acces?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 
     const { sendEmail } = await import("@/lib/email.server");
@@ -62,11 +63,45 @@ export const deleteMyData = createServerFn({ method: "POST" })
       throw new Error("Lien invalide ou expiré.");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Rapports PDF stockés : la suppression en cascade des lignes
+    // `estimation_report` ne retire pas les fichiers du bucket. On les liste
+    // avant de supprimer les estimations (best-effort, ne bloque pas la suite).
+    try {
+      const { data: ests } = await supabaseAdmin
+        .from("estimation")
+        .select("id")
+        .eq("email", email);
+      const ids = (ests ?? []).map((e) => e.id);
+      if (ids.length > 0) {
+        const { data: reports } = await supabaseAdmin
+          .from("estimation_report")
+          .select("storage_path")
+          .in("estimation_id", ids);
+        const paths = (reports ?? []).map((r) => r.storage_path).filter(Boolean);
+        if (paths.length > 0) {
+          const { error: rmErr } = await supabaseAdmin.storage
+            .from("estimation-reports")
+            .remove(paths);
+          if (rmErr) console.error("[rgpd] report files removal failed", rmErr);
+        }
+      }
+    } catch (err) {
+      console.error("[rgpd] report files cleanup failed", err);
+    }
+
     const { error: delErr } = await supabaseAdmin
       .from("estimation")
       .delete()
       .eq("email", email);
     if (delErr) throw new Error("Suppression impossible.");
+
+    // Historique d'envoi : la FK passe à NULL mais l'adresse reste dans `to_email`.
+    const { error: logErr } = await supabaseAdmin
+      .from("email_log")
+      .delete()
+      .eq("to_email", email);
+    if (logErr) console.error("[rgpd] email_log cleanup failed", logErr);
     await supabaseAdmin
       .from("unsubscribe")
       .upsert({ email, reason: "rgpd_deletion" }, { onConflict: "email" });

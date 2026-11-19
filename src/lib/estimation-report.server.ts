@@ -9,6 +9,7 @@ import autoTable from "jspdf-autotable";
 import { getRegionBySlug } from "@/lib/regions";
 import { pdfEuros } from "@/lib/report-pdf";
 import { sendEmail } from "@/lib/email.server";
+import { getSiteUrl } from "@/config/site";
 
 const NAVY: [number, number, number] = [26, 39, 68];
 const GOLD: [number, number, number] = [201, 169, 97];
@@ -56,7 +57,7 @@ function humanizeLabel(label: string): string {
 
 
 function siteUrl(): string {
-  return process.env.SITE_URL ?? "https://hotelvaleur.lovable.app";
+  return getSiteUrl();
 }
 
 function esc(s: string): string {

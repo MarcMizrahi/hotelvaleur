@@ -13,9 +13,10 @@ import {
   type MatchCriteria,
 } from "@/lib/brokerage-matching";
 import { formatEurosRange } from "@/lib/money";
+import { getSiteUrl } from "@/config/site";
 
 function siteUrl(): string {
-  return process.env.SITE_URL ?? "https://true-view-showcase.lovable.app";
+  return getSiteUrl();
 }
 
 export interface EstimationSummary {

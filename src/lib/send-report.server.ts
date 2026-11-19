@@ -13,6 +13,7 @@ import {
   buildAdminNotificationHtml,
 } from "@/lib/email-templates.server";
 import type { EstimationDraft } from "@/lib/estimation-storage";
+import { getSiteUrl } from "@/config/site";
 
 export interface SendReportInput {
   estimationId: string;
@@ -47,7 +48,7 @@ export async function sendEstimationReport(input: SendReportInput): Promise<{ ok
   }
 
   // 2. Signed unsubscribe URL
-  const siteUrl = process.env.SITE_URL ?? "https://example.fr";
+  const siteUrl = getSiteUrl();
   const exp = Math.floor(Date.now() / 1000) + 365 * 24 * 3600;
   const token = signToken({ purpose: "unsubscribe", subject: emailLower, exp });
   const unsubscribeUrl = `${siteUrl}/desabonnement?email=${encodeURIComponent(emailLower)}&token=${encodeURIComponent(token)}`;
