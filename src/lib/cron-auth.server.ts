@@ -40,18 +40,6 @@ export function isAuthorizedCronRequest(
   return safeEqual(provided, expected);
 }
 
-/** Diagnostic temporaire : consigne la cause d'un échec dans app_config. */
-async function recordCronAuthDiag(reason: string): Promise<void> {
-  try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin
-      .from("app_config")
-      .upsert({ key: "cron_auth_diag", value: `${new Date().toISOString()} ${reason}` });
-  } catch {
-    // best-effort : ne jamais bloquer l'authentification pour le diagnostic
-  }
-}
-
 /**
  * Vérification asynchrone complète : CRON_SECRET, puis secret partagé en base,
  * puis clé publishable. À utiliser dans les webhooks.
@@ -65,22 +53,14 @@ export async function isAuthorizedCronRequestAsync(headers: Headers): Promise<bo
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const { data } = await supabaseAdmin
       .from("app_config")
       .select("value")
       .eq("key", "cron_secret")
       .maybeSingle();
-    if (error) {
-      await recordCronAuthDiag(`query_error: ${error.message}`);
-    } else if (data?.value) {
-      const shared = data.value.trim();
-      if (safeEqual(provided, shared)) return true;
-      await recordCronAuthDiag(`mismatch: provided=${provided.length} stored=${shared.length}`);
-    } else {
-      await recordCronAuthDiag("no_row");
-    }
+    const shared = data?.value?.trim();
+    if (shared) return safeEqual(provided, shared);
   } catch (err) {
-    await recordCronAuthDiag(`exception: ${err instanceof Error ? err.message : String(err)}`);
     console.error("[cron-auth] lecture du secret partagé impossible", err);
   }
 
