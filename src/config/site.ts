@@ -7,7 +7,7 @@ export const site = {
    * À mettre à jour si un nom de domaine personnalisé est branché.
    */
   url: "https://hotelvaleur.lovable.app",
-  contactEmail: "contact@example.fr",
+  contactEmail: "contact@hotelvaleur.com",
 } as const;
 
 export type SiteConfig = typeof site;
