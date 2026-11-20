@@ -57,20 +57,21 @@ sont gérées automatiquement par Lovable.
 | `SITE_URL` | URL publique utilisée dans les emails. Par défaut : `site.url` de `src/config/site.ts` |
 | `ADMIN_EMAIL` | Destinataire des notifications de leads qualifiés |
 | `TURNSTILE_SECRET_KEY` | Anti-spam Cloudflare Turnstile (désactivé si absent) |
-| `CRON_SECRET` | Optionnel, recommandé — secret exigé par les webhooks `pg_cron` (voir ci-dessous) |
+| `CRON_SECRET` | Optionnel — secret exigé par les webhooks `pg_cron`, prioritaire sur le secret partagé en base (voir ci-dessous) |
 
 ### Sécuriser les jobs planifiés
 
-Les webhooks `/api/public/hooks/*` acceptent par défaut la clé *publishable* Supabase, qui
-est publique. Pour les protéger :
+Les webhooks `/api/public/hooks/*` vérifient un secret, dans l'ordre :
 
-1. Définir le secret `CRON_SECRET` dans Lovable Cloud.
-2. Mettre à jour les deux jobs `pg_cron` (éditeur SQL Supabase, **pas** dans une migration
-   commitée pour ne pas publier le secret) en ajoutant l'en-tête
-   `"x-cron-secret": "<valeur>"` aux appels `net.http_post`.
+1. la variable d'environnement `CRON_SECRET` si elle est définie ;
+2. le secret partagé `cron_secret` de la table `app_config` (généré par migration,
+   lisible uniquement par le rôle service) — c'est la valeur que les deux jobs
+   `pg_cron` envoient via l'en-tête `x-cron-secret` ;
+3. à défaut, la clé *publishable* Supabase (comportement historique, publique —
+   ne pas s'y fier durablement).
 
-Dès que `CRON_SECRET` est défini, la clé publishable n'est plus acceptée : faire l'étape 2
-juste après l'étape 1.
+Les jobs `pg_cron` sont configurés par migration pour l'étape 2 : aucune action
+manuelle n'est nécessaire.
 
 ## Développement local
 
@@ -88,7 +89,5 @@ bun run lint       # ESLint + Prettier
 
 ## À compléter
 
-- `site.contactEmail` dans `src/config/site.ts` est encore une adresse d'exemple ; elle
-  apparaît dans le pied de page et les pages légales.
 - Si un nom de domaine personnalisé est branché, mettre à jour `site.url`, `SITE_URL`
   et la ligne `Sitemap:` de `public/robots.txt`.
