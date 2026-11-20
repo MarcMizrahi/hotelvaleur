@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 
 /**
  * Veille hebdomadaire des transactions hôtelières.
- * Appelée par le planificateur (pg_cron) avec l'en-tête `apikey`.
+ * Appelée par le planificateur (pg_cron) avec l'en-tête `x-cron-secret`.
  */
 export const Route = createFileRoute("/api/public/hooks/scrape-transactions")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { isAuthorizedCronRequest, unauthorizedResponse } =
+        const { isAuthorizedCronRequestAsync, unauthorizedResponse } =
           await import("@/lib/cron-auth.server");
-        if (!isAuthorizedCronRequest(request.headers)) {
+        if (!(await isAuthorizedCronRequestAsync(request.headers))) {
           return unauthorizedResponse();
         }
 
