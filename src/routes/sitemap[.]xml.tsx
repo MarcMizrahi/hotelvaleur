@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { regions } from "@/lib/regions";
-import { site } from "@/config/site";
-
-const BASE_URL = site.url.replace(/\/$/, "");
+import { getSiteUrl } from "@/config/site";
+import { guides } from "@/content/guides";
 
 type Entry = { path: string; priority?: string; changefreq?: string };
 
@@ -13,9 +12,12 @@ function buildEntries(): Entry[] {
     { path: "/prix-hotel", priority: "0.9", changefreq: "monthly" },
     { path: "/experts", priority: "0.8", changefreq: "monthly" },
     { path: "/guides", priority: "0.8", changefreq: "monthly" },
-    { path: "/guides/combien-vaut-mon-hotel", priority: "0.7", changefreq: "monthly" },
-    { path: "/guides/vendre-son-hotel-etapes", priority: "0.7", changefreq: "monthly" },
-    { path: "/guides/ebitda-revpar-hotellerie", priority: "0.7", changefreq: "monthly" },
+    // Guides : dérivés du contenu pour qu'un nouveau guide apparaisse automatiquement.
+    ...guides.map((g) => ({
+      path: `/guides/${g.slug}`,
+      priority: "0.7",
+      changefreq: "monthly",
+    })),
     { path: "/mentions-legales", priority: "0.3" },
     { path: "/confidentialite", priority: "0.3" },
     { path: "/cgu", priority: "0.3" },
@@ -40,12 +42,13 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
+        const baseUrl = getSiteUrl();
         const entries = buildEntries();
         const urls = entries
           .map((e) =>
             [
               "  <url>",
-              `    <loc>${BASE_URL}${e.path}</loc>`,
+              `    <loc>${baseUrl}${e.path}</loc>`,
               e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
               e.priority ? `    <priority>${e.priority}</priority>` : null,
               "  </url>",

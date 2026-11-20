@@ -1,19 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/admin-guard";
 import type { Coefficient } from "@/lib/valuation";
 import type { ComparableRow } from "@/lib/comparables";
 
-// Ensures the caller is an admin. Throws otherwise.
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
-  const { data, error } = await ctx.supabase
-    .from("profile")
-    .select("role")
-    .eq("id", ctx.userId)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data || data.role !== "admin") throw new Error("Forbidden");
-}
 
 export const checkAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

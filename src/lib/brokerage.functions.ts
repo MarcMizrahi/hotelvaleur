@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/admin-guard";
 
 const BROKERAGE_PURPOSE = "brokerage";
 
@@ -167,14 +168,6 @@ export const listPublicAgents = createServerFn({ method: "GET" }).handler(async 
 /* Admin                                                                */
 /* ------------------------------------------------------------------ */
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
-  const { data, error } = await ctx.supabase
-    .from("profile")
-    .select("role")
-    .eq("id", ctx.userId)
-    .maybeSingle();
-  if (error || data?.role !== "admin") throw new Error("Accès refusé.");
-}
 
 export const listBrokerageLeads = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

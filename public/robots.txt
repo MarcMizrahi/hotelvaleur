@@ -2,9 +2,15 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /admin/
+Disallow: /espace-agent
+Disallow: /espace-agent/
+Disallow: /mon-compte
+Disallow: /auth
 Disallow: /estimation/resultat
+Disallow: /mise-en-relation/
 Disallow: /mes-donnees
 Disallow: /mes-donnees/
 Disallow: /desabonnement
+Disallow: /api/
 
-Sitemap: https://example.fr/sitemap.xml
+Sitemap: https://hotelvaleur.lovable.app/sitemap.xml

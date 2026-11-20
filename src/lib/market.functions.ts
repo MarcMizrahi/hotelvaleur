@@ -1,15 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/admin-guard";
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
-  const { data, error } = await ctx.supabase
-    .from("profile")
-    .select("role")
-    .eq("id", ctx.userId)
-    .maybeSingle();
-  if (error || data?.role !== "admin") throw new Error("Accès refusé.");
-}
 
 export const listMarketTransactions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

@@ -1,15 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/admin-guard";
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
-  const { data, error } = await ctx.supabase
-    .from("profile")
-    .select("role")
-    .eq("id", ctx.userId)
-    .maybeSingle();
-  if (error || data?.role !== "admin") throw new Error("Accès refusé.");
-  return data;
-}
 
 /** Simulation : calcule les propositions sans rien modifier. */
 export const previewCalibration = createServerFn({ method: "GET" })
