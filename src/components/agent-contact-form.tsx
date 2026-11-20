@@ -45,7 +45,6 @@ export function AgentContactForm({
           company: company.trim() || null,
           phone: phone.trim() || null,
           bio: bio.trim() || null,
-          monthly_capacity: Number(capacity) || 0,
           is_active: isActive,
           is_public: isPublic,
         });
@@ -85,6 +84,7 @@ export function AgentContactForm({
           <Label htmlFor="agent-capacity">Capacité mensuelle (dossiers)</Label>
           <Input
             id="agent-capacity"
+            disabled
             type="number"
             min={0}
             max={500}

@@ -103,7 +103,12 @@ function ReportsPage() {
         worksDeduction(r) ? Math.round(worksDeduction(r) / 100) : "",
         r.email,
       ]
-        .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
+        .map((v) => {
+          let str = String(v ?? "");
+          // Neutralise les formules tableur (injection CSV).
+          if (/^[=+\-@\t\r]/.test(str)) str = `'${str}`;
+          return `"${str.replace(/"/g, '""')}"`;
+        })
         .join(","),
     );
     const blob = new Blob([[header.join(","), ...lines].join("\n")], {

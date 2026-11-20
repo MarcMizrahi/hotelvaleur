@@ -94,7 +94,6 @@ export const updateAgentContact = createServerFn({ method: "POST" })
         phone: z.string().max(40).nullable().optional(),
         bio: z.string().max(2000).nullable().optional(),
         company: z.string().max(160).nullable().optional(),
-        monthly_capacity: z.number().int().min(0).max(500).optional(),
         is_active: z.boolean().optional(),
         is_public: z.boolean().optional(),
       })
@@ -128,7 +127,9 @@ export const updateAgentLeadStatus = createServerFn({ method: "POST" })
       ...(data.status === "qualifie" ? { contacted_at: new Date().toISOString() } : {}),
     };
 
-    const { error } = await context.supabase
+    // Mise à jour côté serveur, limitée au statut (pas d'accès direct à assigned_at).
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("brokerage_lead")
       .update(patch)
       .eq("id", data.id)
@@ -161,7 +162,12 @@ export const getAgentValuationRequests = createServerFn({ method: "GET" })
       .limit(120);
 
     const regions = (agent.regions ?? []) as string[];
-    if (regions.length > 0) query = query.in("region_slug", regions);
+    // Sans région : uniquement les demandes déjà attribuées à l'agent.
+    if (regions.length > 0) {
+      query = query.or(`agent_id.eq.${agentId},region_slug.in.(${regions.map((r) => `"${r.replace(/"/g, "")}"`).join(",")})`);
+    } else {
+      query = query.eq("agent_id", agentId);
+    }
 
     const { data, error } = await query;
     if (error) throw new Error(error.message);
@@ -227,22 +233,25 @@ export const getAgentPendingTransactions = createServerFn({ method: "GET" })
       .eq("id", agentId)
       .maybeSingle();
 
+    const regions = (agent?.regions ?? []) as string[];
+    if (regions.length === 0) return { transactions: [] };
+
     const { data, error } = await supabaseAdmin
       .from("market_transaction")
       .select(
         "id, source_name, source_url, title, published_at, hotel_name, city, department_code, region_slug, star_rating, room_count, transaction_type, price_cents, price_per_room_cents, confidence, created_at",
       )
       .eq("status", "pending")
+      .in("region_slug", regions)
       .order("published_at", { ascending: false, nullsFirst: false })
       .limit(150);
     if (error) throw new Error(error.message);
 
-    const regions = (agent?.regions ?? []) as string[];
     const rows = data ?? [];
     return {
       transactions: rows.map((t: any) => ({
         ...t,
-        inMyRegion: regions.length === 0 || regions.includes(t.region_slug ?? ""),
+        inMyRegion: regions.includes(t.region_slug ?? ""),
       })),
     };
   });

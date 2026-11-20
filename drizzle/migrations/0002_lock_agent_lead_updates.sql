@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Agents update assigned leads" ON public.brokerage_lead;
