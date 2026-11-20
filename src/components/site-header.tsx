@@ -5,6 +5,7 @@ import { useT } from "@/hooks/use-t";
 import { site } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import logoUrl from "@/assets/hotelvaleur-logo-h-v2.png";
 
 export function SiteHeader() {
   const t = useT();
@@ -32,11 +33,20 @@ export function SiteHeader() {
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link
           to="/"
-          className="min-w-0 truncate font-serif text-xl font-bold tracking-tight text-navy"
+          className="flex min-w-0 items-center gap-2.5"
           aria-label={site.name}
         >
-          {site.name}
-          <span className="text-gold">.</span>
+          <img
+            src={logoUrl}
+            alt=""
+            width={679}
+            height={649}
+            className="h-9 w-auto shrink-0"
+          />
+          <span className="truncate font-serif text-xl font-bold tracking-tight text-navy">
+            {site.name}
+            <span className="text-gold">.</span>
+          </span>
         </Link>
 
 

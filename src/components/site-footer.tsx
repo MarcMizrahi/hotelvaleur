@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useT } from "@/hooks/use-t";
 import { site } from "@/config/site";
+import logoUrl from "@/assets/hotelvaleur-logo-h-v2.png";
 
 export function SiteFooter() {
   const t = useT();
@@ -10,7 +11,17 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="container-page py-12 grid gap-8 md:grid-cols-3">
         <div>
-          <div className="font-serif text-lg text-navy">{site.name}</div>
+          <div className="flex items-center gap-2.5">
+            <img
+              src={logoUrl}
+              alt=""
+              width={679}
+              height={649}
+              loading="lazy"
+              className="h-8 w-auto"
+            />
+            <span className="font-serif text-lg text-navy">{site.name}</span>
+          </div>
           <p className="mt-3 text-sm text-muted-foreground max-w-sm">
             {t.footer.tagline}
           </p>
