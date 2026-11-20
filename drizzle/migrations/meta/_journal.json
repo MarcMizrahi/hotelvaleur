@@ -22,6 +22,13 @@
       "when": 1795171684821,
       "tag": "0002_lock_agent_lead_updates",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795171783437,
+      "tag": "0003_restrict_coefficient_reads",
+      "breakpoints": true
     }
   ]
 }
