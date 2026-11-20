@@ -24,7 +24,6 @@ export function AgentContactForm({
     company: string | null;
     phone: string | null;
     bio: string | null;
-    monthly_capacity: number;
     is_active: boolean;
     is_public: boolean;
   }) => void;
