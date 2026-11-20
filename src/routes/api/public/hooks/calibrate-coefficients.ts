@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 
 /**
  * Calibrage continu des coefficients de valorisation.
- * Appelé par le planificateur (pg_cron) avec l'en-tête `apikey`.
+ * Appelé par le planificateur (pg_cron) avec l'en-tête `x-cron-secret`.
  */
 export const Route = createFileRoute("/api/public/hooks/calibrate-coefficients")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { isAuthorizedCronRequest, unauthorizedResponse } =
+        const { isAuthorizedCronRequestAsync, unauthorizedResponse } =
           await import("@/lib/cron-auth.server");
-        if (!isAuthorizedCronRequest(request.headers)) {
+        if (!(await isAuthorizedCronRequestAsync(request.headers))) {
           return unauthorizedResponse();
         }
 
